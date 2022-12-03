@@ -1,19 +1,25 @@
 package com.example.demo.user;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.Month;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class UserService {
 
-    private final UserRepository userRepository;
-
+    private UserRepository userRepository;
+    @Autowired
     public UserService(UserRepository userRepository) {
         this.userRepository = userRepository;
+    }
+
+    public Optional<User> getUser(String email){
+        return userRepository.findById(email);
     }
 
     @Autowired
@@ -21,7 +27,15 @@ public class UserService {
         return userRepository.findAll();
     }
 
-    public void addNewUser(User user) {
-        System.out.println(user);
+    public void addUser(User user) {
+        if(userRepository.findById(user.getUsername()).isEmpty()){
+            userRepository.save(user);
+        }else{
+            throw new DuplicateKeyException("User account (email) already exist");
+        }
+    }
+
+    public void removeUser(String email){
+        userRepository.deleteById(email);
     }
 }

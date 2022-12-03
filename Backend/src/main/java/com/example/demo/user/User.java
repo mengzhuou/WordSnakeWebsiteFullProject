@@ -2,6 +2,7 @@ package com.example.demo.user;
 
 import jakarta.persistence.*;
 //javax.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import org.springframework.cglib.core.Local;
 
 import java.time.LocalDate;
@@ -10,7 +11,6 @@ import java.time.Period;
 @Entity
 @Table
 public class User {
-    @Id
     @SequenceGenerator(
             name = " user_sequence",
             sequenceName = " user_sequence",
@@ -20,9 +20,13 @@ public class User {
             strategy = GenerationType.SEQUENCE,
             generator = "user_sequence"
     )
-    private Long id;
+    @NotBlank
     private String name;
+    @Id
     private String email;
+    @NotBlank
+    private String password;
+    @NotBlank
     private LocalDate dob;
     @Transient
     private Integer age; //transient means it will not be a column in database, so we calculate it
@@ -30,10 +34,10 @@ public class User {
     public User() {
     }
 
-    public User(Long id, String name, String email, LocalDate dob) {
-        this.id = id;
-        this.name = name;
+    public User(String email, String password, String name, LocalDate dob) {
         this.email = email;
+        this.password = password;
+        this.name = name;
         this.dob = dob;
     }
 
@@ -43,14 +47,6 @@ public class User {
         this.dob = dob;
     }
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
     public String getName() {
         return name;
     }
@@ -58,8 +54,8 @@ public class User {
     public void setName(String name) {
         this.name = name;
     }
-
-    public String getEmail() {
+//    @Override
+    public String getUsername() {
         return email;
     }
 
@@ -82,13 +78,21 @@ public class User {
     public void setAge(Integer age) {
         this.age = age;
     }
+//    @Override
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
 
     @Override
     public String toString() {
         return "User{" +
-                "id=" + id +
                 ", name='" + name + '\'' +
                 ", email='" + email + '\'' +
+                ", password='" + password + '\'' +
                 ", dob=" + dob +
                 ", age=" + age +
                 '}';
