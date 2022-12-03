@@ -17,13 +17,13 @@ public class UserConfig {
                     1L,
                     "Nina",
                     "100@gam.com",
-                    22
-            );
+                    LocalDate.of(2000, Month.MARCH, 1)
+             );
             User Jalen = new User(
                     2L,
                     "Jalen",
                     "101120@gam.com",
-                    62
+                    LocalDate.of(2018, Month.MARCH, 1)
             );
 
             repository.saveAll(

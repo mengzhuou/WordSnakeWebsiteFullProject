@@ -1,8 +1,11 @@
 package com.example.demo.user;
 
 import jakarta.persistence.*;
+//javax.persistence.*;
+import org.springframework.cglib.core.Local;
 
 import java.time.LocalDate;
+import java.time.Period;
 
 @Entity
 @Table
@@ -20,22 +23,24 @@ public class User {
     private Long id;
     private String name;
     private String email;
-    private Integer age;
+    private LocalDate dob;
+    @Transient
+    private Integer age; //transient means it will not be a column in database, so we calculate it
 
     public User() {
     }
 
-    public User(Long id, String name, String email, Integer age) {
+    public User(Long id, String name, String email, LocalDate dob) {
         this.id = id;
         this.name = name;
         this.email = email;
-        this.age = age;
+        this.dob = dob;
     }
 
-    public User(String name, String email, Integer age) {
+    public User(String name, String email, LocalDate dob) {
         this.name = name;
         this.email = email;
-        this.age = age;
+        this.dob = dob;
     }
 
     public Long getId() {
@@ -62,15 +67,21 @@ public class User {
         this.email = email;
     }
 
+    public LocalDate getDob() {
+        return dob;
+    }
+
+    public void setDob(LocalDate dob) {
+        this.dob = dob;
+    }
+
     public Integer getAge() {
-        return age;
+        return Period.between(this.dob, LocalDate.now()).getYears();
     }
 
     public void setAge(Integer age) {
         this.age = age;
     }
-
-
 
     @Override
     public String toString() {
@@ -78,6 +89,7 @@ public class User {
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", email='" + email + '\'' +
+                ", dob=" + dob +
                 ", age=" + age +
                 '}';
     }
