@@ -2,9 +2,7 @@ package com.gtbackend.gtbackend.user;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.security.Security;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.format.DateTimeParseException;
 import java.util.Optional;
 
@@ -19,13 +17,9 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import java.security.Principal;
 import java.util.*;
-import com.gtbackend.gtbackend.user.UserService;
-import com.gtbackend.gtbackend.user.UserRepository;
-import com.gtbackend.gtbackend.user.Config;
-import com.gtbackend.gtbackend.user.User;
 
 @RestController
-@RequestMapping( path = "api/v1/user")
+@RequestMapping( path = "api/v1")
 public class UserAPI {
 
     private final UserService userService;
