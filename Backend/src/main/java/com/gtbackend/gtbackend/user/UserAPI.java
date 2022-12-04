@@ -27,8 +27,10 @@ public class UserAPI {
 
 
     @Autowired
-    public UserAPI(com.gtbackend.gtbackend.user.UserService userService) {
+    public UserAPI(UserService userService, PasswordEncoder passwordEncoder) {
         this.userService = userService;
+        this.passwordEncoder = passwordEncoder;
+
     }
 
     @GetMapping("/getUserInfo")

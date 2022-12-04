@@ -3,29 +3,21 @@ package com.gtbackend.gtbackend.user;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 import java.time.LocalDate;
 import java.time.Period;
 
 @Entity
-@Table
+@Table(name="users")
 public class User {
-    @SequenceGenerator(
-            name = " user_sequence",
-            sequenceName = " user_sequence",
-            allocationSize = 1
-    )
-    @GeneratedValue(
-            strategy = GenerationType.SEQUENCE,
-            generator = "user_sequence"
-    )
     @NotBlank
     private String name;
     @Id
     private String email;
     @NotBlank
     private String password;
-    @NotBlank
+    @NotNull
     private LocalDate dob;
     @Transient
     private Integer age; //transient means it will not be a column in database, so we calculate it
