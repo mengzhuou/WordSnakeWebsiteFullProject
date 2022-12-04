@@ -1,0 +1,27 @@
+@import url('https://fonts.googleapis.com/css2?family=Neucha&display=swap');
+
+.LoginPage-header{
+    margin-top: 5%;
+    font-weight: bolder;
+}
+
+.loginForm{
+    margin-top:10%;
+    border: 3px solid transparent;
+    border-radius: 5%;
+    box-shadow: rgba(50, 50, 93, 0.25) 0px 50px 100px -20px, rgba(0, 0, 0, 0.3) 0px 30px 60px -30px, rgba(10, 37, 64, 0.35) 0px -2px 6px 0px inset;
+    background: linear-gradient(#a28089, #ffa8B6) padding-box;
+    width: 300px;
+    height: 300px;
+    padding-top: 1%;
+    padding-left: 1%;
+}
+
+.email{
+    margin-top: 10%;
+    margin-bottom: 10%;
+}
+
+.password{
+    margin-bottom:10%;
+}
