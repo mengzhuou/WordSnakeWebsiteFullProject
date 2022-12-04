@@ -2,7 +2,16 @@ package com.gtbackend.gtbackend.user;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.security.Security;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeParseException;
 import java.util.Optional;
+
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.naming.AuthenticationException;
@@ -10,12 +19,17 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import java.security.Principal;
 import java.util.*;
+import com.gtbackend.gtbackend.user.UserService;
+import com.gtbackend.gtbackend.user.UserRepository;
+import com.gtbackend.gtbackend.user.Config;
+import com.gtbackend.gtbackend.user.User;
 
 @RestController
 @RequestMapping( path = "api/v1/user")
 public class UserAPI {
 
-    private final com.gtbackend.gtbackend.user.UserService userService;
+    private final UserService userService;
+    private PasswordEncoder passwordEncoder;
 
 
     @Autowired
@@ -43,8 +57,21 @@ public class UserAPI {
         String password = body.get("password");
         Optional<User> tmp = userService.getUser(email);
         User usr = tmp.get();
-        if(!tmp.isEmpty()){
-//            if()
+        if (tmp.isEmpty()){
+            throw new BadCredentialsException("Please enter your email or password!");
         }
+        if(passwordEncoder.matches(password, usr.getPassword())){
+            SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(usr.getUsername(),
+                    usr.getPassword()));
+        }else{
+            throw new BadCredentialsException("Email or Password does not match our records!");
+        }
+    }
+
+    @PostMapping("/register")
+    public void addUser(@RequestBody Map<String, String> body) throws IllegalArgumentException, DateTimeParseException {
+        User user = new User(body.get("email"), passwordEncoder.encode(body.get("password")),
+                body.get("name"), LocalDate.parse(body.get("dob")));
+        userService.addUser(user);
     }
 }
