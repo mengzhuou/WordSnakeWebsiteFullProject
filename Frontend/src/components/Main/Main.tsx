@@ -19,7 +19,7 @@ function Main() {
   return (
     <div className="App">
       <header className="App-header">
-        <p>Welcome</p>
+        <p className='welcomeText'>Word Snake</p>
         <button className="WelcomePageButton" onClick={goToSecondsComp}>Log In </button>
         <button className="WelcomePageButton" onClick={gotToFirstComp}>Sign Up </button>
       </header>

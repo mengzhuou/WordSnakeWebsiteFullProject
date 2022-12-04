@@ -1,12 +1,11 @@
 @import url('https://fonts.googleapis.com/css2?family=Neucha&display=swap');
 
 .WelcomePageButton{
-  margin-right: 10%;
-  margin-left: 10%;
+  margin: 3% 10% 0% 10%;
   color: rgb(101, 58, 97);
   background-color:bisque;
   border-radius: 30%;
-  width: auto;
+  width: 100px;
   height: auto;
   font-size: 20px;
   font-weight: bold;
@@ -19,18 +18,27 @@
   display: flex;
   flex-direction:column;
   align-items: center;
-  background-color:coral;
+  background-color:#c7fcd1;
   font-family: "Neucha", cursive;
   overflow:auto;
 }
 
 .App-header{
-  margin-top: 5%;
-  font-size: 100px;
+    color: #cedcc5;
+    background-color: #04a670;
+    z-index: 1;
+    text-align: center;
+    width: 450px;
+    box-shadow: rgba(50, 50, 93, 0.25) 0px 50px 100px -20px, rgba(0, 0, 0, 0.3) 0px 30px 60px -30px, rgba(10, 37, 64, 0.35) 0px -2px 6px 0px inset;
+    border: 3px solid transparent;
+}
+
+.welcomeText{
+  font-size: 80px;
+  margin: 0px 5% 150px 5%;
   text-transform: uppercase;
-  color:#6e3232;
-  z-index: 1;
-  text-align: center;
+  font-family: 'Times New Roman', Times, serif;
+
 }
 
 .buttonText{
