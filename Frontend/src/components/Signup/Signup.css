@@ -1,0 +1,56 @@
+@import url('https://fonts.googleapis.com/css2?family=Neucha&display=swap');
+
+.SignUp-header{
+    margin-top: 5%;
+    font-weight: bolder;
+}
+
+.textfield_first{
+    padding-top: 20%;
+    padding-bottom: 20%;
+}
+
+.section_SignUp{
+    padding-right: 20%;
+}
+
+.hasMargin{
+    margin-bottom: 6%;
+}
+
+
+.welcomeLink{
+    margin-top: 3%;
+    position: absolute;
+    /* left: 3%; */
+    color: rgb(101, 58, 97);
+    text-align: center;
+    width: 90px;
+    height: 20px;
+    border: 2px solid rgb(3, 59, 21);
+    text-decoration: none; 
+}
+
+.form{
+    border: 3px solid transparent;
+    border-radius: 5%;
+    box-shadow: rgba(50, 50, 93, 0.25) 0px 50px 100px -20px, rgba(0, 0, 0, 0.3) 0px 30px 60px -30px, rgba(10, 37, 64, 0.35) 0px -2px 6px 0px inset;
+    background: linear-gradient(#a28089, #ffa8B6) padding-box;
+    width: 350px;
+    height: 400px;
+    padding-top: 1%;
+    padding-left: 1%;
+}
+
+.RegisterButton{
+    margin-top: 40%;
+    margin-left: 2%;
+    color: rgb(101, 58, 97);
+    background-color:#ffa8B6;
+    /* border-radius: 35%; */
+    width: 25%;
+    font-size: 18px;
+    font-weight: bold;
+    cursor: pointer;
+    font-family: "Neucha", cursive;
+}

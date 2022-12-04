@@ -4,7 +4,7 @@ import { emailValidator } from '../../helpers/emailValidator'
 import { passwordValidator } from '../../helpers/passwordValidator'
 import { login } from '../../helpers/connector'
 import { useNavigate } from 'react-router-dom';
-import "./LoginPage.css";
+import "./Login.css";
   
 function LoginPage() {
   const navigate = useNavigate();

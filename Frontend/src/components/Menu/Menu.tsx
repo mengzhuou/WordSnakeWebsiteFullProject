@@ -1,4 +1,4 @@
-import "./Dashboard.css";
+import "./Menu.css";
 import { withFuncProps } from "../withFuncProps";
 import React from 'react';
 import {logout} from '../../helpers/connector';
