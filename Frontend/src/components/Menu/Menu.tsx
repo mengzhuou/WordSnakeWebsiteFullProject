@@ -33,10 +33,13 @@ class Menu extends React.Component<any,any>{
     render(){
         return (
             <div className="App">
-                {/* <div className="topnav">
+                <div className="topnav">
                     <button className="topnavButton" onClick={this.pagelogout}>Logout</button>
-                </div>     */}
-                <p>Here</p>
+                </div>    
+                <h1 className="wsTitle">Word Snake</h1>
+                <div>
+                    <input placeholder="Word start with "></input>
+                </div>
             </div>
         );
     }
