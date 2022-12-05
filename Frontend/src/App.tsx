@@ -41,7 +41,7 @@ class App extends React.Component<any,any>{
           <Route path="/first" element={<First />}/>
           <Route path="/second" element={<Second />}/>
           <Route path="/" element={<Main/>}/>
-          <Route path="/" element={<Menu/>}/>
+          <Route path="/Menu" element={<Menu/>}/>
         </Routes>
       </Router>
     );

@@ -31,12 +31,12 @@ class Menu extends React.Component<any,any>{
         this.forceup();
     }
     render(){
-        
         return (
-            <div className="html">
-                <div className="topnav">
+            <div className="App">
+                {/* <div className="topnav">
                     <button className="topnavButton" onClick={this.pagelogout}>Logout</button>
-                </div>    
+                </div>     */}
+                <p>Here</p>
             </div>
         );
     }

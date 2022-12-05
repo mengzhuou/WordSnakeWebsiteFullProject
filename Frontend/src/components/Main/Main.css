@@ -12,6 +12,13 @@
   cursor: pointer;
 }
 
+.imgWS{
+  width: 308px;
+  border-radius: 10%;
+  box-shadow: rgb(50 50 93 / 25%) 0px 50px 100px -20px, rgb(0 0 0 / 30%) 0px 30px 60px -30px, rgb(10 37 64 / 35%) 0px -2px 6px 0px inset;
+  margin-bottom: 10px;
+}
+
 .App{
   width: 100vw;
   height: 100vh;
@@ -31,14 +38,6 @@
     width: 450px;
     box-shadow: rgba(50, 50, 93, 0.25) 0px 50px 100px -20px, rgba(0, 0, 0, 0.3) 0px 30px 60px -30px, rgba(10, 37, 64, 0.35) 0px -2px 6px 0px inset;
     border: 3px solid transparent;
-}
-
-.welcomeText{
-  font-size: 80px;
-  margin: 0px 5% 150px 5%;
-  text-transform: uppercase;
-  font-family: 'Times New Roman', Times, serif;
-
 }
 
 .buttonText{

@@ -49,10 +49,8 @@ function SignUpPage() {
   return (
     <div className="App">
       <Link to="/" className="welcomeLink">Welcome Page</Link>
-      <header className="SignUp-header">
-        <p>SignUp</p>
-      </header>
       <form className="form" onSubmit={formik.handleSubmit}>
+        <p>Sign Up</p>
         <div className="hasMargin">
           <label htmlFor='email'>Email Address (Username) : </label>
           <input onChange={formik.handleChange} value={formik.values.email} id='email' name='email'></input>
@@ -68,7 +66,7 @@ function SignUpPage() {
         </div>
         <div className="hasMargin">
           <label htmlFor='name'> Date of Birth : </label>
-          <input onChange={formik.handleChange} value={formik.values.dob} id='dob' name='dob'></input>
+          <input placeholder='yyyy-mm-dd' onChange={formik.handleChange} value={formik.values.dob} id='dob' name='dob'></input>
         </div>
         <div>
           <button className="RegisterButton" type="submit">Register</button>

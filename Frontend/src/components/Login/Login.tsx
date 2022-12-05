@@ -2,7 +2,7 @@ import { useFormik } from 'formik';
 import { emailValidator } from '../../helpers/emailValidator'
 import { passwordValidator } from '../../helpers/passwordValidator'
 import { login } from '../../helpers/connector'
-import { Link,useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import "./Login.css";
   
 function LoginPage() {
@@ -21,7 +21,7 @@ function LoginPage() {
       }else{
           login(values.email, values.password).then(()=>{
             console.log("loggin")
-            navigate("/dashboard")
+            navigate("/menu")
           }).catch(()=>{
             alert("Error Logging in")
           })
@@ -29,27 +29,22 @@ function LoginPage() {
     }
   })
 
-
   return (
     <div className = "App">
       <Link to = "/" className = "welcomeLink"> Welcome Page</Link>
       <header className = "LoginPage-header">
       <form className="loginForm" onSubmit={formik.handleSubmit}>
-        <div className="email">
+        <div className="emailPasswordMargin">
           <label htmlFor='email'>Your email : </label>
           <input onChange={formik.handleChange} value={formik.values.email} id='email' name='email'></input>
           {formik.errors.email ? <div>{formik.errors.email}</div>: null}
         </div>
-        <div className="password">
+        <div className="emailPasswordMargin">
           <label htmlFor ='password'>Password : </label>
           <input onChange={formik.handleChange} value = {formik.values.password} id='password' name='password'></input>
           {formik.errors.password ? <div>{formik.errors.password}</div>: null}
         </div>
-        <button className="button" type="submit">Login</button>
-        <p>Or don't have an account?</p>
-        <Link to = "/first" className = "button">
-          <button className="button" type="submit">Sign up</button>
-        </Link>
+        <button className="loginPageLogButton" type="submit">Login</button>
       </form>
       </header>
     </div>
