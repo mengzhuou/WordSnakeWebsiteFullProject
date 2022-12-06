@@ -1,8 +1,8 @@
 import "./Menu.css";
 import { withFuncProps } from "../withFuncProps";
-import React from 'react';
 import {logout} from '../../helpers/connector';
-
+import { TextField } from "@mui/material";
+import React, { useState } from "react";
 
 
 class Menu extends React.Component<any,any>{
@@ -30,13 +30,24 @@ class Menu extends React.Component<any,any>{
     componentDidMount(): void {
         this.forceup();
     }
+
+    // NameMet(e:ChangeEvent<HTMLInputElement>){
+    //     const [name, setName] = useState("");
+    //     setName(e.target.value);
+    // }
     render(){
-        
         return (
-            <div className="html">
+            <div className="App">
                 <div className="topnav">
                     <button className="topnavButton" onClick={this.pagelogout}>Logout</button>
                 </div>    
+                <h1 className="wsTitle">Word Snake</h1>
+                <div>
+                    <TextField
+                        label="Word start with "
+                        // onChange={this.NameMet}
+                    />
+                </div>
             </div>
         );
     }

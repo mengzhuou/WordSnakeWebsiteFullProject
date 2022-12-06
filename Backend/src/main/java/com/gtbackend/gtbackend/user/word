@@ -1,0 +1,105 @@
+package com.gtbackend.gtbackend.user;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.Random;
+import java.util.Scanner;
+import java.util.regex.Pattern;
+import java.io.IOException;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.Statement;
+import java.time.LocalDate;
+
+public class Word {
+	public static int count = 0;
+	public static void main(String[] args) throws IOException {
+		try{
+			Connection con = dictionaryConnect();
+			Statement stmt=con.createStatement();  
+			
+			Scanner input = new Scanner(System.in);
+			
+			ArrayList<String> word  = new ArrayList<String>();
+			Random randomStart = new Random();
+			char alphabet = (char) (randomStart.nextInt(26) + 'a'); 
+			String startCharacter = String.valueOf(alphabet);  
+			word.add(startCharacter);
+			
+			
+			for (int i = 1; i <= 200; i++) {
+				
+				String preword = word.get(word.size()-1);
+				System.out.println("    Round " + i);
+				System.out.println("    Previous word: " + word.get(i-1)
+				+ ".\nPlease continue (start with " + preword.charAt(preword.length()-1) + "): ");;
+				
+
+				String temp = input.next();
+				while (!Pattern.matches("[a-zA-Z]+", temp)) {
+	
+		           		System.out.println("    Special character(s) or number(s) are not accepted."
+		           							+ "\nPlease continue (start with " + preword.charAt(preword.length()-1) + "): ");
+		           		temp = input.next();
+		           }
+				ResultSet rs=stmt.executeQuery("select * from entries where word = '" + temp + "'"); 
+				
+				while(!rs.isBeforeFirst()) {
+					System.out.println("Couldn't find an existing word! Please re-enter your input: ");
+					temp = input.next();
+					
+					rs=stmt.executeQuery("select * from entries where word = '" + temp + "'"); 
+				}
+				
+				word.add(temp); 
+				
+				
+	            String currentWord = word.get(word.size()-1);
+	       
+	            
+	            while (Character.toLowerCase(currentWord.charAt(0)) != preword.charAt(preword.length()-1)) {
+					word.remove(i);
+					System.out.println("    False. The first letter of your word should match the last letter of previous word."
+							+ "\nYour previous word is: " + preword 
+							+ ". Please continue (start with " + preword.charAt(preword.length()-1) + "): ");
+					
+					word.add(input.next());
+					
+					currentWord = word.get(word.size()-1);
+				}
+	          
+	            for (int j = 0; j < word.size() - 1; j++) {
+	            	while (currentWord.equalsIgnoreCase(word.get(j))) {
+	                	System.out.println("    You can't use " + "'" + currentWord + "'" + " twice!");
+	                	word.remove(i);
+	    				System.out.println("\nYour previous word is: " + preword 
+	    						+ ". Please continue (start with " + preword.charAt(preword.length()-1) + "): ");
+	    				
+	    				word.add(input.next());
+	    				
+	    				currentWord = word.get(word.size()-1);
+	                }
+	            }
+	            count++;
+	            System.out.println("Definition of " + word.get(word.size()-1) + ": ");
+				while (rs.next()) {
+					System.out.println("{" + rs.getString(2));
+					System.out.println(rs.getString(3) + "}");
+					System.out.println("-------------------------------------------------------------------------------------------------");
+				}
+			}
+			
+			con.close();  
+			
+		}
+		catch(Exception e){
+			System.out.println(e);
+		}  
+		  
+	}
+}

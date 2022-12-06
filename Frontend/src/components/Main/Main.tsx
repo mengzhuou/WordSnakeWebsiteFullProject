@@ -1,5 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import "./Main.css";
+import wordSnakeImage from "../../components/Images/wordsnake.png"
 
   
 function Main() {
@@ -19,7 +20,7 @@ function Main() {
   return (
     <div className="App">
       <header className="App-header">
-        <p className='welcomeText'>Word Snake</p>
+        <img src={wordSnakeImage} className='imgWS' alt="Image"/>
         <button className="WelcomePageButton" onClick={goToSecondsComp}>Log In </button>
         <button className="WelcomePageButton" onClick={gotToFirstComp}>Sign Up </button>
       </header>
