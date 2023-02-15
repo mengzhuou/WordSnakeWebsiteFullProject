@@ -1,6 +1,6 @@
 import "./Menu.css";
 import { withFuncProps } from "../withFuncProps";
-import {logout} from '../../helpers/connector';
+import {logout, getwords} from '../../helpers/connector';
 import { TextField } from "@mui/material";
 import React, { useState } from "react";
 
@@ -20,8 +20,8 @@ class Menu extends React.Component<any,any>{
     }
     forceup(){
         this.setState({ForceUpdateNow:true});
-        
     }
+    
     componentDidUpdate(prevProps: Readonly<any>, prevState: Readonly<any>, snapshot?: any): void {
         if(this.state.ForceUpdateNow){
         }
@@ -31,10 +31,11 @@ class Menu extends React.Component<any,any>{
         this.forceup();
     }
 
-    // NameMet(e:ChangeEvent<HTMLInputElement>){
-    //     const [name, setName] = useState("");
-    //     setName(e.target.value);
-    // }
+    getword = ()=>{
+        getwords().then(()=>{
+            alert("method is called")
+        }).catch(()=>(alert("get word error")));
+    }
     render(){
         return (
             <div className="App">
@@ -45,8 +46,9 @@ class Menu extends React.Component<any,any>{
                 <div>
                     <TextField
                         label="Word start with "
-                        // onChange={this.NameMet}
+                        
                     />
+                    <p onClick={this.getword}>hey there</p>
                 </div>
             </div>
         );

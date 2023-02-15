@@ -45,6 +45,18 @@ export async function logout(){
     return content;
 }
 
+export async function getwords(){
+    let content = await client({
+        method: 'post',
+        url: url+"getwords",
+        withCredentials: true
+    });
+    return content;
+}
+
+
+// need to fetch token using some springboot method, so that the user can be verified when accessing
+// the database even after login due to AuthenticationToken for password
 
 
 
