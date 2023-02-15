@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @RestController
+@RequestMapping("/api/v1")
 public class WordAPI {
     @Autowired
     WordRepository wordRepository;
@@ -22,8 +23,4 @@ public class WordAPI {
         return "Testing";
     }
 
-    @GetMapping("/hello")
-    public String hello() {
-        return "Hello, world!";
-    }
 }
