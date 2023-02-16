@@ -13,6 +13,10 @@ public interface WordRepository extends JpaRepository<WordModel, Integer> {
     @Query("SELECT w FROM words w")
     List<WordModel> findAll();
 
+    @Query("SELECT w FROM words w WHERE w.word = 'snake'")
+    List<WordModel> getWordAndDef();
+
+
 //    @Query("select w from WordModel w where w.id = ?1 ")
 //    List<WordModel> findById(Integer id);
 }

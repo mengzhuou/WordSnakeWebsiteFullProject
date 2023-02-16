@@ -8,19 +8,20 @@ import java.util.ArrayList;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/v1")
+@RequestMapping(path = "/api/v1")
 public class WordAPI {
     @Autowired
-    WordRepository wordRepository;
-
-//    @GetMapping(path = "/getwords")
-//    List<WordModel> getWords(){
-//        return wordRepository.findAll();
-//    }
+    private WordRepository wordRepository;
 
     @RequestMapping("/getWords")
-    public String getWords(){
-        return "Testing";
+    public List<WordModel> getWords(){
+        return wordRepository.findAll();
     }
+
+    @RequestMapping("/getWordAndDef")
+    public List<WordModel> getWordAndDef(){
+        return wordRepository.getWordAndDef();
+    }
+
 
 }
