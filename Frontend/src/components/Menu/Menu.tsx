@@ -1,6 +1,6 @@
 import "./Menu.css";
 import { withFuncProps } from "../withFuncProps";
-import {logout, getwords} from '../../helpers/connector';
+import {logout, getWordAndDef, getWordAndDefTest} from '../../helpers/connector';
 import { TextField } from "@mui/material";
 import React, { useState } from "react";
 
@@ -8,8 +8,10 @@ import React, { useState } from "react";
 class Menu extends React.Component<any,any>{
 
     constructor(props:any){
-        super(props);
-        this.forceup = this.forceup.bind(this);
+            super(props);
+            this.state = {word:"", wordDef:"", arr:[]};
+            this.forceup = this.forceup.bind(this);
+            this.getWordTest = this.getWordTest.bind(this);
 
     }
 
@@ -21,20 +23,36 @@ class Menu extends React.Component<any,any>{
     forceup(){
         this.setState({ForceUpdateNow:true});
     }
-    
     componentDidUpdate(prevProps: Readonly<any>, prevState: Readonly<any>, snapshot?: any): void {
-        if(this.state.ForceUpdateNow){
+            if(this.state.ForceUpdateNow){
+                getWordAndDefTest().then((content)=>{
+                    this.setState({wordDef:content.data});
+                });
+                this.setState({ForceUpdateNow:false});
+            }
+    //         getWordAndDefTest().then((content)=>{
+    //             this.setState({username:content.data.username});
+    //         });
+    //         this.setState({ForceUpdateNow:false});
+
         }
-    }
-    
-    componentDidMount(): void {
-        this.forceup();
+
+        componentDidMount(): void {
+            this.forceup();
     }
 
-    getword = ()=>{
-        getwords().then(()=>{
-            alert("method is called")
-        }).catch(()=>(alert("get word error")));
+    // getword = ()=>{
+    //     getwords().then(()=>{
+    // getWord = ()=>{
+    //     getWordAndDef().then(()=>{
+    //         alert("method is called")
+    //     }).catch(()=>(alert("get word error")));
+    // }
+
+    getWordTest = ()=>{
+        getWordAndDefTest().then(()=>{
+           alert("method is called")
+       }).catch(()=>(alert("get word error")));
     }
     render(){
         return (
@@ -48,7 +66,7 @@ class Menu extends React.Component<any,any>{
                         label="Word start with "
                         
                     />
-                    <p onClick={this.getword}>hey there</p>
+                    <p>{this.state.wordDef}</p>
                 </div>
             </div>
         );

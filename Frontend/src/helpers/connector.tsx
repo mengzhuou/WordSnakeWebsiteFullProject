@@ -45,10 +45,19 @@ export async function logout(){
     return content;
 }
 
-export async function getwords(){
+export async function getWordAndDef(){
     let content = await client({
         method: 'post',
-        url: url+"getwords",
+        url: url+"getWordAndDef",
+        withCredentials: true
+    });
+    return content;
+}
+
+export async function getWordAndDefTest(){
+    let content = await client({
+        method: 'get',
+        url: url+"getWordAndDefTest",
         withCredentials: true
     });
     return content;

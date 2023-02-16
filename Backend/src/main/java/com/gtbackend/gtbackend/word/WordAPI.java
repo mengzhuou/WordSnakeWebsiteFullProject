@@ -19,8 +19,18 @@ public class WordAPI {
     }
 
     @RequestMapping("/getWordAndDef")
-    public List<WordModel> getWordAndDef(){
-        return wordRepository.getWordAndDef();
+    public List<WordModel> getWordAndDef(@RequestParam String inputWord) throws IllegalArgumentException{
+        return wordRepository.getWordAndDef(inputWord);
+    }
+
+    @RequestMapping("/getWordAndDefTest")
+    public List<WordModel> getWordAndDefTest(){
+        return wordRepository.getWordAndDefTest();
+    }
+
+    @RequestMapping("/getDefTest")
+    public List<String> getDefTest(){
+        return wordRepository.getDefTest();
     }
 
 
