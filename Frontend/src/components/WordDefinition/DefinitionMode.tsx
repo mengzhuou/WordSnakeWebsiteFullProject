@@ -29,9 +29,11 @@ class DefinitionMode extends React.Component<any,any>{
     }
     forceup(){
         getWordAndDefTest().then(async (content)=>{
-            const wordList = await getWordAndDefTest();
+            const words = await getWordAndDefTest();
+            const wordList = words.map((word: String) => word.replace(/,/g, ", ")); //created some space before comma 
             this.setState({ wordList });
         });
+        
         this.setState({ForceUpdateNow:false});
     }
 

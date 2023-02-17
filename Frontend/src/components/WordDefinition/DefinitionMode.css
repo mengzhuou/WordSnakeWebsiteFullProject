@@ -1,4 +1,17 @@
 
+ul {
+  padding: 0;
+  text-align: left;
+  margin-top: 40px;
+}
+
+li {
+  margin-top: 10px;
+  padding: 0;
+  word-spacing: 2px;
+  letter-spacing: 1px;
+}
+
 .topnav {
     background-color: rgb(181 255 196);
     position: fixed;
