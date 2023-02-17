@@ -7,6 +7,8 @@ ul {
 
 li {
   margin-top: 10px;
+  margin-left: 40px;
+  margin-right: 40px;
   padding: 0;
   word-spacing: 2px;
   letter-spacing: 1px;

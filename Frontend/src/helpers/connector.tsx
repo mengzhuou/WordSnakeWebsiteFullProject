@@ -45,13 +45,16 @@ export async function logout(){
     return content;
 }
 
-export async function getWordAndDef(){
+export async function getWordAndDef(inputWord: string): Promise<String[]>{
     let content = await client({
-        method: 'post',
+        method: 'get',
         url: url+"getWordAndDef",
+        params: {
+          inputWord: inputWord
+        },
         withCredentials: true
     });
-    return content;
+    return content.data;
 }
 
 export async function getWordAndDefTest(): Promise<String[]>{
@@ -62,10 +65,3 @@ export async function getWordAndDefTest(): Promise<String[]>{
     });
     return content.data;
 }
-
-
-// need to fetch token using some springboot method, so that the user can be verified when accessing
-// the database even after login due to AuthenticationToken for password
-
-
-

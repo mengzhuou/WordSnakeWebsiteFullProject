@@ -1,21 +1,38 @@
 import "./DefinitionMode.css";
 import { withFuncProps } from "../withFuncProps";
-import {logout, getWordAndDefTest} from '../../helpers/connector';
+import {logout, getWordAndDef} from '../../helpers/connector';
 import { TextField } from "@mui/material";
 import React from "react";
-
-interface MyComponentState{
-    word: string;
-    definition: string;
-    wordList: string[];
-}
 
 class DefinitionMode extends React.Component<any,any>{
     constructor(props:any){
         super(props);
-        this.state = {word:"", definition:"", wordList:[], ForceUpdateNow: false};
+        this.state = {wordList:[], ForceUpdateNow: false, inputValue: '', storedInputValue: ''};
         this.forceup = this.forceup.bind(this);
         this.menuNav = this.menuNav.bind(this);
+    }
+
+    handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        this.setState({
+            inputValue: event.target.value,
+        });
+    }
+
+    handleEnterKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+        if (event.key === "Enter"){
+            this.storeInputValue(this.state.inputValue).then(() => {
+                this.setState({inputValue: "", ForceUpdateNow: true});
+            }); 
+            
+        }
+    }
+
+    storeInputValue = async (inputValue: string) => {
+        try{
+            this.setState({ storedInputValue: inputValue})
+        } catch (error) {
+            console.error(error)
+        }
     }
 
     menuNav = () => {
@@ -27,14 +44,18 @@ class DefinitionMode extends React.Component<any,any>{
             this.props.navigate("/")
         }).catch(()=>(alert("logout error")));
     }
-    forceup(){
-        getWordAndDefTest().then(async (content)=>{
-            const words = await getWordAndDefTest();
-            const wordList = words.map((word: String) => word.replace(/,/g, ", ")); //created some space before comma 
-            this.setState({ wordList });
-        });
-        
-        this.setState({ForceUpdateNow:false});
+
+    forceup = async () => {
+        const { storedInputValue } = this.state;
+        try {
+            const content = await getWordAndDef(storedInputValue);
+            const words = content.map((word: String) => word.replace(/,/g, ", "));
+            console.log("content")
+            console.log(words)
+            this.setState({ wordList: words, ForceUpdateNow: false });
+          } catch (error) {
+            console.error("Error fetching word list:", error);
+          }
     }
 
     componentDidMount(): void {
@@ -58,8 +79,10 @@ class DefinitionMode extends React.Component<any,any>{
                 <h1 className="wsTitle">Word Snake</h1>
                 <div>
                     <TextField
-                        label="Word start with "
-                        
+                        label = "Type a word for definition"
+                        value = {this.state.inputValue}
+                        onChange = {this.handleInputChange}
+                        onKeyDown = {this.handleEnterKeyDown}
                     />
                 </div>
                 {wordList.length > 0 && (

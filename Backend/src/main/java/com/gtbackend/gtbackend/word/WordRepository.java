@@ -14,8 +14,8 @@ public interface WordRepository extends JpaRepository<WordModel, Integer> {
     @Query("SELECT w FROM words w")
     List<WordModel> findAll();
 
-    @Query("SELECT w FROM words w WHERE w.word = :inputWord")
-    List<WordModel> getWordAndDef(@Param("inputWord") String inputWord);
+    @Query("SELECT w.definition FROM words w WHERE w.word = :inputWord")
+    List<String> getWordAndDef(@Param("inputWord") String inputWord);
 
     @Query("SELECT w.word, w.definition FROM words w WHERE w.word = 'snake'")
     List<String> getWordAndDefTest();

@@ -19,7 +19,7 @@ public class WordAPI {
     }
 
     @RequestMapping("/getWordAndDef")
-    public List<WordModel> getWordAndDef(@RequestParam String inputWord) throws IllegalArgumentException{
+    public List<String> getWordAndDef(@RequestParam String inputWord) throws IllegalArgumentException{
         return wordRepository.getWordAndDef(inputWord);
     }
 
