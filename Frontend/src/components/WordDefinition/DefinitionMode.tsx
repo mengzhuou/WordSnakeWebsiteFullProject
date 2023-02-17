@@ -76,7 +76,7 @@ class DefinitionMode extends React.Component<any,any>{
                     <button className="topnavButton" onClick={this.menuNav}>Menu</button>
                     <button className="topnavButton" onClick={this.pagelogout}>Logout</button>
                 </div>    
-                <h1 className="wsTitle">Word Snake</h1>
+                <h1 className="wsTitle">Word Definition</h1>
                 <div>
                     <TextField
                         label = "Type a word for definition"

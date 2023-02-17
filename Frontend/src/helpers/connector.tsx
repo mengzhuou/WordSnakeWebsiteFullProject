@@ -65,3 +65,12 @@ export async function getWordAndDefTest(): Promise<String[]>{
     });
     return content.data;
 }
+
+export async function getRandomStart(): Promise<String>{
+    let content = await client({
+        method: 'get',
+        url: url+"getRandomStart",
+        withCredentials: true
+    });
+    return content.data;
+}

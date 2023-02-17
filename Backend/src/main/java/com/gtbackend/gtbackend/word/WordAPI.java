@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 @RestController
 @RequestMapping(path = "/api/v1")
@@ -38,5 +39,10 @@ public class WordAPI {
         return wordRepository.isWordExistTest();
     }
 
+    @RequestMapping("/getRandomStart")
+    public String getRandomStart(){
+        Random randomStart = new Random();
+        return String.valueOf((char) (randomStart.nextInt(26) + 'a'));
+    }
 
 }

@@ -27,7 +27,6 @@ public interface WordRepository extends JpaRepository<WordModel, Integer> {
     boolean isWordExistTest();
 
 
-
 //    @Query("select w from WordModel w where w.id = ?1 ")
 //    List<WordModel> findById(Integer id);
 }
