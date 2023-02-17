@@ -24,13 +24,18 @@ public class WordAPI {
     }
 
     @RequestMapping("/getWordAndDefTest")
-    public List<WordModel> getWordAndDefTest(){
+    public List<String> getWordAndDefTest(){
         return wordRepository.getWordAndDefTest();
     }
 
     @RequestMapping("/getDefTest")
     public List<String> getDefTest(){
         return wordRepository.getDefTest();
+    }
+
+    @RequestMapping("/isWordExistTest")
+    public boolean isWordExistTest(){
+        return wordRepository.isWordExistTest();
     }
 
 

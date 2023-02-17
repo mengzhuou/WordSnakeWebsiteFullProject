@@ -23,7 +23,9 @@ public class Config {
     }
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception{
-        http.cors().and().csrf().disable().authorizeRequests().antMatchers("/api/v1/register","/api/v1/login", "/api/v1/logout", "/api/v1/getWords", "/api/v1/getWordAndDef", "/api/v1/getWordAndDefTest", "/api/v1/getDefTest").permitAll()
+        http.cors().and().csrf().disable().authorizeRequests().antMatchers("/api/v1/register","/api/v1/login",
+                        "/api/v1/logout", "/api/v1/getWords", "/api/v1/getWordAndDef",
+                        "/api/v1/getWordAndDefTest", "/api/v1/getDefTest", "/api/v1/isWordExistTest").permitAll()
                 .antMatchers("/api/v1/**").hasAnyRole("USER","ADMIN").anyRequest().authenticated().and()
                 .rememberMe(); // todo: enable csrf protection after testing
         return http.build();

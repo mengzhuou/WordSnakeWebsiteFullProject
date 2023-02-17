@@ -17,11 +17,14 @@ public interface WordRepository extends JpaRepository<WordModel, Integer> {
     @Query("SELECT w FROM words w WHERE w.word = :inputWord")
     List<WordModel> getWordAndDef(@Param("inputWord") String inputWord);
 
-    @Query("SELECT w FROM words w WHERE w.word = 'snake'")
-    List<WordModel> getWordAndDefTest();
+    @Query("SELECT w.word, w.definition FROM words w WHERE w.word = 'snake'")
+    List<String> getWordAndDefTest();
 
     @Query("SELECT w.definition FROM words w WHERE w.word = 'snake'")
     List<String> getDefTest();
+
+    @Query("SELECT COUNT(w) > 0 FROM words w WHERE w.word = 'snakexsad'")
+    boolean isWordExistTest();
 
 
 
