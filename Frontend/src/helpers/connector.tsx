@@ -54,13 +54,13 @@ export async function getWordAndDef(){
     return content;
 }
 
-export async function getWordAndDefTest(){
+export async function getWordAndDefTest(): Promise<String[]>{
     let content = await client({
         method: 'get',
         url: url+"getWordAndDefTest",
         withCredentials: true
     });
-    return content;
+    return content.data;
 }
 
 
