@@ -34,6 +34,11 @@ public class WordAPI {
         return wordRepository.getDefTest();
     }
 
+    @RequestMapping("/isWordExist")
+    public boolean isWordExist(@RequestParam String inputWord) throws IllegalArgumentException{
+        return wordRepository.isWordExist(inputWord);
+    }
+
     @RequestMapping("/isWordExistTest")
     public boolean isWordExistTest(){
         return wordRepository.isWordExistTest();
@@ -43,6 +48,14 @@ public class WordAPI {
     public String getRandomStart(){
         Random randomStart = new Random();
         return String.valueOf((char) (randomStart.nextInt(26) + 'a'));
+    }
+
+    @RequestMapping("/getLetterFromPreviousWord")
+    public String getLetterFromPreviousWord(@RequestParam String inputWord) throws IllegalArgumentException{
+        if (isWordExist(inputWord)){
+            return String.valueOf(inputWord.charAt(inputWord.length() - 1));
+        }
+        return "The word does not exist";
     }
 
 }

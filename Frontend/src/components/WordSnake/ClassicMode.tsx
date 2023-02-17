@@ -1,6 +1,6 @@
 import "./ClassicMode.css";
 import { withFuncProps } from "../withFuncProps";
-import {logout, getWord} from '../../helpers/connector';
+import {logout, isWordExist, } from '../../helpers/connector';
 import { TextField } from "@mui/material";
 import React from "react";
 

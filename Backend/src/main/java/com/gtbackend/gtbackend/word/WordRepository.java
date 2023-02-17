@@ -23,6 +23,9 @@ public interface WordRepository extends JpaRepository<WordModel, Integer> {
     @Query("SELECT w.definition FROM words w WHERE w.word = 'snake'")
     List<String> getDefTest();
 
+    @Query("SELECT COUNT(w) > 0 FROM words w WHERE w.word = :inputWord")
+    boolean isWordExist(@Param("inputWord") String inputWord);
+
     @Query("SELECT COUNT(w) > 0 FROM words w WHERE w.word = 'snakexsad'")
     boolean isWordExistTest();
 
