@@ -23,9 +23,9 @@ class ClassicMode extends React.Component<any,any>{
                 if (inputValue[0] == lastLetter){
                     const words = await getLetterFromPreviousWord(inputValue);
                     let wordList = this.state.wordList.concat(inputValue);
-                    if (this.state.deleteFirst) {
-                        wordList = wordList.slice(1);
-                    }
+                    // if (this.state.deleteFirst) {
+                    //     wordList = wordList.slice(1);
+                    // }
                     this.setState({ 
                         errMessage:'', 
                         firstWord: words, 
@@ -95,8 +95,6 @@ class ClassicMode extends React.Component<any,any>{
     render(){
         const { wordList, errMessage } = this.state;
         const wordListWithoutFirst = wordList.slice(1);
-        console.log(wordList)
-        console.log(wordListWithoutFirst)
         return (
             <div className="App">
                 <div className="topnav">
@@ -115,14 +113,12 @@ class ClassicMode extends React.Component<any,any>{
                     /> 
                     <FormHelperText style={{ color: 'red' }}>{errMessage}</FormHelperText>
                 </div>
-                {wordList.length > 0 && (
+                {wordListWithoutFirst.length > 0 && (
                     <div>
                         <ul>
-                            {wordList.map((word: string, index: number) => (
+                            {wordListWithoutFirst.map((word: string, index: number) => (
                                 <li key={index}>{word}</li>
                             ))}
-                         
-
                         </ul>
                     </div>
                 )}
