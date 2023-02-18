@@ -1,24 +1,27 @@
 import "./ClassicMode.css";
+
 import { withFuncProps } from "../withFuncProps";
 import {logout, isWordExist, getLetterFromPreviousWord, getRandomStart} from '../../helpers/connector';
 import { TextField, FormHelperText } from "@mui/material";
 import React from "react";
+import CountdownTimer from "./CountdownTimer";
 
 class ClassicMode extends React.Component<any,any>{
     constructor(props:any){
         super(props);
         this.state = { isErrorOccurred: false, isGameStarted: false, 
             deleteFirst: false, ForceUpdateNow: false, isInputValid: true,
+            isGameOver: false,
             firstWord: "", inputValue: '', storedInputValue: '', inputValidString: '',
             errMessage: '',
-            count: 0, wordList:[]};
+            count: 0, timeLeft: 60, wordList:[]};
         this.forceup = this.forceup.bind(this);
         this.menuNav = this.menuNav.bind(this);
     }
 
     forceup = async (inputValue: string) => {
 
-        if (this.state.isGameStarted  && !this.state.isErrorOccurred) {
+        if (!this.state.isGameOver && this.state.isGameStarted  && !this.state.isErrorOccurred) {
             try {
                 if (this.state.wordList.includes(inputValue)){
                     this.setState({ errMessage: 'The word already exist. Please type another word.'})
@@ -58,6 +61,11 @@ class ClassicMode extends React.Component<any,any>{
 
     }
     
+    handleTimeUp = () => {
+        this.setState({ isGameOver: true })
+        console.log('Time is up!');
+    };
+
     handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const inputString = event.target.value;
         if (inputString === "") {
@@ -110,7 +118,7 @@ class ClassicMode extends React.Component<any,any>{
         }).catch(()=>(alert("logout error")));
     }
     render(){
-        const { wordList, errMessage, inputValidString, isInputValid } = this.state;
+        const { wordList, errMessage, timeLeft, gameOver } = this.state;
         const wordListWithoutFirst = wordList.slice(1);
         return (
             <div className="App">
@@ -119,6 +127,7 @@ class ClassicMode extends React.Component<any,any>{
                     <button className="topnavButton" onClick={this.pagelogout}>Logout</button>
                 </div>    
                 <h1 className="wsTitle">Word Snake</h1>
+                <CountdownTimer duration={3} onTimeUp={this.handleTimeUp} />
                 <div>
                     <TextField
                         label = {`Enter a word starting with '${this.state.firstWord}'`}
@@ -129,7 +138,7 @@ class ClassicMode extends React.Component<any,any>{
 
                     /> 
                     <FormHelperText style={{ color: 'red' }}>
-                        {this.state.errMessage}
+                        {errMessage}
                     </FormHelperText>
                 </div>
                 {wordListWithoutFirst.length > 0 && (
@@ -141,6 +150,13 @@ class ClassicMode extends React.Component<any,any>{
                         </ul>
                     </div>
                 )}
+                {/* <div>
+                {gameOver ? (
+                    <span>Time's up!</span>
+                    ) : (
+                    <span>{timeLeft} seconds left</span>
+                )}
+                </div> */}
             </div>
         );
     }
