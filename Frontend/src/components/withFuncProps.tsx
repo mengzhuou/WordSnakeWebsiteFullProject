@@ -1,11 +1,8 @@
-import { useNavigate } from 'react-router-dom';
-
-const lib:any[] = ['places'];
+import { useNavigate, Link } from 'react-router-dom';
 
 export const withFuncProps = (Component: any) => {
   const Wrapper = (props: any) => {
     const navigate = useNavigate();
-    
     return (
       <Component
         navigate={navigate}

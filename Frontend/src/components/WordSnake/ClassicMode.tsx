@@ -15,7 +15,7 @@ class ClassicMode extends React.Component<any, any>{
             isGameOver: false,
             firstWord: "", inputValue: '', storedInputValue: '', inputValidString: '',
             errMessage: '',
-            count: 0, timeLeft: 60, wordList: []
+            timeLeft: 60, wordList: [], history: []
         };
         this.menuNav = this.menuNav.bind(this);
     }
@@ -23,8 +23,6 @@ class ClassicMode extends React.Component<any, any>{
     forceup = async (inputValue: string) => {
         if (!this.state.isErrorOccurred) {
             try {
-                console.log("check3")
-
                 if (this.state.wordList.includes(inputValue)) {
                     this.setState({ errMessage: 'The word already exist. Please type another word.' })
                 } else {
@@ -33,11 +31,15 @@ class ClassicMode extends React.Component<any, any>{
                     if (inputValue[0] == lastLetter) {
                         const words = await getLetterFromPreviousWord(inputValue);
                         let wordList = this.state.wordList.concat(inputValue);
+                        
+                        const hisArr = this.state.wordList.slice(1);
+
                         this.setState({
                             errMessage: '',
                             firstWord: words,
                             ForceUpdateNow: false,
                             wordList: wordList,
+                            history: hisArr
                         });
                     } else {
                         this.setState({ errMessage: `The word must start with '${lastLetter}'` })
@@ -121,6 +123,11 @@ class ClassicMode extends React.Component<any, any>{
 
         if (isGameOver) {
             this.setState({ isGameStarted: false, isGameOver: true, wordList: [], errMessage: "" })
+            this.props.navigate("/GameoverBoard", {
+                state: {
+                  wordList: this.state.history
+                }
+              })
             this.props.navigate("/GameoverBoard")
         }
     }
@@ -128,7 +135,6 @@ class ClassicMode extends React.Component<any, any>{
     render() {
         const { firstWord, inputValue, wordList, errMessage, isGameStarted, isGameOver } = this.state;
         const wordListWithoutFirst = wordList.slice(1);
-        console.log(isGameOver)
         return (
             <div className="App">
                 <div className="topnav">
@@ -138,7 +144,7 @@ class ClassicMode extends React.Component<any, any>{
                 </div>
                 <h1 className="wsTitle">Word Snake</h1>
                 {isGameStarted ? (
-                    <CountdownTimer duration={3} onTimeUp={this.handleTimeUp} />
+                    <CountdownTimer duration={10} onTimeUp={this.handleTimeUp} />
                 ) : (
                     <button className="topnavButton" onClick={() => this.updateGameState(true, false)} hidden={isGameStarted ? true : false}>Start Game</button>
                 )}
@@ -159,11 +165,6 @@ class ClassicMode extends React.Component<any, any>{
                         {errMessage}
                     </FormHelperText>
                 </div>
-                {isGameOver? (
-                    <p>Game over</p>
-                ) : (
-                    <p></p>
-                )}
 
                 {wordListWithoutFirst.length > 0 && (
                     <div>
