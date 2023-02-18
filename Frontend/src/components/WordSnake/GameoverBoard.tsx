@@ -4,7 +4,6 @@ import { withFuncProps } from "../withFuncProps";
 import { logout, isWordExist, getLetterFromPreviousWord, getRandomStart } from '../../helpers/connector';
 import { TextField, FormHelperText } from "@mui/material";
 import React from "react";
-import CountdownTimer from "./CountdownTimer";
 
 class GameoverBoard extends React.Component<any, any>{
     constructor(props: any) {
@@ -38,7 +37,6 @@ class GameoverBoard extends React.Component<any, any>{
     render() {
         const { firstWord, inputValue, wordList, errMessage, isGameStarted, isGameOver } = this.state;
         const wordListWithoutFirst = wordList.slice(1);
-        console.log(isGameOver)
         return (
             <div className="App">
                 <div className="topnav">
