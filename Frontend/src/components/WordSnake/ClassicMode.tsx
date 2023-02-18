@@ -7,8 +7,10 @@ import React from "react";
 class ClassicMode extends React.Component<any,any>{
     constructor(props:any){
         super(props);
-        this.state = { isErrorOccurred: false, isGameStarted: false, deleteFirst: false, ForceUpdateNow: false, 
-            firstWord: "", errMessage: '', inputValue: '', storedInputValue: '', 
+        this.state = { isErrorOccurred: false, isGameStarted: false, 
+            deleteFirst: false, ForceUpdateNow: false, isInputValid: true,
+            firstWord: "", inputValue: '', storedInputValue: '', inputValidString: '',
+            errMessage: '',
             count: 0, wordList:[]};
         this.forceup = this.forceup.bind(this);
         this.menuNav = this.menuNav.bind(this);
@@ -57,9 +59,25 @@ class ClassicMode extends React.Component<any,any>{
     }
     
     handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        this.setState({
-            inputValue: event.target.value,
-        });
+        const inputString = event.target.value;
+        if (inputString === "") {
+            this.setState({
+                inputValue: "",
+                errMessage: ""
+            });
+        } else{
+            const isValid = /^[a-zA-Z]+$/.test(inputString);
+            if(isValid){
+                this.setState({
+                    inputValue: inputString,
+                    errMessage: ""
+                });
+            } else{
+                this.setState({ errMessage: 'Special character(s) or number(s) are not accepted. Please type a valid word.'})
+            }
+        }
+        
+
     }
 
     handleEnterKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
@@ -92,7 +110,7 @@ class ClassicMode extends React.Component<any,any>{
         }).catch(()=>(alert("logout error")));
     }
     render(){
-        const { wordList, errMessage } = this.state;
+        const { wordList, errMessage, inputValidString, isInputValid } = this.state;
         const wordListWithoutFirst = wordList.slice(1);
         return (
             <div className="App">
@@ -110,7 +128,9 @@ class ClassicMode extends React.Component<any,any>{
                         style={{ width: '300px' }}
 
                     /> 
-                    <FormHelperText style={{ color: 'red' }}>{errMessage}</FormHelperText>
+                    <FormHelperText className="errorMessage">
+                        {this.state.errMessage}
+                    </FormHelperText>
                 </div>
                 {wordListWithoutFirst.length > 0 && (
                     <div>
