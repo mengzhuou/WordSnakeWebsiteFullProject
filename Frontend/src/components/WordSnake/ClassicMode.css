@@ -42,5 +42,11 @@
     margin-bottom: 20px;
     font-size: 25px;
   } 
+
+  .helperTextContainer {
+    display: none;
+  }
   
-  
+  .helperTextContainer.show {
+    display: block;
+  }

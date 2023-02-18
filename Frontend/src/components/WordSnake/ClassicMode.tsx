@@ -1,22 +1,23 @@
 import "./ClassicMode.css";
 
 import { withFuncProps } from "../withFuncProps";
-import {logout, isWordExist, getLetterFromPreviousWord, getRandomStart} from '../../helpers/connector';
+import { logout, isWordExist, getLetterFromPreviousWord, getRandomStart } from '../../helpers/connector';
 import { TextField, FormHelperText } from "@mui/material";
 import React from "react";
 import CountdownTimer from "./CountdownTimer";
 
-class ClassicMode extends React.Component<any,any>{
-    constructor(props:any){
+class ClassicMode extends React.Component<any, any>{
+    constructor(props: any) {
         super(props);
-        this.state = { isErrorOccurred: false, isGameStarted: false, 
+        this.state = {
+            isErrorOccurred: false, isGameStarted: false,
             ForceUpdateNow: false, isInputValid: true,
             isGameOver: false,
             firstWord: "", inputValue: '', storedInputValue: '', inputValidString: '',
             errMessage: '',
-            count: 0, timeLeft: 60, wordList:[]};
+            count: 0, timeLeft: 60, wordList: []
+        };
         this.menuNav = this.menuNav.bind(this);
-        this.handleStartGame = this.handleStartGame.bind(this);
     }
 
     forceup = async (inputValue: string) => {
@@ -24,18 +25,18 @@ class ClassicMode extends React.Component<any,any>{
             try {
                 console.log("check3")
 
-                if (this.state.wordList.includes(inputValue)){
-                    this.setState({ errMessage: 'The word already exist. Please type another word.'})
-                } else{
+                if (this.state.wordList.includes(inputValue)) {
+                    this.setState({ errMessage: 'The word already exist. Please type another word.' })
+                } else {
                     const lastWord = this.state.wordList[this.state.wordList.length - 1]
                     const lastLetter = lastWord[lastWord.length - 1]
-                    if (inputValue[0] == lastLetter){
+                    if (inputValue[0] == lastLetter) {
                         const words = await getLetterFromPreviousWord(inputValue);
                         let wordList = this.state.wordList.concat(inputValue);
-                        this.setState({ 
-                            errMessage:'', 
-                            firstWord: words, 
-                            ForceUpdateNow: false, 
+                        this.setState({
+                            errMessage: '',
+                            firstWord: words,
+                            ForceUpdateNow: false,
                             wordList: wordList,
                         });
                     } else {
@@ -49,33 +50,29 @@ class ClassicMode extends React.Component<any,any>{
         }
     };
 
-    async componentDidMount() {  
+    async componentDidMount() {
     }
 
     componentDidUpdate(prevProps: Readonly<any>, prevState: Readonly<any>, snapshot?: any): void {
         // this.reStart();
     }
 
-    updateGameState(isGameStarted: boolean, isGameOver: boolean) {
+    updateGameState = async (isGameStarted: boolean, isGameOver: boolean) => {
         if (isGameStarted) {
-            this.setState({ isGameStarted: true, isGameOver: true })
+            const fWord = await getRandomStart();
+            this.setState({ isGameStarted: true, isGameOver: true, wordList: this.state.wordList.concat(fWord), firstWord: fWord }, () => {
+                this.componentDidMount();
+            });
         }
+
         if (isGameOver) {
-            this.setState({ isGameStarted: false, isGameOver: true, wordList: [] })
+            this.setState({ isGameStarted: false, isGameOver: true, wordList: [], errMessage: "" })
         }
-      }
-    
+    }
+
     handleTimeUp = () => {
         this.updateGameState(false, true)
     };
-
-    handleStartGame = async () => {
-        const fWord = await getRandomStart();
-        this.updateGameState(true, false)
-        this.setState({  wordList: this.state.wordList.concat(fWord), firstWord: fWord }, () => {
-            this.componentDidMount();
-        });
-    }
 
     handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const inputString = event.target.value;
@@ -84,34 +81,34 @@ class ClassicMode extends React.Component<any,any>{
                 inputValue: "",
                 errMessage: ""
             });
-        } else{
+        } else {
             const isValid = /^[a-zA-Z]+$/.test(inputString);
-            if(isValid){
+            if (isValid) {
                 this.setState({
                     inputValue: inputString,
                     errMessage: ""
                 });
-            } else{
-                this.setState({ errMessage: 'Special character(s) or number(s) are not accepted. Please type a valid word.'})
+            } else {
+                this.setState({ errMessage: 'Special character(s) or number(s) are not accepted. Please type a valid word.' })
             }
         }
-        
+
 
     }
 
     handleEnterKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
-        if (event.key === "Enter"){
+        if (event.key === "Enter") {
             this.storeInputValue(this.state.inputValue).then(() => {
                 console.log("check2")
-                this.setState({inputValue: ""});
-            }); 
-            
+                this.setState({ inputValue: "" });
+            });
+
         }
     }
 
     storeInputValue = async (inputValue: string) => {
-        try{
-            if (inputValue !== this.state.storedInputValue){
+        try {
+            if (inputValue !== this.state.storedInputValue) {
                 console.log("check1")
 
                 this.setState({ storedInputValue: inputValue, ForceUpdateNow: true })
@@ -130,39 +127,41 @@ class ClassicMode extends React.Component<any,any>{
         this.props.navigate("/menu")
     }
 
-    pagelogout = ()=>{
-        logout().then(()=>{
+    pagelogout = () => {
+        logout().then(() => {
             this.props.navigate("/")
-        }).catch(()=>(alert("logout error")));
+        }).catch(() => (alert("logout error")));
     }
-    render(){
+    render() {
         const { firstWord, inputValue, wordList, errMessage, isGameStarted } = this.state;
         const wordListWithoutFirst = wordList.slice(1);
         console.log(wordListWithoutFirst)
         return (
             <div className="App">
                 <div className="topnav">
-                    <button className="topnavButton" onClick={this.reStart} hidden={isGameStarted? false : true}>Restart</button>
+                    <button className="topnavButton" onClick={this.reStart} hidden={isGameStarted ? false : true}>Restart</button>
                     <button className="topnavButton" onClick={this.menuNav}>Menu</button>
                     <button className="topnavButton" onClick={this.pagelogout}>Logout</button>
-                </div>    
+                </div>
                 <h1 className="wsTitle">Word Snake</h1>
-                {isGameStarted ? ( // conditionally render CountdownTimer
-                    <CountdownTimer duration={30} onTimeUp={this.handleTimeUp} />
+                {isGameStarted ? (
+                    <CountdownTimer duration={90} onTimeUp={this.handleTimeUp} />
                 ) : (
-                    <button className="topnavButton" onClick={this.handleStartGame} hidden={isGameStarted ? true : false}>Start Game</button>
+                    <button className="topnavButton" onClick={() => this.updateGameState(true, false)} hidden={isGameStarted ? true : false}>Start Game</button>
                 )}
                 <div>
                     <TextField
-                        label = {`Enter a word starts with '${firstWord}'`}
-                        value = {inputValue}
-                        onChange = {this.handleInputChange}
-                        onKeyDown = {this.handleEnterKeyDown}
-                        style={{ 
+                        label={`Enter a word starts with '${firstWord}'`}
+                        value={inputValue}
+                        onChange={this.handleInputChange}
+                        onKeyDown={this.handleEnterKeyDown}
+                        style={{
                             display: isGameStarted ? 'block' : 'none'
                         }}
 
-                    /> 
+                    />
+                </div>
+                <div>
                     <FormHelperText style={{ color: 'red' }}>
                         {errMessage}
                     </FormHelperText>

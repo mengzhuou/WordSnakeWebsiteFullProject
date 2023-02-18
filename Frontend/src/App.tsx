@@ -50,7 +50,7 @@ class App extends React.Component<any,any>{
           <Route path="/ClassicMode" element={<ClassicMode/>}/>
           <Route path="/CountdownTimer" element={
             <CountdownTimer
-              duration={10}
+              duration={90}
               onTimeUp={ ()=>console.log('Time is up!') }
             />
           }/>
