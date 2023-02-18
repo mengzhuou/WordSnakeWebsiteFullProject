@@ -128,7 +128,7 @@ class ClassicMode extends React.Component<any,any>{
                         style={{ width: '300px' }}
 
                     /> 
-                    <FormHelperText className="errorMessage">
+                    <FormHelperText style={{ color: 'red' }}>
                         {this.state.errMessage}
                     </FormHelperText>
                 </div>
