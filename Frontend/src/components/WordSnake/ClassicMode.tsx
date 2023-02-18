@@ -7,18 +7,36 @@ import React from "react";
 class ClassicMode extends React.Component<any,any>{
     constructor(props:any){
         super(props);
-        this.state = { isErrorOccurred: false, isGameStarted: false, firstWord: "", 
-        count: 0, errMessage: '', ForceUpdateNow: false, inputValue: '', 
-        storedInputValue: '', wordList:[]};
+        this.state = { isErrorOccurred: false, isGameStarted: false, deleteFirst: false, ForceUpdateNow: false, 
+            firstWord: "", errMessage: '', inputValue: '', storedInputValue: '', 
+            count: 0, wordList:[]};
         this.forceup = this.forceup.bind(this);
         this.menuNav = this.menuNav.bind(this);
     }
 
     forceup = async (inputValue: string) => {
+
         if (this.state.isGameStarted  && !this.state.isErrorOccurred) {
             try {
-                const words = await getLetterFromPreviousWord(inputValue);
-                this.setState({ errMessage:'', firstWord: words, ForceUpdateNow: false, wordList: this.state.wordList.concat(inputValue) });
+                const lastWord = this.state.wordList[this.state.wordList.length - 1]
+                const lastLetter = lastWord[lastWord.length - 1]
+                if (inputValue[0] == lastLetter){
+                    const words = await getLetterFromPreviousWord(inputValue);
+                    let wordList = this.state.wordList.concat(inputValue);
+                    if (this.state.deleteFirst) {
+                        wordList = wordList.slice(1);
+                    }
+                    this.setState({ 
+                        errMessage:'', 
+                        firstWord: words, 
+                        ForceUpdateNow: false, 
+                        wordList: wordList,
+                        deleteFirst: false,
+                    });
+                } else {
+                    this.setState({ errMessage: `The word must start with '${lastLetter}'` })
+                }
+                
 
             } catch (error) {
                 console.error("Error fetching word in the database:", error);
@@ -30,7 +48,8 @@ class ClassicMode extends React.Component<any,any>{
     async componentDidMount() {
         if(!this.state.isGameStarted){
             const fWord = await getRandomStart();
-            this.setState({ firstWord: fWord, isGameStarted: true})
+            this.setState({ wordList: this.state.wordList.concat(fWord) })
+            this.setState({ firstWord: fWord, isGameStarted: true, deleteFirst: true})
         }
     }
 
@@ -74,8 +93,10 @@ class ClassicMode extends React.Component<any,any>{
         }).catch(()=>(alert("logout error")));
     }
     render(){
-        const { firstWord, wordList, errMessage } = this.state;
-        console.log((wordList.length)); 
+        const { wordList, errMessage } = this.state;
+        const wordListWithoutFirst = wordList.slice(1);
+        console.log(wordList)
+        console.log(wordListWithoutFirst)
         return (
             <div className="App">
                 <div className="topnav">
