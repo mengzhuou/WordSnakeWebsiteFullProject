@@ -10,16 +10,19 @@ class ClassicMode extends React.Component<any,any>{
     constructor(props:any){
         super(props);
         this.state = { isErrorOccurred: false, isGameStarted: false, 
-            deleteFirst: false, ForceUpdateNow: false, isInputValid: true,
-            isGameOver: false,
+            ForceUpdateNow: false, isInputValid: true,
+            isGameOver: false, showCountdownTimer: false,
             firstWord: "", inputValue: '', storedInputValue: '', inputValidString: '',
             errMessage: '',
             count: 0, timeLeft: 60, wordList:[]};
         this.forceup = this.forceup.bind(this);
         this.menuNav = this.menuNav.bind(this);
+        this.handleStartGame = this.handleStartGame.bind(this);
     }
 
     forceup = async (inputValue: string) => {
+        console.log("check 3")
+
 
         if (!this.state.isGameOver && this.state.isGameStarted  && !this.state.isErrorOccurred) {
             try {
@@ -36,7 +39,6 @@ class ClassicMode extends React.Component<any,any>{
                             firstWord: words, 
                             ForceUpdateNow: false, 
                             wordList: wordList,
-                            deleteFirst: false,
                         });
                     } else {
                         this.setState({ errMessage: `The word must start with '${lastLetter}'` })
@@ -49,22 +51,20 @@ class ClassicMode extends React.Component<any,any>{
         }
     };
 
-    async componentDidMount() {
-        if(!this.state.isGameStarted){
-            const fWord = await getRandomStart();
-            this.setState({ wordList: this.state.wordList.concat(fWord) })
-            this.setState({ firstWord: fWord, isGameStarted: true, deleteFirst: true})
-        }
-    }
-
-    componentDidUpdate(prevProps: Readonly<any>, prevState: Readonly<any>, snapshot?: any): void {
-
+    async componentDidMount() {  
     }
     
     handleTimeUp = () => {
         this.setState({ isGameOver: true })
         console.log('Time is up!');
     };
+
+    handleStartGame = async () => {
+        const fWord = await getRandomStart();
+        this.setState({  wordList: this.state.wordList.concat(fWord), firstWord: fWord, showCountdownTimer: true, isGameStarted: true }, () => {
+            this.componentDidMount();
+        });
+    }
 
     handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const inputString = event.target.value;
@@ -118,8 +118,9 @@ class ClassicMode extends React.Component<any,any>{
         }).catch(()=>(alert("logout error")));
     }
     render(){
-        const { wordList, errMessage, timeLeft, gameOver } = this.state;
+        const { firstWord, inputValue, wordList, errMessage, isGameStarted, showCountdownTimer } = this.state;
         const wordListWithoutFirst = wordList.slice(1);
+        console.log(wordListWithoutFirst)
         return (
             <div className="App">
                 <div className="topnav">
@@ -127,14 +128,20 @@ class ClassicMode extends React.Component<any,any>{
                     <button className="topnavButton" onClick={this.pagelogout}>Logout</button>
                 </div>    
                 <h1 className="wsTitle">Word Snake</h1>
-                <CountdownTimer duration={3} onTimeUp={this.handleTimeUp} />
+                {showCountdownTimer ? ( // conditionally render CountdownTimer
+                    <CountdownTimer duration={30} onTimeUp={this.handleTimeUp} />
+                ) : (
+                    <button onClick={this.handleStartGame} hidden={isGameStarted ? true : false}>Start Game</button>
+                )}
                 <div>
                     <TextField
-                        label = {`Enter a word starting with '${this.state.firstWord}'`}
-                        value = {this.state.inputValue}
+                        label = {`Enter a word starts with '${firstWord}'`}
+                        value = {inputValue}
                         onChange = {this.handleInputChange}
                         onKeyDown = {this.handleEnterKeyDown}
-                        style={{ width: '300px' }}
+                        style={{ 
+                            display: isGameStarted ? 'block' : 'none'
+                        }}
 
                     /> 
                     <FormHelperText style={{ color: 'red' }}>
