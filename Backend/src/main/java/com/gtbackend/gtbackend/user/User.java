@@ -22,6 +22,7 @@ public class User {
     @Transient
     private Integer age; //transient means it will not be a column in database, so we calculate it
 
+    private Integer bestScore;
     public User() {
     }
 
@@ -31,7 +32,13 @@ public class User {
         this.name = name;
         this.dob = dob;
     }
+    public Integer getBestScore() {
+        return bestScore;
+    }
 
+    public void setBestScore(Integer bestScore) {
+        this.bestScore = bestScore;
+    }
     public String getName() {
         return name;
     }
@@ -80,6 +87,7 @@ public class User {
                 ", password='" + password + '\'' +
                 ", dob=" + dob +
                 ", age=" + age +
+                ", bestScore=" + bestScore +
                 '}';
     }
 }
