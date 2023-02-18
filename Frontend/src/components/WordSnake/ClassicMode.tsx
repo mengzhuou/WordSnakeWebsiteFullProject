@@ -18,26 +18,25 @@ class ClassicMode extends React.Component<any,any>{
 
         if (this.state.isGameStarted  && !this.state.isErrorOccurred) {
             try {
-                const lastWord = this.state.wordList[this.state.wordList.length - 1]
-                const lastLetter = lastWord[lastWord.length - 1]
-                if (inputValue[0] == lastLetter){
-                    const words = await getLetterFromPreviousWord(inputValue);
-                    let wordList = this.state.wordList.concat(inputValue);
-                    // if (this.state.deleteFirst) {
-                    //     wordList = wordList.slice(1);
-                    // }
-                    this.setState({ 
-                        errMessage:'', 
-                        firstWord: words, 
-                        ForceUpdateNow: false, 
-                        wordList: wordList,
-                        deleteFirst: false,
-                    });
-                } else {
-                    this.setState({ errMessage: `The word must start with '${lastLetter}'` })
+                if (this.state.wordList.includes(inputValue)){
+                    this.setState({ errMessage: 'The word already exist. Please type another word.'})
+                } else{
+                    const lastWord = this.state.wordList[this.state.wordList.length - 1]
+                    const lastLetter = lastWord[lastWord.length - 1]
+                    if (inputValue[0] == lastLetter){
+                        const words = await getLetterFromPreviousWord(inputValue);
+                        let wordList = this.state.wordList.concat(inputValue);
+                        this.setState({ 
+                            errMessage:'', 
+                            firstWord: words, 
+                            ForceUpdateNow: false, 
+                            wordList: wordList,
+                            deleteFirst: false,
+                        });
+                    } else {
+                        this.setState({ errMessage: `The word must start with '${lastLetter}'` })
+                    }
                 }
-                
-
             } catch (error) {
                 console.error("Error fetching word in the database:", error);
                 this.setState({ errMessage: 'The word does not exist. Please enter a valid word.' });
