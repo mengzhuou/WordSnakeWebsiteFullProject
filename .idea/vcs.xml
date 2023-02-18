@@ -2,7 +2,5 @@
 <project version="4">
   <component name="VcsDirectoryMappings">
     <mapping directory="" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/Backend/src/main/java/com/gtbackend/gtbackend/-Java-Word-Snake-Volcabulary-Project" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/Backend/src/main/java/com/gtbackend/gtbackend/volcabulary" vcs="Git" />
   </component>
 </project>

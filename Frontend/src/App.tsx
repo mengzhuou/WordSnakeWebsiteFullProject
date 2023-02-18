@@ -4,6 +4,11 @@ import First from "./components/Signup/Signup";
 import Second from "./components/Login/Login";
 import Menu from "./components/Menu/Menu";
 import Main from "./components/Main/Main";
+import ClassicMode from "./components/WordSnake/ClassicMode";
+import CountdownTimer from "./components/WordSnake/CountdownTimer";
+import GameoverBoard from "./components/WordSnake/GameoverBoard";
+import DefinitionMode from "./components/WordDefinition/DefinitionMode";
+
 import React from "react";
 
 class App extends React.Component<any,any>{
@@ -42,6 +47,15 @@ class App extends React.Component<any,any>{
           <Route path="/second" element={<Second />}/>
           <Route path="/" element={<Main/>}/>
           <Route path="/Menu" element={<Menu/>}/>
+          <Route path="/ClassicMode" element={<ClassicMode/>}/>
+          <Route path="/GameoverBoard" element={<GameoverBoard/>}/>
+          <Route path="/CountdownTimer" element={
+            <CountdownTimer
+              duration={90}
+              onTimeUp={ ()=>console.log('Time is up!') }
+            />
+          }/>
+          <Route path="/DefinitionMode" element={<DefinitionMode/>}/>
         </Routes>
       </Router>
     );

@@ -44,7 +44,58 @@ export async function logout(){
     });
     return content;
 }
+export async function getWordAndDef(inputWord: string): Promise<String[]>{
+    let content = await client({
+        method: 'get',
+        url: url+"getWordAndDef",
+        params: {
+          inputWord: inputWord
+        },
+        withCredentials: true
+    });
+    return content.data;
+}
+
+export async function getWordAndDefTest(): Promise<String[]>{
+    let content = await client({
+        method: 'get',
+        url: url+"getWordAndDefTest",
+        withCredentials: true
+    });
+    return content.data;
+}
+
+export async function getRandomStart(): Promise<String>{
+    let content = await client({
+        method: 'get',
+        url: url+"getRandomStart",
+        withCredentials: true
+    });
+    return content.data;
+}
 
 
+export async function isWordExist(inputWord: string): Promise<boolean>{
+    let content = await client({
+        method: 'get',
+        url: url+"isWordExist",
+        params: {
+          inputWord: inputWord
+        },
+        withCredentials: true
+    });
+    return content.data.exist;
+}
 
+export async function getLetterFromPreviousWord(inputWord: string): Promise<String>{
+    let content = await client({
+        method: 'get',
+        url: url+"getLetterFromPreviousWord",
+        params: {
+          inputWord: inputWord
+        },
+        withCredentials: true
+    });
+    return content.data;
+}
 
