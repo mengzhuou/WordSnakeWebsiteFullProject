@@ -1,14 +1,14 @@
 import "./ClassicMode.css";
 import { withFuncProps } from "../withFuncProps";
 import {logout, isWordExist, getLetterFromPreviousWord, getRandomStart} from '../../helpers/connector';
-import { TextField } from "@mui/material";
+import { TextField, FormHelperText } from "@mui/material";
 import React from "react";
 
 class ClassicMode extends React.Component<any,any>{
     constructor(props:any){
         super(props);
         this.state = { isErrorOccurred: false, isGameStarted: false, firstWord: "", 
-        count: 0, word: "", ForceUpdateNow: false, inputValue: '', 
+        count: 0, errMessage: '', ForceUpdateNow: false, inputValue: '', 
         storedInputValue: '', wordList:[]};
         this.forceup = this.forceup.bind(this);
         this.menuNav = this.menuNav.bind(this);
@@ -18,12 +18,11 @@ class ClassicMode extends React.Component<any,any>{
         if (this.state.isGameStarted  && !this.state.isErrorOccurred) {
             try {
                 const words = await getLetterFromPreviousWord(inputValue);
-                this.setState({ firstWord: words, ForceUpdateNow: false, wordList: this.state.wordList.concat(inputValue) });
+                this.setState({ errMessage:'', firstWord: words, ForceUpdateNow: false, wordList: this.state.wordList.concat(inputValue) });
+
             } catch (error) {
-                if (!this.state.isErrorOccurred) {
-                    console.error("Error fetching word list:", error);
-                    this.setState({ isErrorOccurred: true });
-                }
+                console.error("Error fetching word in the database:", error);
+                this.setState({ errMessage: 'The word does not exist. Please enter a valid word.' });
             }
         }
     };
@@ -75,7 +74,7 @@ class ClassicMode extends React.Component<any,any>{
         }).catch(()=>(alert("logout error")));
     }
     render(){
-        const { firstWord, wordList } = this.state;
+        const { firstWord, wordList, errMessage } = this.state;
         console.log((wordList.length)); 
         return (
             <div className="App">
@@ -90,8 +89,10 @@ class ClassicMode extends React.Component<any,any>{
                         value = {this.state.inputValue}
                         onChange = {this.handleInputChange}
                         onKeyDown = {this.handleEnterKeyDown}
+                        style={{ width: '300px' }}
 
                     /> 
+                    <FormHelperText style={{ color: 'red' }}>{errMessage}</FormHelperText>
                 </div>
                 {wordList.length > 0 && (
                     <div>
@@ -104,7 +105,6 @@ class ClassicMode extends React.Component<any,any>{
                         </ul>
                     </div>
                 )}
-                <p>{firstWord}</p>
             </div>
         );
     }
