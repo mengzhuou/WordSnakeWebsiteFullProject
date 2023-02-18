@@ -1,20 +1,39 @@
 import "./ClassicMode.css";
 import { withFuncProps } from "../withFuncProps";
-import {logout, isWordExist, } from '../../helpers/connector';
+import {logout, isWordExist, getLetterFromPreviousWord, getRandomStart} from '../../helpers/connector';
 import { TextField } from "@mui/material";
 import React from "react";
-
-interface MyComponentState{
-    word: string;
-    count: number;
-}
 
 class ClassicMode extends React.Component<any,any>{
     constructor(props:any){
         super(props);
-        this.state = {count: 0, word:"", ForceUpdateNow: false, inputValue: '', storedInputValue: '', wordList:[]};
+        this.state = {isGameStarted: false, firstWord: "", count: 0, word: "", ForceUpdateNow: false, inputValue: '', storedInputValue: '', wordList:[]};
         this.forceup = this.forceup.bind(this);
         this.menuNav = this.menuNav.bind(this);
+    }
+
+    forceup = async (inputValue: string) => {
+        if (this.state.isGameStarted) {
+            try {
+                const words = await getLetterFromPreviousWord(inputValue);
+                this.setState({ firstWord: words, ForceUpdateNow: false });
+            } catch (error) {
+                console.error("Error fetching word list:", error);
+            }
+        }
+    };
+
+    async componentDidMount() {
+        if(!this.state.isGameStarted){
+            const fWord = await getRandomStart();
+            this.setState({ firstWord: fWord, isGameStarted: true})
+        }
+    }
+
+    componentDidUpdate(prevProps: Readonly<any>, prevState: Readonly<any>, snapshot?: any): void {
+        if (this.state.ForceUpdateNow) {
+            this.forceup(this.state.storedInputValue);
+          }
     }
     
     handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -26,7 +45,7 @@ class ClassicMode extends React.Component<any,any>{
     handleEnterKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
         if (event.key === "Enter"){
             this.storeInputValue(this.state.inputValue).then(() => {
-                this.setState({inputValue: "", ForceUpdateNow: true});
+                this.setState({inputValue: ""});
             }); 
             
         }
@@ -34,7 +53,10 @@ class ClassicMode extends React.Component<any,any>{
 
     storeInputValue = async (inputValue: string) => {
         try{
-            this.setState({ storedInputValue: inputValue})
+            if (inputValue !== this.state.storedInputValue){
+                this.setState({ storedInputValue: inputValue, ForceUpdateNow: true, wordList: this.state.wordList.concat(inputValue)})
+                this.forceup(inputValue);
+            }
         } catch (error) {
             console.error(error)
         }
@@ -49,31 +71,9 @@ class ClassicMode extends React.Component<any,any>{
             this.props.navigate("/")
         }).catch(()=>(alert("logout error")));
     }
-    forceup = async () => {
-        const { storedInputValue } = this.state;
-        try {
-            const content = await getWord(storedInputValue);
-            const words = content.map((word: String) => word.replace(/,/g, ", "));
-            console.log("content")
-            console.log(words)
-            this.setState({ wordList: words, ForceUpdateNow: false });
-          } catch (error) {
-            console.error("Error fetching word list:", error);
-          }
-    }
-
-    componentDidMount(): void {
-        this.forceup();
-    }
-
-    componentDidUpdate(prevProps: Readonly<any>, prevState: Readonly<any>, snapshot?: any): void {
-        if(this.state.ForceUpdateNow){
-            this.forceup();
-        }
-    }
-    
     render(){
-        const { wordList } = this.state;
+        const { firstWord, wordList } = this.state;
+        console.log((wordList.length)); 
         return (
             <div className="App">
                 <div className="topnav">
@@ -83,21 +83,25 @@ class ClassicMode extends React.Component<any,any>{
                 <h1 className="wsTitle">Word Snake</h1>
                 <div>
                     <TextField
-                        label = "Type a word for definition"
+                        label = {`Enter a word starting with '${this.state.firstWord}'`}
                         value = {this.state.inputValue}
                         onChange = {this.handleInputChange}
                         onKeyDown = {this.handleEnterKeyDown}
+
                     /> 
                 </div>
                 {wordList.length > 0 && (
                     <div>
                         <ul>
-                            {wordList.map((word: string) => (
-                                <li key={word}>{word}</li>
+                            {wordList.map((word: string, index: number) => (
+                                <li key={index}>{word}</li>
                             ))}
+                         
+
                         </ul>
                     </div>
                 )}
+                <p>{firstWord}</p>
             </div>
         );
     }
