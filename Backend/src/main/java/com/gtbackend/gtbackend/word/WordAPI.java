@@ -55,7 +55,7 @@ public class WordAPI {
         if (isWordExist(inputWord)){
             return String.valueOf(inputWord.charAt(inputWord.length() - 1));
         }
-        return "The word does not exist";
+        throw new IllegalArgumentException("The word does not exist. Please enter a valid word.");
     }
 
 }

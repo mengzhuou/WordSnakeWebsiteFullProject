@@ -7,18 +7,23 @@ import React from "react";
 class ClassicMode extends React.Component<any,any>{
     constructor(props:any){
         super(props);
-        this.state = {isGameStarted: false, firstWord: "", count: 0, word: "", ForceUpdateNow: false, inputValue: '', storedInputValue: '', wordList:[]};
+        this.state = { isErrorOccurred: false, isGameStarted: false, firstWord: "", 
+        count: 0, word: "", ForceUpdateNow: false, inputValue: '', 
+        storedInputValue: '', wordList:[]};
         this.forceup = this.forceup.bind(this);
         this.menuNav = this.menuNav.bind(this);
     }
 
     forceup = async (inputValue: string) => {
-        if (this.state.isGameStarted) {
+        if (this.state.isGameStarted  && !this.state.isErrorOccurred) {
             try {
                 const words = await getLetterFromPreviousWord(inputValue);
-                this.setState({ firstWord: words, ForceUpdateNow: false });
+                this.setState({ firstWord: words, ForceUpdateNow: false, wordList: this.state.wordList.concat(inputValue) });
             } catch (error) {
-                console.error("Error fetching word list:", error);
+                if (!this.state.isErrorOccurred) {
+                    console.error("Error fetching word list:", error);
+                    this.setState({ isErrorOccurred: true });
+                }
             }
         }
     };
@@ -31,9 +36,7 @@ class ClassicMode extends React.Component<any,any>{
     }
 
     componentDidUpdate(prevProps: Readonly<any>, prevState: Readonly<any>, snapshot?: any): void {
-        if (this.state.ForceUpdateNow) {
-            this.forceup(this.state.storedInputValue);
-          }
+
     }
     
     handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -54,7 +57,7 @@ class ClassicMode extends React.Component<any,any>{
     storeInputValue = async (inputValue: string) => {
         try{
             if (inputValue !== this.state.storedInputValue){
-                this.setState({ storedInputValue: inputValue, ForceUpdateNow: true, wordList: this.state.wordList.concat(inputValue)})
+                this.setState({ storedInputValue: inputValue, ForceUpdateNow: true })
                 this.forceup(inputValue);
             }
         } catch (error) {
