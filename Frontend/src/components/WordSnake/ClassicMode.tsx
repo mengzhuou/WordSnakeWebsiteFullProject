@@ -50,26 +50,6 @@ class ClassicMode extends React.Component<any, any>{
         }
     };
 
-    async componentDidMount() {
-    }
-
-    componentDidUpdate(prevProps: Readonly<any>, prevState: Readonly<any>, snapshot?: any): void {
-        // this.reStart();
-    }
-
-    updateGameState = async (isGameStarted: boolean, isGameOver: boolean) => {
-        if (isGameStarted) {
-            const fWord = await getRandomStart();
-            this.setState({ isGameStarted: true, isGameOver: true, wordList: this.state.wordList.concat(fWord), firstWord: fWord }, () => {
-                this.componentDidMount();
-            });
-        }
-
-        if (isGameOver) {
-            this.setState({ isGameStarted: false, isGameOver: true, wordList: [], errMessage: "" })
-        }
-    }
-
     handleTimeUp = () => {
         this.updateGameState(false, true)
     };
@@ -132,10 +112,23 @@ class ClassicMode extends React.Component<any, any>{
             this.props.navigate("/")
         }).catch(() => (alert("logout error")));
     }
+
+    updateGameState = async (isGameStarted: boolean, isGameOver: boolean) => {
+        if (isGameStarted) {
+            const fWord = await getRandomStart();
+            this.setState({ isGameStarted: true, isGameOver: false, wordList: this.state.wordList.concat(fWord), firstWord: fWord });
+        }
+
+        if (isGameOver) {
+            this.setState({ isGameStarted: false, isGameOver: true, wordList: [], errMessage: "" })
+            this.props.navigate("GameoverBoard")
+        }
+    }
+
     render() {
-        const { firstWord, inputValue, wordList, errMessage, isGameStarted } = this.state;
+        const { firstWord, inputValue, wordList, errMessage, isGameStarted, isGameOver } = this.state;
         const wordListWithoutFirst = wordList.slice(1);
-        console.log(wordListWithoutFirst)
+        console.log(isGameOver)
         return (
             <div className="App">
                 <div className="topnav">
@@ -145,7 +138,7 @@ class ClassicMode extends React.Component<any, any>{
                 </div>
                 <h1 className="wsTitle">Word Snake</h1>
                 {isGameStarted ? (
-                    <CountdownTimer duration={90} onTimeUp={this.handleTimeUp} />
+                    <CountdownTimer duration={3} onTimeUp={this.handleTimeUp} />
                 ) : (
                     <button className="topnavButton" onClick={() => this.updateGameState(true, false)} hidden={isGameStarted ? true : false}>Start Game</button>
                 )}
@@ -166,6 +159,12 @@ class ClassicMode extends React.Component<any, any>{
                         {errMessage}
                     </FormHelperText>
                 </div>
+                {isGameOver? (
+                    <p>Game over</p>
+                ) : (
+                    <p></p>
+                )}
+
                 {wordListWithoutFirst.length > 0 && (
                     <div>
                         <ul>
