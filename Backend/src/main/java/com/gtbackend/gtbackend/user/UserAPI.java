@@ -25,6 +25,8 @@ public class UserAPI {
     private final UserService userService;
     private PasswordEncoder passwordEncoder;
 
+    @Autowired
+    private UserRepository userRepository;
 
     @Autowired
     public UserAPI(UserService userService, PasswordEncoder passwordEncoder) {
@@ -69,5 +71,33 @@ public class UserAPI {
         User user = new User(body.get("email"), passwordEncoder.encode(body.get("password")),
                 body.get("name"), LocalDate.parse(body.get("dob")));
         userService.addUser(user);
+    }
+
+    @PostMapping("/updateBestScore")
+    public void updateBestScore(Principal principal, @RequestParam int score){
+        if (principal != null){
+            String email = principal.getName();
+            Optional<User> user = userService.getUser(email);
+            if (!user.isPresent()) {
+                throw new IllegalArgumentException("User not found!");
+            }
+            userService.updateBestScore(email, score);
+        }
+    }
+    @GetMapping("/getBestScore")
+    public int getBestScore(Principal principal){
+        String email = "";
+        if (principal != null){
+            email = principal.getName();
+            Optional<User> user = userService.getUser(email);
+            if (!user.isPresent()) {
+                throw new IllegalArgumentException("User not found!");
+            }
+        }
+        Integer bestScore = userRepository.getBestScore(email);
+        if (bestScore == null){
+            return 0;
+        }
+        return bestScore;
     }
 }

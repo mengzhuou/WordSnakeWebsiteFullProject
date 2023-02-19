@@ -12,7 +12,7 @@ class GameoverBoard extends React.Component<any, any>{
         super(props);
         this.state = {
             username: '',
-            score: 0,
+            bestScore: 0,
             isSent: false,
             wordList: this.props.wordList
         };
@@ -46,7 +46,7 @@ class GameoverBoard extends React.Component<any, any>{
                 </div>
                 <p className="goTitle">Game Over</p>
                 <div className="wordListStyle">
-                    <p>Your Results: {wordList.length}</p>
+                    <p>Your Score: {wordList.length}</p>
                     <ul>
                         {Array.isArray(wordList) && wordList.map((word: string, index: number) => (
                             <li key={index}>{word}</li>

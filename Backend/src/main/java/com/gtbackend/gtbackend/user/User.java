@@ -22,7 +22,8 @@ public class User {
     @Transient
     private Integer age; //transient means it will not be a column in database, so we calculate it
 
-    private Integer bestScore;
+    @Column(name = "bestScore", columnDefinition = "INT DEFAULT 0", nullable = false)
+    private Integer bestScore = 0;
     public User() {
     }
 

@@ -35,4 +35,12 @@ public class UserService {
     public void removeUser(String email){
         userRepository.deleteById(email);
     }
+
+    public void updateBestScore(String email, int score){
+        User user = userRepository.findByEmail(email);
+        if (user != null){
+            user.setBestScore(score);
+            userRepository.save(user);
+        }
+    }
 }
