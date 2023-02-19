@@ -48,7 +48,9 @@ public class User {
         this.name = name;
     }
 //    @Override
-    public String getUsername() {
+
+
+    public String getEmail() {
         return email;
     }
 

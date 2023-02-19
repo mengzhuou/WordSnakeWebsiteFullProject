@@ -25,7 +25,7 @@ public class UserService {
     }
 
     public void addUser(User user) {
-        if(userRepository.findById(user.getUsername()).isEmpty()){
+        if(userRepository.findById(user.getEmail()).isEmpty()){
             userRepository.save(user);
         }else{
             throw new DuplicateKeyException("User account (email) already exist");
