@@ -13,8 +13,9 @@ class ClassicMode extends React.Component<any, any>{
             isErrorOccurred: false, isGameStarted: false,
             ForceUpdateNow: false, isInputValid: true,
             isGameOver: false,
-            firstWord: "", inputValue: '', storedInputValue: '', inputValidString: '',
-            errMessage: '',
+            lastWord:"", firstWord: "", inputValue: '', 
+            storedInputValue: '', inputValidString: '',
+            errMessage: '', 
             timeLeft: 60, wordList: [], history: []
         };
         this.menuNav = this.menuNav.bind(this);
@@ -32,15 +33,15 @@ class ClassicMode extends React.Component<any, any>{
                         const words = await getLetterFromPreviousWord(inputValue);
                         let wordList = this.state.wordList.concat(inputValue);
                         
-                        const hisArr = this.state.wordList.slice(1);
-
                         this.setState({
+                            lastWord: lastWord,
                             errMessage: '',
                             firstWord: words,
                             ForceUpdateNow: false,
                             wordList: wordList,
-                            history: hisArr
                         });
+                        let hisArr = this.state.history.concat(inputValue);
+                        this.setState({history: hisArr})
                     } else {
                         this.setState({ errMessage: `The word must start with '${lastLetter}'` })
                     }
@@ -81,7 +82,6 @@ class ClassicMode extends React.Component<any, any>{
     handleEnterKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
         if (event.key === "Enter") {
             this.storeInputValue(this.state.inputValue).then(() => {
-                console.log("check2")
                 this.setState({ inputValue: "" });
             });
 
@@ -91,8 +91,6 @@ class ClassicMode extends React.Component<any, any>{
     storeInputValue = async (inputValue: string) => {
         try {
             if (inputValue !== this.state.storedInputValue) {
-                console.log("check1")
-
                 this.setState({ storedInputValue: inputValue, ForceUpdateNow: true })
                 this.forceup(inputValue);
             }
@@ -134,6 +132,9 @@ class ClassicMode extends React.Component<any, any>{
     render() {
         const { firstWord, inputValue, wordList, errMessage, isGameStarted, isGameOver } = this.state;
         const wordListWithoutFirst = wordList.slice(1);
+        console.log("hist in render:", this.state.history)
+        console.log("wordListWithoutFirst in render:", wordListWithoutFirst)
+
         return (
             <div className="App">
                 <div className="topnav">
