@@ -35,20 +35,14 @@ public class UserAPI {
 
     }
 
-    @GetMapping("/getUserEmail")
+    @GetMapping("/getUserInfo")
     @ResponseBody
-    public String getUserEmail(Principal principal) {
-        if (principal != null){
-            Optional<User> user = userService.getUser(principal.getName());
-            if (user.isPresent()) {
-                return user.get().getEmail();
-            } else {
-                throw new NoSuchElementException("User not found");
-            }
-        }
-        return "User does not exist";
+    public Map<String, String> getUser(Principal principal){
+        User user = userService.getUser(principal.getName()).get();
+        Map<String, String> ret = new HashMap<>();
+        ret.put("username", user.getUsername());
+        return ret;
     }
-
 
     @PostMapping("/logout")
     public void logout(HttpServletRequest request) throws ServletException {
@@ -65,7 +59,7 @@ public class UserAPI {
             throw new BadCredentialsException("Please enter your email or password!");
         }
         if(passwordEncoder.matches(password, usr.getPassword())){
-            SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(usr.getEmail(),
+            SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(usr.getUsername(),
                     usr.getPassword()));
         }else{
             throw new BadCredentialsException("Email or Password does not match our records!");

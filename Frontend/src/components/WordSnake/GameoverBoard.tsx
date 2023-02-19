@@ -1,7 +1,7 @@
 import "./GameoverBoard.css";
 
 import { withFuncProps } from "../withFuncProps";
-import { logout, getBestScore, updateBestScore, getUserEmail } from '../../helpers/connector';
+import { logout, isWordExist, getLetterFromPreviousWord, getRandomStart } from '../../helpers/connector';
 import { TextField, FormHelperText } from "@mui/material";
 import React from "react";
 import { useLocation } from 'react-router-dom';
@@ -17,11 +17,6 @@ class GameoverBoard extends React.Component<any, any>{
             wordList: this.props.wordList
         };
         this.menuNav = this.menuNav.bind(this);
-        this.handleGetUserEmail = this.handleGetUserEmail.bind(this);
-    }
-
-    componentDidMount(): void {
-        this.handleGetUserEmail();
     }
 
 
@@ -38,15 +33,7 @@ class GameoverBoard extends React.Component<any, any>{
             this.props.navigate("/")
         }).catch(() => (alert("logout error")));
     }
-
-    // handleGetBestScore = async () => {
-    //     const bestScore = await getBestScore();
-    // }
     
-    handleGetUserEmail = async () => {
-        const email = await getUserEmail();
-        console.log("User email is: " , email)
-    }
 
     render() {
         const { wordList } = this.state;

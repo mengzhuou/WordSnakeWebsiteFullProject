@@ -139,6 +139,9 @@ class ClassicMode extends React.Component<any, any>{
     render() {
         const { firstWord, inputValue, wordList, errMessage, isGameStarted, showWords } = this.state;
         const wordListWithoutFirst = wordList.slice(1);
+        console.log("hist in render:", this.state.history)
+        console.log("wordListWithoutFirst in render:", wordListWithoutFirst)
+
         return (
             <div className="App">
                 <div className="topnav">
