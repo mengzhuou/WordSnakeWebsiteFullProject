@@ -12,7 +12,7 @@ class ClassicMode extends React.Component<any, any>{
         this.state = {
             isErrorOccurred: false, isGameStarted: false,
             ForceUpdateNow: false, isInputValid: true,
-            isGameOver: false,
+            isGameOver: false, showWords: true,
             lastWord:"", firstWord: "", inputValue: '', 
             storedInputValue: '', inputValidString: '',
             errMessage: '', 
@@ -91,8 +91,9 @@ class ClassicMode extends React.Component<any, any>{
     storeInputValue = async (inputValue: string) => {
         try {
             if (inputValue !== this.state.storedInputValue) {
-                this.setState({ storedInputValue: inputValue, ForceUpdateNow: true })
-                this.forceup(inputValue);
+                const lowerInput = inputValue.toLowerCase();
+                this.setState({ storedInputValue: lowerInput, ForceUpdateNow: true })
+                this.forceup(lowerInput);
             }
         } catch (error) {
             console.error(error)
@@ -129,8 +130,14 @@ class ClassicMode extends React.Component<any, any>{
         }
     }
 
+    handleShowWords = () => {
+        this.setState({
+            showWords: !this.state.showWords
+        })
+    }
+
     render() {
-        const { firstWord, inputValue, wordList, errMessage, isGameStarted, isGameOver } = this.state;
+        const { firstWord, inputValue, wordList, errMessage, isGameStarted, showWords } = this.state;
         const wordListWithoutFirst = wordList.slice(1);
         console.log("hist in render:", this.state.history)
         console.log("wordListWithoutFirst in render:", wordListWithoutFirst)
@@ -138,6 +145,7 @@ class ClassicMode extends React.Component<any, any>{
         return (
             <div className="App">
                 <div className="topnav">
+                    <button className="topnavButton" onClick={this.handleShowWords} hidden={isGameStarted ? false : true}>{showWords ? 'Hide Words' : 'Show Words'}</button>
                     <button className="topnavButton" onClick={this.reStart} hidden={isGameStarted ? false : true}>Restart</button>
                     <button className="topnavButton" onClick={this.menuNav}>Menu</button>
                     <button className="topnavButton" onClick={this.pagelogout}>Logout</button>
@@ -166,7 +174,7 @@ class ClassicMode extends React.Component<any, any>{
                     </FormHelperText>
                 </div>
 
-                {wordListWithoutFirst.length > 0 && (
+                {showWords && wordListWithoutFirst.length > 0 && (
                     <div>
                         <ul>
                             {wordListWithoutFirst.map((word: string, index: number) => (
