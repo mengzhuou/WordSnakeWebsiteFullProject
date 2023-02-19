@@ -123,12 +123,11 @@ class ClassicMode extends React.Component<any, any>{
 
         if (isGameOver) {
             this.setState({ isGameStarted: false, isGameOver: true, wordList: [], errMessage: "" })
-            this.props.navigate("/GameoverBoard", {
+            this.props.navigate("/ResultListFunc", {
                 state: {
                   wordList: this.state.history
                 }
               })
-            this.props.navigate("/GameoverBoard")
         }
     }
 

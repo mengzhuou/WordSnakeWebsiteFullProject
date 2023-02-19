@@ -5,6 +5,7 @@ import { logout, isWordExist, getLetterFromPreviousWord, getRandomStart } from '
 import { TextField, FormHelperText } from "@mui/material";
 import React from "react";
 import { useLocation } from 'react-router-dom';
+import ResultListFunc from './ResultListFunc';
 
 class GameoverBoard extends React.Component<any, any>{
     constructor(props: any) {
@@ -13,15 +14,11 @@ class GameoverBoard extends React.Component<any, any>{
             username: '',
             score: 0,
             isSent: false,
-            resultList: []
+            wordList: this.props.wordList
         };
         this.menuNav = this.menuNav.bind(this);
     }
 
-    componentDidMount() {
-        this.setState({ resultList: this.props.location.state})
-        console.log("his is::: ", this.state.resultList); // Do something with the history state
-    }
 
     reStart = () => {
         this.props.navigate("/ClassicMode")
@@ -36,8 +33,10 @@ class GameoverBoard extends React.Component<any, any>{
             this.props.navigate("/")
         }).catch(() => (alert("logout error")));
     }
+    
 
     render() {
+        const { wordList } = this.state;
         return (
             <div className="App">
                 <div className="topnav">
@@ -46,7 +45,14 @@ class GameoverBoard extends React.Component<any, any>{
                     <button className="topnavButton" onClick={this.pagelogout}>Logout</button>
                 </div>
                 <p className="goTitle">Game Over</p>
-                
+                <div className="wordListStyle">
+                    <p>Your Results: {wordList.length}</p>
+                    <ul>
+                        {Array.isArray(wordList) && wordList.map((word: string, index: number) => (
+                            <li key={index}>{word}</li>
+                        ))}
+                    </ul>
+                </div>
             </div>
         );
     }
