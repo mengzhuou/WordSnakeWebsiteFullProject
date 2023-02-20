@@ -1,20 +1,20 @@
-import "./ClassicMode.css";
+import "./GameoverBoard.css";
 
 import { withFuncProps } from "../withFuncProps";
 import { logout, isWordExist, getLetterFromPreviousWord, getRandomStart } from '../../helpers/connector';
 import { TextField, FormHelperText } from "@mui/material";
 import React from "react";
+import { useLocation } from 'react-router-dom';
+import ResultListFunc from './ResultListFunc';
 
 class GameoverBoard extends React.Component<any, any>{
     constructor(props: any) {
         super(props);
         this.state = {
-            isErrorOccurred: false, isGameStarted: false,
-            ForceUpdateNow: false, isInputValid: true,
-            isGameOver: false,
-            firstWord: "", inputValue: '', storedInputValue: '', inputValidString: '',
-            errMessage: '',
-            count: 0, timeLeft: 60, wordList: []
+            username: '',
+            bestScore: 0,
+            isSent: false,
+            wordList: this.props.wordList
         };
         this.menuNav = this.menuNav.bind(this);
     }
@@ -33,18 +33,26 @@ class GameoverBoard extends React.Component<any, any>{
             this.props.navigate("/")
         }).catch(() => (alert("logout error")));
     }
+    
 
     render() {
-        const { firstWord, inputValue, wordList, errMessage, isGameStarted, isGameOver } = this.state;
-        const wordListWithoutFirst = wordList.slice(1);
+        const { wordList } = this.state;
         return (
             <div className="App">
                 <div className="topnav">
-                    <button className="topnavButton" onClick={this.reStart} hidden={isGameStarted ? false : true}>Restart</button>
+                    <button className="topnavButton" onClick={this.reStart}>Restart</button>
                     <button className="topnavButton" onClick={this.menuNav}>Menu</button>
                     <button className="topnavButton" onClick={this.pagelogout}>Logout</button>
                 </div>
-                
+                <p className="goTitle">Game Over</p>
+                <div className="wordListStyle">
+                    <p>Your Score: {wordList.length}</p>
+                    <ul>
+                        {Array.isArray(wordList) && wordList.map((word: string, index: number) => (
+                            <li key={index}>{word}</li>
+                        ))}
+                    </ul>
+                </div>
             </div>
         );
     }

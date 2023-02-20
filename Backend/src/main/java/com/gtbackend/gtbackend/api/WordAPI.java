@@ -1,10 +1,10 @@
-package com.gtbackend.gtbackend.word;
+package com.gtbackend.gtbackend.api;
 
+import com.gtbackend.gtbackend.dao.WordRepository;
+import com.gtbackend.gtbackend.model.Word;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
@@ -15,7 +15,7 @@ public class WordAPI {
     private WordRepository wordRepository;
 
     @RequestMapping("/getWords")
-    public List<WordModel> getWords(){
+    public List<Word> getWords(){
         return wordRepository.findAll();
     }
 

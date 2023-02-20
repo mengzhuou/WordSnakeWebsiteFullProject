@@ -1,5 +1,6 @@
-package com.gtbackend.gtbackend.word;
+package com.gtbackend.gtbackend.dao;
 
+import com.gtbackend.gtbackend.model.Word;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -9,10 +10,10 @@ import java.util.List;
 
 //write JPA Select query to fetch data from db
 @Repository
-public interface WordRepository extends JpaRepository<WordModel, Integer> {
+public interface WordRepository extends JpaRepository<Word, Integer> {
 
     @Query("SELECT w FROM words w")
-    List<WordModel> findAll();
+    List<Word> findAll();
 
     @Query("SELECT w.definition FROM words w WHERE w.word = :inputWord")
     List<String> getWordAndDef(@Param("inputWord") String inputWord);

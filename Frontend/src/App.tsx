@@ -7,6 +7,7 @@ import Main from "./components/Main/Main";
 import ClassicMode from "./components/WordSnake/ClassicMode";
 import CountdownTimer from "./components/WordSnake/CountdownTimer";
 import GameoverBoard from "./components/WordSnake/GameoverBoard";
+import ResultListFunc from "./components/WordSnake/ResultListFunc";
 import DefinitionMode from "./components/WordDefinition/DefinitionMode";
 
 import React from "react";
@@ -55,6 +56,10 @@ class App extends React.Component<any,any>{
               onTimeUp={ ()=>console.log('Time is up!') }
             />
           }/>
+          <Route path="/ResultListFunc" element={<ResultListFunc
+              wordList={this.props.wordList}
+          />}/>
+          
           <Route path="/DefinitionMode" element={<DefinitionMode/>}/>
         </Routes>
       </Router>
