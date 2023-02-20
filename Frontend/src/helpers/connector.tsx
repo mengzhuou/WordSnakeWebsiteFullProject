@@ -44,16 +44,6 @@ export async function logout(){
     });
     return content;
 }
-
-export async function getUserEmail(){
-    let content = await client({
-        method: 'get',
-        url: url+"getUserEmail",
-        withCredentials: true
-      });
-    return content;
-}
-
 export async function getWordAndDef(inputWord: string): Promise<String[]>{
     let content = await client({
         method: 'get',
@@ -109,27 +99,3 @@ export async function getLetterFromPreviousWord(inputWord: string): Promise<Stri
     return content.data;
 }
 
-export async function getBestScore(email: string): Promise<number>{
-    let content = await client({
-        method: 'get',
-        url: url+"getBestScore",
-        params: {
-            email: email
-          },
-        withCredentials: true
-    });
-    return content.data;
-}
-
-
-export async function updateBestScore(email: string, score: number): Promise<void>{
-    let content = await client({
-        method: 'put',
-        url: url+"updateBestScore",
-        params: {
-          email: email,
-          score: score
-        },
-        withCredentials: true
-    });
-}
