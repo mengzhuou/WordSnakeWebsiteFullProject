@@ -73,7 +73,7 @@ public class UserAPI {
 
     @PostMapping("/register")
     public void addUser(@RequestBody Map<String, String> body) throws IllegalArgumentException, DateTimeParseException {
-        Role role = Role.valueOf("");
+        Role role = Role.USER;
         User user = new User(
                 body.get("email"),
                 passwordEncoder.encode(body.get("password")),
