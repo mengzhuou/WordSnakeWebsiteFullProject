@@ -1,4 +1,4 @@
-package com.gtbackend.gtbackend.word;
+package com.gtbackend.gtbackend.model;
 
 import org.springframework.stereotype.Component;
 
@@ -6,7 +6,7 @@ import javax.persistence.*;
 
 @Component
 @Entity(name = "words")
-public class WordModel {
+public class Word {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

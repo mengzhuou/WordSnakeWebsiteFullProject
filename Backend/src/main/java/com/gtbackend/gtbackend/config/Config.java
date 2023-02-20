@@ -1,6 +1,5 @@
-package com.gtbackend.gtbackend.user;
+package com.gtbackend.gtbackend.config;
 
-import com.gtbackend.gtbackend.word.WordModel;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
