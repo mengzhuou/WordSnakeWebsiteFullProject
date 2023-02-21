@@ -24,8 +24,10 @@ class ClassicMode extends React.Component<any, any>{
     forceup = async (inputValue: string) => {
         if (!this.state.isErrorOccurred) {
             try {
+                console.log("inputVal in FU: ", inputValue);
+                console.log("is word included? ", this.state.wordList.includes(inputValue))
                 if (this.state.wordList.includes(inputValue)) {
-                    this.setState({ errMessage: 'The word already exist. Please type another word.' })
+                    this.setState({ errMessage: 'The word already exist. Please type another word.', inputValue: "", storedInputValue: "" })
                 } else {
                     const lastWord = this.state.wordList[this.state.wordList.length - 1]
                     const lastLetter = lastWord[lastWord.length - 1]
@@ -139,8 +141,8 @@ class ClassicMode extends React.Component<any, any>{
     render() {
         const { firstWord, inputValue, wordList, errMessage, isGameStarted, showWords } = this.state;
         const wordListWithoutFirst = wordList.slice(1);
-        console.log("hist in render:", this.state.history)
-        console.log("wordListWithoutFirst in render:", wordListWithoutFirst)
+        // console.log("hist in render:", this.state.history)
+        // console.log("wordListWithoutFirst in render:", wordListWithoutFirst)
 
         return (
             <div className="App">
@@ -152,7 +154,7 @@ class ClassicMode extends React.Component<any, any>{
                 </div>
                 <h1 className="wsTitle">Word Snake</h1>
                 {isGameStarted ? (
-                    <CountdownTimer duration={10} onTimeUp={this.handleTimeUp} />
+                    <CountdownTimer duration={100} onTimeUp={this.handleTimeUp} />
                 ) : (
                     <button className="topnavButton" onClick={() => this.updateGameState(true, false)} hidden={isGameStarted ? true : false}>Start Game</button>
                 )}
