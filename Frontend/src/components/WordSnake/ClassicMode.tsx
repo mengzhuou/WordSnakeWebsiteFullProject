@@ -147,7 +147,7 @@ class ClassicMode extends React.Component<any, any>{
         return (
             <div className="App">
                 <div className="topnav">
-                    <button className="topnavButton" onClick={this.handleShowWords} hidden={isGameStarted ? false : true}>{showWords ? 'Hide Words' : 'Show Words'}</button>
+                    <button className="topnavButtonHiddShowWords" onClick={this.handleShowWords} hidden={isGameStarted ? false : true}>{showWords ? 'Hide Words' : 'Show Words'}</button>
                     <button className="topnavButton" onClick={this.reStart} hidden={isGameStarted ? false : true}>Restart</button>
                     <button className="topnavButton" onClick={this.menuNav}>Menu</button>
                     <button className="topnavButton" onClick={this.pagelogout}>Logout</button>
