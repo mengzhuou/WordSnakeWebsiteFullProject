@@ -1,7 +1,7 @@
 import "./ClassicMode.css";
 
 import { withFuncProps } from "../withFuncProps";
-import { logout, isWordExist, getLetterFromPreviousWord, getRandomStart } from '../../helpers/connector';
+import { logout, getLetterFromPreviousWord, getRandomStart, getHintWordAndDef } from '../../helpers/connector';
 import { TextField, FormHelperText } from "@mui/material";
 import React from "react";
 import CountdownTimer from "./CountdownTimer";
@@ -12,8 +12,10 @@ class ClassicMode extends React.Component<any, any>{
         this.state = {
             isErrorOccurred: false, isGameStarted: false,
             ForceUpdateNow: false, isInputValid: true,
-            isGameOver: false, showWords: true,
-            lastWord:"", firstWord: "", inputValue: '', 
+            isGameOver: false, showWords: true, 
+            getHints: true,
+            lastWord:"", lastLetter: "", firstWord: "", 
+            inputValue: '', printHints: [],
             storedInputValue: '', inputValidString: '',
             errMessage: '', 
             timeLeft: 60, wordList: [], history: []
@@ -24,8 +26,6 @@ class ClassicMode extends React.Component<any, any>{
     forceup = async (inputValue: string) => {
         if (!this.state.isErrorOccurred) {
             try {
-                console.log("inputVal in FU: ", inputValue);
-                console.log("is word included? ", this.state.wordList.includes(inputValue))
                 if (this.state.wordList.includes(inputValue)) {
                     this.setState({ errMessage: 'The word already exist. Please type another word.', inputValue: "", storedInputValue: "" })
                 } else {
@@ -43,7 +43,9 @@ class ClassicMode extends React.Component<any, any>{
                             wordList: wordList,
                         });
                         let hisArr = this.state.history.concat(inputValue);
-                        this.setState({history: hisArr})
+                        const lastLetter = lastWord[lastWord.length - 1]
+                        console.log("lastLetter is: ", this.state.lastLetter)
+                        this.setState({history: hisArr, lastLetter: lastLetter})
                     } else {
                         this.setState({ errMessage: `The word must start with '${lastLetter}'` })
                     }
@@ -138,16 +140,24 @@ class ClassicMode extends React.Component<any, any>{
         })
     }
 
-    render() {
-        const { firstWord, inputValue, wordList, errMessage, isGameStarted, showWords } = this.state;
-        const wordListWithoutFirst = wordList.slice(1);
-        // console.log("hist in render:", this.state.history)
-        // console.log("wordListWithoutFirst in render:", wordListWithoutFirst)
+    handleGiveHints = async() => {
+        const hints = await getHintWordAndDef(this.state.lastLetter);
 
+        this.setState({
+            giveHints: !this.state.giveHints,
+            printHints: hints
+        })
+    }
+
+    render() {
+        const { firstWord, inputValue, wordList, errMessage, isGameStarted, showWords, printHints } = this.state;
+        const wordListWithoutFirst = wordList.slice(1);
+        console.log(printHints)
         return (
             <div className="App">
                 <div className="topnav">
                     <button className="topnavButtonHiddShowWords" onClick={this.handleShowWords} hidden={isGameStarted ? false : true}>{showWords ? 'Hide Words' : 'Show Words'}</button>
+                    <button className="topnavButtonHiddShowWords" onClick={this.handleGiveHints} hidden={isGameStarted ? false : true}>Hint</button>
                     <button className="topnavButton" onClick={this.reStart} hidden={isGameStarted ? false : true}>Restart</button>
                     <button className="topnavButton" onClick={this.menuNav}>Menu</button>
                     <button className="topnavButton" onClick={this.pagelogout}>Logout</button>

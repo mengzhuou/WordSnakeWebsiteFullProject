@@ -3,8 +3,10 @@ package com.gtbackend.gtbackend.api;
 import com.gtbackend.gtbackend.dao.WordRepository;
 import com.gtbackend.gtbackend.model.Word;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
@@ -18,6 +20,12 @@ public class WordAPI {
     public List<Word> getWords(){
         return wordRepository.findAll();
     }
+
+    @RequestMapping("/getHintWordAndDef")
+    public List<String> getHintWordAndDef(@RequestParam String inputWordLetter) throws IllegalArgumentException{
+        return wordRepository.getHintWordAndDef(inputWordLetter, PageRequest.of(0, 5)); //PageRequest.of is to define the limit size
+    }
+
 
     @RequestMapping("/getWordAndDef")
     public List<String> getWordAndDef(@RequestParam String inputWord) throws IllegalArgumentException{
