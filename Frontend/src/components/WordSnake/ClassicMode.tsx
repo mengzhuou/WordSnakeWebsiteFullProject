@@ -5,6 +5,7 @@ import { logout, getLetterFromPreviousWord, getRandomStart, getHintWordAndDef } 
 import { TextField, FormHelperText } from "@mui/material";
 import React from "react";
 import CountdownTimer from "./CountdownTimer";
+import HintPopup from "./HintPopupProps";
 
 class ClassicMode extends React.Component<any, any>{
     constructor(props: any) {
@@ -13,9 +14,9 @@ class ClassicMode extends React.Component<any, any>{
             isErrorOccurred: false, isGameStarted: false,
             ForceUpdateNow: false, isInputValid: true,
             isGameOver: false, showWords: true, 
-            getHints: true,
+            printHints: [], showHints: false,
             lastWord:"", lastLetter: "", firstWord: "", 
-            inputValue: '', printHints: [],
+            inputValue: '',
             storedInputValue: '', inputValidString: '',
             errMessage: '', 
             timeLeft: 60, wordList: [], history: []
@@ -144,30 +145,38 @@ class ClassicMode extends React.Component<any, any>{
         const hints = await getHintWordAndDef(this.state.lastLetter);
 
         this.setState({
-            giveHints: !this.state.giveHints,
+            showHints: !this.state.showHints,
             printHints: hints
         })
     }
 
+    handleCloseHint = () => {
+        this.setState({ showHints: false, printHints: []})
+    }
     render() {
-        const { firstWord, inputValue, wordList, errMessage, isGameStarted, showWords, printHints } = this.state;
+        const { firstWord, inputValue, wordList, errMessage, 
+            isGameStarted, showWords, printHints, showHints } = this.state;
         const wordListWithoutFirst = wordList.slice(1);
         console.log(printHints)
         return (
             <div className="App">
                 <div className="topnav">
                     <button className="topnavButtonHiddShowWords" onClick={this.handleShowWords} hidden={isGameStarted ? false : true}>{showWords ? 'Hide Words' : 'Show Words'}</button>
-                    <button className="topnavButtonHiddShowWords" onClick={this.handleGiveHints} hidden={isGameStarted ? false : true}>Hint</button>
                     <button className="topnavButton" onClick={this.reStart} hidden={isGameStarted ? false : true}>Restart</button>
                     <button className="topnavButton" onClick={this.menuNav}>Menu</button>
                     <button className="topnavButton" onClick={this.pagelogout}>Logout</button>
                 </div>
+                <div className="sidenav" >
+                    <button className="sidenavButton" onClick={this.handleGiveHints} hidden={isGameStarted && !showHints ? false : true}>Hint</button>
+                    {showHints && <HintPopup hint={printHints} onClose={this.handleCloseHint} />}
+                </div>
                 <h1 className="wsTitle">Word Snake</h1>
                 {isGameStarted ? (
-                    <CountdownTimer duration={100} onTimeUp={this.handleTimeUp} />
+                    <CountdownTimer duration={300} onTimeUp={this.handleTimeUp} />
                 ) : (
                     <button className="topnavButton" onClick={() => this.updateGameState(true, false)} hidden={isGameStarted ? true : false}>Start Game</button>
                 )}
+
                 <div>
                     <TextField
                         label={`Enter a word starts with '${firstWord}'`}
