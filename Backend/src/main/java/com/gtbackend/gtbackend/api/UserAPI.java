@@ -12,10 +12,12 @@ import java.util.Optional;
 
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.security.PermitAll;
 import javax.naming.AuthenticationException;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -39,13 +41,17 @@ public class UserAPI {
 
     }
 
+//    Auth will work as long as you only need user email. To retrieve more, you need principal
     @GetMapping("/getUserEmail")
+    @PermitAll
     @ResponseBody
-    public Map<String, String> getUserEmail(Principal principal){
-        User user = userService.getUser(principal.getName()).get();
+    public Map<String, String> getUserEmail(){
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String user = auth.getName();
+//        User user = userService.getUser(principal.getName()).get();
         Map<String, String> ret = new HashMap<>();
-        ret.put("username", user.getUsername());
-        ret.put("role", user.getRole().toString());
+        ret.put("username", user);
+//        ret.put("role", user.getRole().toString());
         return ret;
     }
 

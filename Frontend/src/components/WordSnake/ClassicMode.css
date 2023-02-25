@@ -1,6 +1,6 @@
 
 .topnav {
-    background-color: rgb(181 255 196);
+    background-color:rgb(161, 181, 161);
     position: fixed;
     top: 0;
     z-index: 2;
@@ -42,3 +42,30 @@
     margin-bottom: 20px;
     font-size: 25px;
   } 
+
+
+  .sidenav {
+    height: 100%;
+    width: 130px;
+    position: fixed;
+    z-index: 1;
+    top: 0;
+    left: 0;
+    background-color: rgb(161, 181, 161);
+}
+
+.sidenavButton {
+  float: left;
+  color: black;
+  padding: 10px 10px;
+  text-decoration: none;
+  margin-top: 80px;
+  margin-left: 20px;
+  font-size: 15px;
+  background-color: #effff9;
+  cursor: pointer;
+  font-family: "Neucha", cursive;
+  border-radius: 5%;
+  font-weight: bold;
+  width: 90px;
+}

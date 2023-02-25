@@ -3,8 +3,10 @@ package com.gtbackend.gtbackend.api;
 import com.gtbackend.gtbackend.dao.WordRepository;
 import com.gtbackend.gtbackend.model.Word;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
@@ -19,9 +21,25 @@ public class WordAPI {
         return wordRepository.findAll();
     }
 
+    @RequestMapping("/getHintWordAndDef")
+    public List<String> getHintWordAndDef(@RequestParam String inputWordLetter) throws IllegalArgumentException{
+        List<String> hintWordsAndDefs = wordRepository.getHintWordAndDef(inputWordLetter, PageRequest.of(0,5));
+        List<String> numberedHintWordsAndDefs = new ArrayList<>();
+        int counter = 1;
+        for (String hintWordAndDef : hintWordsAndDefs){
+            numberedHintWordsAndDefs.add(counter + ". " + hintWordAndDef + "\n");
+            counter++;
+        }
+        return numberedHintWordsAndDefs;
+    }
+
+
     @RequestMapping("/getWordAndDef")
     public List<String> getWordAndDef(@RequestParam String inputWord) throws IllegalArgumentException{
-        return wordRepository.getWordAndDef(inputWord);
+        if (isWordExist(inputWord)) {
+            return wordRepository.getWordAndDef(inputWord);
+        }
+        throw new IllegalArgumentException("The word does not exist. Please enter a valid word.");
     }
 
     @RequestMapping("/getWordAndDefTest")

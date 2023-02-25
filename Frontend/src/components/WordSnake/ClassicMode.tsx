@@ -1,19 +1,22 @@
 import "./ClassicMode.css";
 
 import { withFuncProps } from "../withFuncProps";
-import { logout, isWordExist, getLetterFromPreviousWord, getRandomStart } from '../../helpers/connector';
+import { logout, getLetterFromPreviousWord, getRandomStart, getHintWordAndDef } from '../../helpers/connector';
 import { TextField, FormHelperText } from "@mui/material";
 import React from "react";
 import CountdownTimer from "./CountdownTimer";
+import HintPopup from "./HintPopupProps";
 
 class ClassicMode extends React.Component<any, any>{
     constructor(props: any) {
         super(props);
         this.state = {
-            isErrorOccurred: false, isGameStarted: false,
-            ForceUpdateNow: false, isInputValid: true,
-            isGameOver: false, showWords: true,
-            lastWord:"", firstWord: "", inputValue: '', 
+            isGameStarted: false,
+            ForceUpdateNow: false, 
+            isGameOver: false, showWords: true, 
+            printHints: [], showHints: false,
+            lastWord:"", lastLetter: "", firstWord: "", 
+            inputValue: '',
             storedInputValue: '', inputValidString: '',
             errMessage: '', 
             timeLeft: 60, wordList: [], history: []
@@ -22,35 +25,37 @@ class ClassicMode extends React.Component<any, any>{
     }
 
     forceup = async (inputValue: string) => {
-        if (!this.state.isErrorOccurred) {
-            try {
-                if (this.state.wordList.includes(inputValue)) {
-                    this.setState({ errMessage: 'The word already exist. Please type another word.' })
+        try {
+            if (this.state.wordList.includes(inputValue)) {
+                this.setState({ errMessage: 'The word already exist. Please type another word.', inputValue: "", storedInputValue: "" })
+            } else {
+                const lastWord = this.state.wordList[this.state.wordList.length - 1]
+                const lastLetter = lastWord[lastWord.length - 1]
+                if (inputValue[0] == lastLetter) {
+                    const words = await getLetterFromPreviousWord(inputValue);
+                    let wordList = this.state.wordList.concat(inputValue);
+                    
+                    this.setState({
+                        lastWord: lastWord,
+                        errMessage: '',
+                        firstWord: words,
+                        ForceUpdateNow: false,
+                        wordList: wordList,
+                    });
+                    let hisArr = this.state.history.concat(inputValue);
+                    const lastWordForHint = hisArr[hisArr.length - 1]
+                    const lastLetter = lastWordForHint[lastWordForHint.length - 1]
+                    
+                    this.setState({history: hisArr, lastLetter: lastLetter})
                 } else {
-                    const lastWord = this.state.wordList[this.state.wordList.length - 1]
-                    const lastLetter = lastWord[lastWord.length - 1]
-                    if (inputValue[0] == lastLetter) {
-                        const words = await getLetterFromPreviousWord(inputValue);
-                        let wordList = this.state.wordList.concat(inputValue);
-                        
-                        this.setState({
-                            lastWord: lastWord,
-                            errMessage: '',
-                            firstWord: words,
-                            ForceUpdateNow: false,
-                            wordList: wordList,
-                        });
-                        let hisArr = this.state.history.concat(inputValue);
-                        this.setState({history: hisArr})
-                    } else {
-                        this.setState({ errMessage: `The word must start with '${lastLetter}'` })
-                    }
+                    this.setState({ errMessage: `The word must start with '${lastLetter}'` })
                 }
-            } catch (error) {
-                console.error("Error fetching word in the database:", error);
-                this.setState({ errMessage: 'The word does not exist. Please enter a valid word.' });
             }
+        } catch (error) {
+            console.error("Error fetching word in the database:", error);
+            this.setState({ errMessage: 'The word does not exist. Please enter a valid word.' });
         }
+        
     };
 
     handleTimeUp = () => {
@@ -117,7 +122,7 @@ class ClassicMode extends React.Component<any, any>{
     updateGameState = async (isGameStarted: boolean, isGameOver: boolean) => {
         if (isGameStarted) {
             const fWord = await getRandomStart();
-            this.setState({ isGameStarted: true, isGameOver: false, wordList: this.state.wordList.concat(fWord), firstWord: fWord });
+            this.setState({ isGameStarted: true, isGameOver: false, wordList: this.state.wordList.concat(fWord), firstWord: fWord, lastLetter: fWord });
         }
 
         if (isGameOver) {
@@ -136,26 +141,45 @@ class ClassicMode extends React.Component<any, any>{
         })
     }
 
-    render() {
-        const { firstWord, inputValue, wordList, errMessage, isGameStarted, showWords } = this.state;
-        const wordListWithoutFirst = wordList.slice(1);
-        console.log("hist in render:", this.state.history)
-        console.log("wordListWithoutFirst in render:", wordListWithoutFirst)
+    handleGiveHints = async() => {
+        const hints = await getHintWordAndDef(this.state.lastLetter);
 
+        this.setState({
+            showHints: !this.state.showHints,
+            printHints: hints
+        })
+    }
+
+    handleCloseHint = () => {
+        this.setState({ showHints: false, printHints: []})
+    }
+    render() {
+        const { firstWord, inputValue, wordList, errMessage, 
+            isGameStarted, showWords, printHints, showHints
+        } = this.state;
+        const wordListWithoutFirst = wordList.slice(1);
         return (
             <div className="App">
                 <div className="topnav">
-                    <button className="topnavButton" onClick={this.handleShowWords} hidden={isGameStarted ? false : true}>{showWords ? 'Hide Words' : 'Show Words'}</button>
                     <button className="topnavButton" onClick={this.reStart} hidden={isGameStarted ? false : true}>Restart</button>
                     <button className="topnavButton" onClick={this.menuNav}>Menu</button>
                     <button className="topnavButton" onClick={this.pagelogout}>Logout</button>
                 </div>
+                <div className="sidenav" hidden={isGameStarted ? false : true} >
+                    <button className="sidenavButton" onClick={this.handleShowWords} hidden={isGameStarted ? false : true}>{showWords ? 'Hide Words' : 'Show Words'}</button>
+
+                    <button className="sidenavButton" onClick={this.handleGiveHints} hidden={isGameStarted && !showHints ? false : true}>Hint</button>
+                    {showHints && <HintPopup hint={printHints} onClose={this.handleCloseHint} />}
+
+
+                </div>
                 <h1 className="wsTitle">Word Snake</h1>
                 {isGameStarted ? (
-                    <CountdownTimer duration={10} onTimeUp={this.handleTimeUp} />
+                    <CountdownTimer duration={300} onTimeUp={this.handleTimeUp} />
                 ) : (
                     <button className="topnavButton" onClick={() => this.updateGameState(true, false)} hidden={isGameStarted ? true : false}>Start Game</button>
                 )}
+
                 <div>
                     <TextField
                         label={`Enter a word starts with '${firstWord}'`}
