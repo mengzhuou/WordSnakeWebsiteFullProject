@@ -23,7 +23,14 @@ public class WordAPI {
 
     @RequestMapping("/getHintWordAndDef")
     public List<String> getHintWordAndDef(@RequestParam String inputWordLetter) throws IllegalArgumentException{
-        return wordRepository.getHintWordAndDef(inputWordLetter, PageRequest.of(0, 5)); //PageRequest.of is to define the limit size
+        List<String> hintWordsAndDefs = wordRepository.getHintWordAndDef(inputWordLetter, PageRequest.of(0,5));
+        List<String> numberedHintWordsAndDefs = new ArrayList<>();
+        int counter = 1;
+        for (String hintWordAndDef : hintWordsAndDefs){
+            numberedHintWordsAndDefs.add(counter + ". " + hintWordAndDef + "\n");
+            counter++;
+        }
+        return numberedHintWordsAndDefs;
     }
 
 

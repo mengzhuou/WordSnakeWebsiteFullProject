@@ -15,6 +15,7 @@
     overflow-x: hidden;
     background: rgb(227 255 233);
     margin-left: 10px;
+    text-align: left;
 }
 
   .hint-content::-webkit-scrollbar {
@@ -36,4 +37,8 @@
     margin-left: 229px;
     background-color: #2196F3;
     border-radius: 10px;
+}
+
+.hint-line{
+  margin-left: 2px;
 }

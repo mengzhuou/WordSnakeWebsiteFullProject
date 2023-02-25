@@ -3,7 +3,7 @@ import "./HintPopupProps.css";
 
 
 interface HintPopupProps {
-  hint: string;
+  hint: [];
   onClose: () => void;
 }
 
@@ -14,7 +14,9 @@ const HintPopup: React.FC<HintPopupProps> = ({ hint, onClose }) => {
         X
       </button>
       <div className="hint-content">
-        <p>{hint}</p>
+        {hint.map((item, index) => (
+          <p className="hint-line" key={index}>{item}</p>
+        ))}
       </div>
     </div>
   );
