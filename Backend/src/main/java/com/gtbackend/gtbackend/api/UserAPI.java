@@ -5,11 +5,6 @@ import com.gtbackend.gtbackend.model.Role;
 import com.gtbackend.gtbackend.model.User;
 import com.gtbackend.gtbackend.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import java.time.LocalDate;
-import java.time.format.DateTimeParseException;
-import java.util.Optional;
-
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -22,7 +17,12 @@ import javax.naming.AuthenticationException;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import java.security.Principal;
-import java.util.*;
+import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.NoSuchElementException;
+import java.util.Optional;
 
 @RestController
 @RequestMapping( path = "api/v1")
@@ -85,7 +85,7 @@ public class UserAPI {
                 passwordEncoder.encode(body.get("password")),
                 body.get("name"),
                 LocalDate.parse(body.get("dob")),
-                role);
+                false);
         userService.addUser(user);
     }
 

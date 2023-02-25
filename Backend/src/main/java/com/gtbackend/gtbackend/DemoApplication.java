@@ -1,15 +1,18 @@
 package com.gtbackend.gtbackend;
 
+import com.gtbackend.gtbackend.config.Config;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 
 //ctrl+Alt+O remove unused import
-@SpringBootApplication
+@SpringBootApplication(exclude = { SecurityAutoConfiguration.class })
+@EnableConfigurationProperties(Config.class)
 public class DemoApplication {
+
 	public static void main(String[] args) {
 		SpringApplication.run(DemoApplication.class, args);
 	}
 
-
 }
-
