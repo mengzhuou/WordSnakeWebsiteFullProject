@@ -11,8 +11,8 @@ class ClassicMode extends React.Component<any, any>{
     constructor(props: any) {
         super(props);
         this.state = {
-            isErrorOccurred: false, isGameStarted: false,
-            ForceUpdateNow: false, isInputValid: true,
+            isGameStarted: false,
+            ForceUpdateNow: false, 
             isGameOver: false, showWords: true, 
             printHints: [], showHints: false,
             lastWord:"", lastLetter: "", firstWord: "", 
@@ -25,38 +25,37 @@ class ClassicMode extends React.Component<any, any>{
     }
 
     forceup = async (inputValue: string) => {
-        if (!this.state.isErrorOccurred) {
-            try {
-                if (this.state.wordList.includes(inputValue)) {
-                    this.setState({ errMessage: 'The word already exist. Please type another word.', inputValue: "", storedInputValue: "" })
+        try {
+            if (this.state.wordList.includes(inputValue)) {
+                this.setState({ errMessage: 'The word already exist. Please type another word.', inputValue: "", storedInputValue: "" })
+            } else {
+                const lastWord = this.state.wordList[this.state.wordList.length - 1]
+                const lastLetter = lastWord[lastWord.length - 1]
+                if (inputValue[0] == lastLetter) {
+                    const words = await getLetterFromPreviousWord(inputValue);
+                    let wordList = this.state.wordList.concat(inputValue);
+                    
+                    this.setState({
+                        lastWord: lastWord,
+                        errMessage: '',
+                        firstWord: words,
+                        ForceUpdateNow: false,
+                        wordList: wordList,
+                    });
+                    let hisArr = this.state.history.concat(inputValue);
+                    const lastWordForHint = hisArr[hisArr.length - 1]
+                    const lastLetter = lastWordForHint[lastWordForHint.length - 1]
+                    
+                    this.setState({history: hisArr, lastLetter: lastLetter})
                 } else {
-                    const lastWord = this.state.wordList[this.state.wordList.length - 1]
-                    const lastLetter = lastWord[lastWord.length - 1]
-                    if (inputValue[0] == lastLetter) {
-                        const words = await getLetterFromPreviousWord(inputValue);
-                        let wordList = this.state.wordList.concat(inputValue);
-                        
-                        this.setState({
-                            lastWord: lastWord,
-                            errMessage: '',
-                            firstWord: words,
-                            ForceUpdateNow: false,
-                            wordList: wordList,
-                        });
-                        let hisArr = this.state.history.concat(inputValue);
-                        const lastWordForHint = hisArr[hisArr.length - 1]
-                        const lastLetter = lastWordForHint[lastWordForHint.length - 1]
-                       
-                        this.setState({history: hisArr, lastLetter: lastLetter})
-                    } else {
-                        this.setState({ errMessage: `The word must start with '${lastLetter}'` })
-                    }
+                    this.setState({ errMessage: `The word must start with '${lastLetter}'` })
                 }
-            } catch (error) {
-                console.error("Error fetching word in the database:", error);
-                this.setState({ errMessage: 'The word does not exist. Please enter a valid word.' });
             }
+        } catch (error) {
+            console.error("Error fetching word in the database:", error);
+            this.setState({ errMessage: 'The word does not exist. Please enter a valid word.' });
         }
+        
     };
 
     handleTimeUp = () => {
@@ -156,13 +155,9 @@ class ClassicMode extends React.Component<any, any>{
     }
     render() {
         const { firstWord, inputValue, wordList, errMessage, 
-            isGameStarted, showWords, printHints, showHints,
-            lastWord, lastLetter
+            isGameStarted, showWords, printHints, showHints
         } = this.state;
         const wordListWithoutFirst = wordList.slice(1);
-        // console.log(printHints)
-        console.log("lastWord is: ", lastWord)
-        console.log("lastLetter is: ", lastLetter)
         return (
             <div className="App">
                 <div className="topnav">

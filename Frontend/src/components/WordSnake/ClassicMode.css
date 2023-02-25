@@ -1,6 +1,6 @@
 
 .topnav {
-    background-color: rgb(181 255 196);
+    background-color:rgb(161, 181, 161);
     position: fixed;
     top: 0;
     z-index: 2;
@@ -25,22 +25,6 @@
   font-family: "Neucha", cursive;
   border-radius: 5%;
   font-weight: bold;
-  }
-
-  .topnavButtonHiddShowWords{
-    float: left;
-    color: black;
-    text-align: center;
-    padding: 10px 10px;
-    margin-right: 10px;
-    text-decoration: none;
-    font-size: 15px;
-    background-color: #effff9;
-    cursor: pointer;
-    font-family: "Neucha", cursive;
-    border-radius: 5%;
-    font-weight: bold;
-    
   }
 
   .wsTitle{
@@ -77,7 +61,6 @@
   text-decoration: none;
   margin-top: 80px;
   margin-left: 20px;
-  /* margin-bottom: 22px; */
   font-size: 15px;
   background-color: #effff9;
   cursor: pointer;

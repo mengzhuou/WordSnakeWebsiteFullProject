@@ -29,7 +29,10 @@ public class WordAPI {
 
     @RequestMapping("/getWordAndDef")
     public List<String> getWordAndDef(@RequestParam String inputWord) throws IllegalArgumentException{
-        return wordRepository.getWordAndDef(inputWord);
+        if (isWordExist(inputWord)) {
+            return wordRepository.getWordAndDef(inputWord);
+        }
+        throw new IllegalArgumentException("The word does not exist. Please enter a valid word.");
     }
 
     @RequestMapping("/getWordAndDefTest")
