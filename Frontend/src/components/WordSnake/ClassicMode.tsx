@@ -44,8 +44,9 @@ class ClassicMode extends React.Component<any, any>{
                             wordList: wordList,
                         });
                         let hisArr = this.state.history.concat(inputValue);
-                        const lastLetter = lastWord[lastWord.length - 1]
-                        console.log("lastLetter is: ", this.state.lastLetter)
+                        const lastWordForHint = hisArr[hisArr.length - 1]
+                        const lastLetter = lastWordForHint[lastWordForHint.length - 1]
+                       
                         this.setState({history: hisArr, lastLetter: lastLetter})
                     } else {
                         this.setState({ errMessage: `The word must start with '${lastLetter}'` })
@@ -122,7 +123,7 @@ class ClassicMode extends React.Component<any, any>{
     updateGameState = async (isGameStarted: boolean, isGameOver: boolean) => {
         if (isGameStarted) {
             const fWord = await getRandomStart();
-            this.setState({ isGameStarted: true, isGameOver: false, wordList: this.state.wordList.concat(fWord), firstWord: fWord });
+            this.setState({ isGameStarted: true, isGameOver: false, wordList: this.state.wordList.concat(fWord), firstWord: fWord, lastLetter: fWord });
         }
 
         if (isGameOver) {
@@ -155,20 +156,27 @@ class ClassicMode extends React.Component<any, any>{
     }
     render() {
         const { firstWord, inputValue, wordList, errMessage, 
-            isGameStarted, showWords, printHints, showHints } = this.state;
+            isGameStarted, showWords, printHints, showHints,
+            lastWord, lastLetter
+        } = this.state;
         const wordListWithoutFirst = wordList.slice(1);
-        console.log(printHints)
+        // console.log(printHints)
+        console.log("lastWord is: ", lastWord)
+        console.log("lastLetter is: ", lastLetter)
         return (
             <div className="App">
                 <div className="topnav">
-                    <button className="topnavButtonHiddShowWords" onClick={this.handleShowWords} hidden={isGameStarted ? false : true}>{showWords ? 'Hide Words' : 'Show Words'}</button>
                     <button className="topnavButton" onClick={this.reStart} hidden={isGameStarted ? false : true}>Restart</button>
                     <button className="topnavButton" onClick={this.menuNav}>Menu</button>
                     <button className="topnavButton" onClick={this.pagelogout}>Logout</button>
                 </div>
-                <div className="sidenav" >
+                <div className="sidenav" hidden={isGameStarted ? false : true} >
+                    <button className="sidenavButton" onClick={this.handleShowWords} hidden={isGameStarted ? false : true}>{showWords ? 'Hide Words' : 'Show Words'}</button>
+
                     <button className="sidenavButton" onClick={this.handleGiveHints} hidden={isGameStarted && !showHints ? false : true}>Hint</button>
                     {showHints && <HintPopup hint={printHints} onClose={this.handleCloseHint} />}
+
+
                 </div>
                 <h1 className="wsTitle">Word Snake</h1>
                 {isGameStarted ? (

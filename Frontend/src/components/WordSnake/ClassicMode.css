@@ -40,7 +40,6 @@
     font-family: "Neucha", cursive;
     border-radius: 5%;
     font-weight: bold;
-    width: 90px;
     
   }
 
@@ -63,7 +62,7 @@
 
   .sidenav {
     height: 100%;
-    width: 96px;
+    width: 130px;
     position: fixed;
     z-index: 1;
     top: 0;
@@ -77,11 +76,13 @@
   padding: 10px 10px;
   text-decoration: none;
   margin-top: 80px;
-  margin-left: 22px;
+  margin-left: 20px;
+  /* margin-bottom: 22px; */
   font-size: 15px;
   background-color: #effff9;
   cursor: pointer;
   font-family: "Neucha", cursive;
   border-radius: 5%;
   font-weight: bold;
+  width: 90px;
 }
