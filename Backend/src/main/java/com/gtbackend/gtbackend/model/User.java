@@ -1,6 +1,5 @@
 package com.gtbackend.gtbackend.model;
 
-
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -10,7 +9,6 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 import java.time.LocalDate;
-import java.time.Period;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -28,18 +26,20 @@ public class User implements UserDetails {
     private LocalDate dob;
     @Transient
     private Integer age; //transient means it will not be a column in database, so we calculate it
+    @Column(name="role")
+    @Enumerated(EnumType.STRING)
     private Role role;
     @Column(name = "bestScore", columnDefinition = "INT DEFAULT 0", nullable = false)
     private Integer bestScore = 0;
     public User() {
     }
 
-    public User(String email, String password, String name, LocalDate dob, Role role) {
+    public User(String email, String password, String name, LocalDate dob, boolean isAdmin) {
         this.email = email;
         this.password = password;
         this.name = name;
         this.dob = dob;
-        this.role = role;
+        this.role = isAdmin? Role.ADMIN : Role.USER;
     }
 
 
@@ -81,7 +81,6 @@ public class User implements UserDetails {
                 ", bestScore=" + bestScore +
                 '}';
     }
-
     public Role getRole() {
         return role;
     }
