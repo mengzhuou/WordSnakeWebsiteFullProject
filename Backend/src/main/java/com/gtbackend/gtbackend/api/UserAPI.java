@@ -7,19 +7,16 @@ import com.gtbackend.gtbackend.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
-import javax.annotation.security.PermitAll;
 import javax.naming.AuthenticationException;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import java.security.Principal;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Optional;
@@ -28,7 +25,8 @@ import java.util.Optional;
 @RequestMapping( path = "api/v1")
 public class UserAPI {
 
-    private final UserService userService;
+    @Autowired
+    private UserService userService;
     private PasswordEncoder passwordEncoder;
 
     @Autowired
@@ -38,21 +36,40 @@ public class UserAPI {
     public UserAPI(UserService userService, PasswordEncoder passwordEncoder) {
         this.userService = userService;
         this.passwordEncoder = passwordEncoder;
-
     }
 
-//    Auth will work as long as you only need user email. To retrieve more, you need principal
-    @GetMapping("/getUserEmail")
-    @PermitAll
+    //    @GetMapping("/getBestScore")
+//    public int getBestScore(Principal principal){
+//        String email = "";
+//        if (principal != null){
+//            email = principal.getName();
+//            Optional<User> user = userService.getUser(email);
+//            if (!user.isPresent()) {
+//                throw new IllegalArgumentException("User not found!");
+//            }
+//        }
+//        Integer bestScore = userRepository.getBestScore(email);
+//        if (bestScore == null){
+//            return 0;
+//        }
+//        return bestScore;
+//    }
+
+    @GetMapping("/getBestScore")
     @ResponseBody
-    public Map<String, String> getUserEmail(){
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        String user = auth.getName();
-//        User user = userService.getUser(principal.getName()).get();
-        Map<String, String> ret = new HashMap<>();
-        ret.put("username", user);
-//        ret.put("role", user.getRole().toString());
-        return ret;
+    public int getBestScore(Principal principal) {
+        if (principal.getName() == null){
+            throw new NullPointerException("You are not logged in");
+        }
+        else{
+            String userEmail = principal.getName();
+            Optional<User> user = userService.getUser(userEmail);
+            if (!user.isPresent()) {
+                throw new IllegalArgumentException("User not found!");
+            }
+            Integer bestScore = userRepository.getBestScore(user.get().getUsername());
+            return bestScore;
+        }
     }
 
     @PostMapping("/logout")
@@ -89,31 +106,15 @@ public class UserAPI {
         userService.addUser(user);
     }
 
-    @PostMapping("/updateBestScore")
-    public void updateBestScore(Principal principal, @RequestParam int score){
-        if (principal != null){
-            String email = principal.getName();
-            Optional<User> user = userService.getUser(email);
-            if (!user.isPresent()) {
-                throw new IllegalArgumentException("User not found!");
-            }
-            userService.updateBestScore(email, score);
-        }
-    }
-    @GetMapping("/getBestScore")
-    public int getBestScore(Principal principal){
-        String email = "";
-        if (principal != null){
-            email = principal.getName();
-            Optional<User> user = userService.getUser(email);
-            if (!user.isPresent()) {
-                throw new IllegalArgumentException("User not found!");
-            }
-        }
-        Integer bestScore = userRepository.getBestScore(email);
-        if (bestScore == null){
-            return 0;
-        }
-        return bestScore;
-    }
+//    @PostMapping("/updateBestScore")
+//    public void updateBestScore(Principal principal, @RequestParam int score){
+//        if (principal != null){
+//            String email = principal.getName();
+//            Optional<User> user = userService.getUser(email);
+//            if (!user.isPresent()) {
+//                throw new IllegalArgumentException("User not found!");
+//            }
+//            userService.updateBestScore(email, score);
+//        }
+//    }
 }
