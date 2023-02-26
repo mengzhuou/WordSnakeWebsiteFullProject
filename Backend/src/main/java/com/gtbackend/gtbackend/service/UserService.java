@@ -36,13 +36,13 @@ public class UserService implements UserDetailsService {
         }
     }
 
-    public void updateBestScore(String email, int score){
-        User user = userRepository.findByEmail(email);
-        if (user != null){
-            user.setBestScore(score);
-            userRepository.save(user);
-        }
-    }
+//    public void updateBestScore(String email, int score){
+//        User user = userRepository.findByEmail(email);
+//        if (user != null){
+//            user.setBestScore(score);
+//            userRepository.save(user);
+//        }
+//    }
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {

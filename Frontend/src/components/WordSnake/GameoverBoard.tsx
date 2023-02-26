@@ -1,22 +1,20 @@
 import "./GameoverBoard.css";
 
 import { withFuncProps } from "../withFuncProps";
-import { logout, isWordExist, getLetterFromPreviousWord, getRandomStart } from '../../helpers/connector';
-import { TextField, FormHelperText } from "@mui/material";
+import { logout, getBestScore } from '../../helpers/connector';
 import React from "react";
-import { useLocation } from 'react-router-dom';
-import ResultListFunc from './ResultListFunc';
 
 class GameoverBoard extends React.Component<any, any>{
     constructor(props: any) {
         super(props);
         this.state = {
             username: '',
-            bestScore: 0,
+            bestScore: -1,
             isSent: false,
             wordList: this.props.wordList
         };
         this.menuNav = this.menuNav.bind(this);
+        this.bestScore = this.bestScore.bind(this);
     }
 
 
@@ -33,10 +31,23 @@ class GameoverBoard extends React.Component<any, any>{
             this.props.navigate("/")
         }).catch(() => (alert("logout error")));
     }
+
+    bestScore = async() => {
+        getBestScore().then((response) => {
+            this.setState({ bestScore: response })
+        })
+        .catch((error) => {
+            console.log("Error when fetching data.")
+        });
+    }
     
+    componentDidMount(): void {
+        this.bestScore();
+    }
 
     render() {
-        const { wordList } = this.state;
+        const { wordList, bestScore } = this.state;
+        console.log("best score is : ",bestScore)
         return (
             <div className="App">
                 <div className="topnav">

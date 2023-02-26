@@ -111,3 +111,13 @@ export async function getHintWordAndDef(inputWordLetter: string): Promise<String
     return content.data;
 }
 
+export async function getBestScore(){
+    let content = await client({
+        method: 'get',
+        url: url+"getBestScore"
+    });
+    return content;
+}
+
+
+
