@@ -47,6 +47,7 @@ class GameoverBoard extends React.Component<any, any>{
 
     render() {
         const { wordList, bestScore } = this.state;
+        const sortedWords = [...wordList].sort();
         console.log("best score is : ",bestScore)
         return (
             <div className="App">
@@ -56,13 +57,11 @@ class GameoverBoard extends React.Component<any, any>{
                     <button className="topnavButton" onClick={this.pagelogout}>Logout</button>
                 </div>
                 <p className="goTitle">Game Over</p>
+                <p className="scoreStyle">Your Score: {wordList.length}</p>
                 <div className="wordListStyle">
-                    <p>Your Score: {wordList.length}</p>
-                    <ul>
-                        {Array.isArray(wordList) && wordList.map((word: string, index: number) => (
-                            <li key={index}>{word}</li>
-                        ))}
-                    </ul>
+                    {Array.isArray(sortedWords) && sortedWords.map((word: string, index: number) => (
+                        <li key={index}>{word}</li>
+                    ))}
                 </div>
             </div>
         );
