@@ -158,6 +158,7 @@ class ClassicMode extends React.Component<any, any>{
             isGameStarted, showWords, printHints, showHints
         } = this.state;
         const wordListWithoutFirst = wordList.slice(1);
+        const sortedWords = [...wordListWithoutFirst].sort();
         return (
             <div className="App">
                 <div className="topnav">
@@ -175,7 +176,7 @@ class ClassicMode extends React.Component<any, any>{
                 </div>
                 <h1 className="wsTitle">Word Snake</h1>
                 {isGameStarted ? (
-                    <CountdownTimer duration={3} onTimeUp={this.handleTimeUp} />
+                    <CountdownTimer duration={12000} onTimeUp={this.handleTimeUp} />
                 ) : (
                     <button className="topnavButton" onClick={() => this.updateGameState(true, false)} hidden={isGameStarted ? true : false}>Start Game</button>
                 )}
@@ -198,13 +199,11 @@ class ClassicMode extends React.Component<any, any>{
                     </FormHelperText>
                 </div>
 
-                {showWords && wordListWithoutFirst.length > 0 && (
-                    <div>
-                        <ul>
-                            {wordListWithoutFirst.map((word: string, index: number) => (
-                                <li key={index}>{word}</li>
-                            ))}
-                        </ul>
+                {showWords && sortedWords.length > 0 && (
+                    <div className="container">
+                        {sortedWords.map((word: string, index: number) => (
+                            <li key={index}>{word}</li>
+                        ))}
                     </div>
                 )}
             </div>
