@@ -5,6 +5,7 @@ import com.gtbackend.gtbackend.model.Role;
 import com.gtbackend.gtbackend.model.User;
 import com.gtbackend.gtbackend.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -37,23 +38,6 @@ public class UserAPI {
         this.userService = userService;
         this.passwordEncoder = passwordEncoder;
     }
-
-    //    @GetMapping("/getBestScore")
-//    public int getBestScore(Principal principal){
-//        String email = "";
-//        if (principal != null){
-//            email = principal.getName();
-//            Optional<User> user = userService.getUser(email);
-//            if (!user.isPresent()) {
-//                throw new IllegalArgumentException("User not found!");
-//            }
-//        }
-//        Integer bestScore = userRepository.getBestScore(email);
-//        if (bestScore == null){
-//            return 0;
-//        }
-//        return bestScore;
-//    }
 
     @GetMapping("/getBestScore")
     @ResponseBody
@@ -108,6 +92,17 @@ public class UserAPI {
         userService.addUser(user);
     }
 
+    @GetMapping("/userInfo")
+    public ResponseEntity<User> userInfo(Principal principal){
+        String userEmail = principal.getName();
+        Optional<User> user = userRepository.findById(userEmail);
+        if (user == null) {
+            return ResponseEntity.notFound().build();
+        } else {
+            return ResponseEntity.ok(user.get());
+        }
+    }
+
 //    @PostMapping("/updateBestScore")
 //    public void updateBestScore(Principal principal, @RequestParam int score){
 //        if (principal != null){
@@ -118,5 +113,22 @@ public class UserAPI {
 //            }
 //            userService.updateBestScore(email, score);
 //        }
+//    }
+
+    //    @GetMapping("/getBestScore")
+//    public int getBestScore(Principal principal){
+//        String email = "";
+//        if (principal != null){
+//            email = principal.getName();
+//            Optional<User> user = userService.getUser(email);
+//            if (!user.isPresent()) {
+//                throw new IllegalArgumentException("User not found!");
+//            }
+//        }
+//        Integer bestScore = userRepository.getBestScore(email);
+//        if (bestScore == null){
+//            return 0;
+//        }
+//        return bestScore;
 //    }
 }
