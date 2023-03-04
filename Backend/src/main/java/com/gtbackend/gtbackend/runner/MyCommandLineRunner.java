@@ -17,7 +17,7 @@ public class MyCommandLineRunner implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
         // Check if admin account already exists in database
-        if (userRepository.findByEmail("admin@example.com") == null) {
+        if (userRepository.findById("admin@example.com") == null) {
             // Create and save admin account
             User admin = new User("admin@example.com", "password", "Admin", LocalDate.of(2000, 1, 1), true);
             userRepository.save(admin);

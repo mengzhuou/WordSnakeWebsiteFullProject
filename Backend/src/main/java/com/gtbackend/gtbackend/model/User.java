@@ -31,6 +31,7 @@ public class User implements UserDetails {
     private Role role;
     @Column(name = "bestScore", columnDefinition = "INT DEFAULT 0", nullable = false)
     private Integer bestScore = 0;
+
     public User() {
     }
 
@@ -42,18 +43,25 @@ public class User implements UserDetails {
         this.role = isAdmin? Role.ADMIN : Role.USER;
     }
 
+    public void setBestScore(Integer bestScore) {
+        this.bestScore = bestScore;
+    }
+
+    public Role getRole() {
+        return role;
+    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        List<GrantedAuthority> list = new ArrayList<GrantedAuthority>();
+        List<GrantedAuthority> authorities = new ArrayList<GrantedAuthority>();
 
         if(role.equals(Role.ADMIN)){
-            list.add(new SimpleGrantedAuthority("ROLE_ADMIN"));
+            authorities.add(new SimpleGrantedAuthority("ROLE_ADMIN"));
         }else{
-            list.add(new SimpleGrantedAuthority("ROLE_USER"));
+            authorities.add(new SimpleGrantedAuthority("ROLE_USER"));
         }
-
-        return list;
+//        authorities.add()
+        return authorities;
     }
     @Override
     public String getPassword() {
@@ -63,26 +71,6 @@ public class User implements UserDetails {
     @Override
     public String getUsername() {
         return email;
-    }
-
-    public void setBestScore(Integer bestScore) {
-        this.bestScore = bestScore;
-    }
-
-    @Override
-    public String toString() {
-        return "User{" +
-                ", role='" + role + '\'' +
-                ", email='" + email + '\'' +
-                ", password='" + password + '\'' +
-                ", name='" + name + '\'' +
-                ", dob=" + dob +
-                ", age=" + age +
-                ", bestScore=" + bestScore +
-                '}';
-    }
-    public Role getRole() {
-        return role;
     }
 
     @Override
@@ -103,5 +91,9 @@ public class User implements UserDetails {
     @Override
     public boolean isEnabled() {
         return true;
+    }
+
+    public String getEmail(){
+        return email;
     }
 }
