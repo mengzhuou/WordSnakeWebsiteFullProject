@@ -58,10 +58,7 @@ public class UserAPI {
     @GetMapping("/getBestScore")
     @ResponseBody
     public int getBestScore(Principal principal) {
-        if (principal.getName() == null){
-            throw new NullPointerException("You are not logged in");
-        }
-        else{
+        if (principal != null){
             String userEmail = principal.getName();
             Optional<User> user = userService.getUser(userEmail);
             if (!user.isPresent()) {
@@ -69,6 +66,11 @@ public class UserAPI {
             }
             Integer bestScore = userRepository.getBestScore(user.get().getUsername());
             return bestScore;
+        }
+        else
+        {
+            System.out.print("nuts");
+            return -1;
         }
     }
 
