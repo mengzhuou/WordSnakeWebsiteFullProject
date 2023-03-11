@@ -8,7 +8,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
@@ -93,13 +95,17 @@ public class UserAPI {
     }
 
     @GetMapping("/userInfo")
-    public ResponseEntity<User> userInfo(Principal principal){
-        String userEmail = principal.getName();
-        Optional<User> user = userRepository.findById(userEmail);
-        if (user == null) {
+    public ResponseEntity<User> userInfo(Authentication authentication){
+        if (authentication != null && authentication.isAuthenticated()){
+            UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+            Optional<User> user = userService.getUser(userDetails.getUsername());
+            if (user.isPresent()){
+                return ResponseEntity.ok(user.get());
+            } else{
+                return ResponseEntity.notFound().build();
+            }
+        } else{
             return ResponseEntity.notFound().build();
-        } else {
-            return ResponseEntity.ok(user.get());
         }
     }
 
