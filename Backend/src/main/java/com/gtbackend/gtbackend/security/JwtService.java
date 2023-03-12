@@ -1,5 +1,6 @@
 package com.gtbackend.gtbackend.security;
 
+import com.gtbackend.gtbackend.model.User;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -9,6 +10,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.security.Key;
+import java.time.ZonedDateTime;
 import java.util.Date;
 import java.util.List;
 import java.util.function.Function;
@@ -16,23 +18,30 @@ import java.util.function.Function;
 @Service
 public class JwtService {
 
-    @Value("${jwt.secret}")
-    private String secret;
-
     @Value("${jwt.expiration}")
     private Long expiration;
+    @Value("${jwt.secret}")
+    private String jwtSecret;
+
+    public void setJwtSecret(String jwtSecret) {
+        this.jwtSecret = jwtSecret;
+    }
 
     private Key getSigningKey() {
-        byte[] keyBytes = secret.getBytes();
+        byte[] keyBytes = jwtSecret.getBytes();
         return Keys.hmacShaKeyFor(keyBytes);
     }
 
-    public String generateToken(UserDetails userDetails) {
+    public String generateToken(User user) {
+        Date now = new Date();
+        Date expiryDate = Date.from(ZonedDateTime.now().plusHours(8).toInstant());
+//        Key key = Keys.hmacShaKeyFor(jwtSecret.getBytes());
+        Key key = Keys.secretKeyFor(SignatureAlgorithm.HS512);
         return Jwts.builder()
-                .setSubject(userDetails.getUsername())
-                .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + expiration * 1000))
-                .signWith(getSigningKey(), SignatureAlgorithm.HS512)
+                .setSubject(user.getEmail())
+                .setIssuedAt(now)
+                .setExpiration(expiryDate)
+                .signWith(key)
                 .compact();
     }
 

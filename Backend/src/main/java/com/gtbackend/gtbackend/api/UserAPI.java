@@ -21,7 +21,6 @@ import java.security.Principal;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 import java.util.Map;
-import java.util.NoSuchElementException;
 import java.util.Optional;
 
 @RestController
@@ -66,18 +65,20 @@ public class UserAPI {
     }
 
     @PostMapping("/login")
-    public void login(@RequestBody Map<String, String> body) throws AuthenticationException, NoSuchElementException {
+    public ResponseEntity<String> login(@RequestBody Map<String, String> body) throws AuthenticationException, BadCredentialsException {
         String email = body.get("email");
         String password = body.get("password");
         Optional<User> tmp = userService.getUser(email);
         User usr = tmp.get();
-        if (tmp.isEmpty()){
+        if (tmp.isEmpty()) {
             throw new BadCredentialsException("Please enter your email or password.");
         }
-        if(passwordEncoder.matches(password, usr.getPassword())){
+        if (passwordEncoder.matches(password, usr.getPassword())) {
             SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(usr.getUsername(),
-                    usr.getPassword()));
-        }else{
+            usr.getPassword()));
+            String token = userService.generateToken(usr);
+            return ResponseEntity.ok(token);
+        } else {
             throw new BadCredentialsException("Email or Password does not match our records.");
         }
     }
@@ -94,7 +95,7 @@ public class UserAPI {
         userService.addUser(user);
     }
 
-    @GetMapping("/userInfo")
+    @RequestMapping("/userInfo")
     public ResponseEntity<User> userInfo(Authentication authentication){
         if (authentication != null && authentication.isAuthenticated()){
             UserDetails userDetails = (UserDetails) authentication.getPrincipal();
