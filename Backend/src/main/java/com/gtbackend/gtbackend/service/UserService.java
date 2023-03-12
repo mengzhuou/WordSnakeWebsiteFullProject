@@ -2,19 +2,14 @@ package com.gtbackend.gtbackend.service;
 
 import com.gtbackend.gtbackend.dao.UserRepository;
 import com.gtbackend.gtbackend.model.User;
-import io.jsonwebtoken.*;
-import io.jsonwebtoken.security.Keys;
+import com.gtbackend.gtbackend.security.JwtService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import java.security.Key;
-import java.time.ZonedDateTime;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -22,19 +17,12 @@ import java.util.Optional;
 public class UserService implements UserDetailsService {
 
     private UserRepository userRepository;
-    private Key jwtSecretKey = Keys.secretKeyFor(SignatureAlgorithm.HS512);
+    private JwtService jwtService;
 
-
-    @Value("${jwt.secret}")
-    private String jwtSecret;
     @Autowired
-    public UserService(UserRepository userRepository) {
+    public UserService(UserRepository userRepository, JwtService jwtService) {
         this.userRepository = userRepository;
-
-    }
-
-    public void setJwtSecret(String jwtSecret) {
-        this.jwtSecret = jwtSecret;
+        this.jwtService = jwtService;
     }
 
     public Optional<User> getUser(String email){
@@ -60,28 +48,5 @@ public class UserService implements UserDetailsService {
             throw new UsernameNotFoundException("User not present");
         }
         return usr.get();
-    }
-
-    public String generateToken(User user) {
-        Date now = new Date();
-        Date expiryDate = Date.from(ZonedDateTime.now().plusHours(8).toInstant());
-        String token = Jwts.builder()
-                .setSubject(user.getEmail())
-                .setIssuedAt(now)
-                .setExpiration(expiryDate)
-                .signWith(jwtSecretKey)
-                .compact();
-        return "Bearer " + token;
-    }
-    public Claims decodeToken(String token) {
-        try {
-            Jws<Claims> jws = Jwts.parserBuilder()
-                    .setSigningKey(jwtSecretKey)
-                    .build()
-                    .parseClaimsJws(token);
-            return jws.getBody();
-        } catch (JwtException e) {
-            throw new JwtException("Invalid token", e);
-        }
     }
 }

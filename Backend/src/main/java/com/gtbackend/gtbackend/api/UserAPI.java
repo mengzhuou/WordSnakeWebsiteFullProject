@@ -3,6 +3,7 @@ package com.gtbackend.gtbackend.api;
 import com.gtbackend.gtbackend.dao.UserRepository;
 import com.gtbackend.gtbackend.model.Role;
 import com.gtbackend.gtbackend.model.User;
+import com.gtbackend.gtbackend.security.JwtService;
 import com.gtbackend.gtbackend.service.UserService;
 import io.jsonwebtoken.Claims;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,14 +31,16 @@ public class UserAPI {
     @Autowired
     private UserService userService;
     private PasswordEncoder passwordEncoder;
-
+    @Autowired
+    private JwtService jwtService;
     @Autowired
     private UserRepository userRepository;
 
     @Autowired
-    public UserAPI(UserService userService, PasswordEncoder passwordEncoder) {
+    public UserAPI(UserService userService, PasswordEncoder passwordEncoder, JwtService jwtService) {
         this.userService = userService;
         this.passwordEncoder = passwordEncoder;
+        this.jwtService = jwtService;
     }
 
     @GetMapping("/getBestScore")
@@ -76,7 +79,7 @@ public class UserAPI {
         if (passwordEncoder.matches(password, usr.getPassword())) {
             SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(usr.getUsername(),
             usr.getPassword()));
-            String token = userService.generateToken(usr);
+            String token = jwtService.generateToken(usr);
             return ResponseEntity.ok(token);
         } else {
             throw new BadCredentialsException("Email or Password does not match our records.");
@@ -97,7 +100,7 @@ public class UserAPI {
 
     @RequestMapping("/userInfo")
     public ResponseEntity<User> userInfo(Authentication authentication, @RequestParam("token") String token){
-        Claims claims = userService.decodeToken(token);
+        Claims claims = jwtService.decodeToken(token);
         String userEmail = claims.getSubject();
 
         Optional<User> user = userService.getUser(userEmail);
