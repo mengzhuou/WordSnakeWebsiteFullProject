@@ -5,6 +5,7 @@ import com.gtbackend.gtbackend.api.UserAPI;
 import com.gtbackend.gtbackend.dao.UserRepository;
 import com.gtbackend.gtbackend.model.User;
 import com.gtbackend.gtbackend.service.UserService;
+import io.jsonwebtoken.Claims;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -12,6 +13,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -23,6 +25,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -30,15 +33,16 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 public class UserAPITest {
+    String token = "";
 
-    private MockMvc mockMvc;
     @Mock
     private UserRepository userRepository;
     @Mock
     private UserService userService;
-
+    @Mock
+    private Authentication authentication;
+    private MockMvc mockMvc;
     private PasswordEncoder passwordEncoder;
-
     private User user;
 
     @BeforeEach
@@ -47,6 +51,7 @@ public class UserAPITest {
         passwordEncoder = new BCryptPasswordEncoder();
         UserAPI userAPI = new UserAPI(userService, passwordEncoder);
         mockMvc = MockMvcBuilders.standaloneSetup(userAPI).build();
+        Claims claims = mock(Claims.class);
 
         user = new User(
                 "test@test.com",
@@ -65,13 +70,13 @@ public class UserAPITest {
     public void testLogin() throws Exception {
         String email = user.getEmail();
         String password = "test123";
-        String token = "test-token";
         Map<String, String> requestBody = new HashMap<>();
         requestBody.put("email", email);
         requestBody.put("password", password);
+
         when(userService.getUser(email)).thenReturn(Optional.of(user));
 
-        // Stub the userService to return a token when generateToken method is called with the user
+        //we need to generate this token for the requestBody
         when(userService.generateToken(user)).thenReturn(token);
 
         // Perform the login request and verify the response
@@ -82,32 +87,10 @@ public class UserAPITest {
                 .andExpect(content().string(token));
     }
 
-//    @Test
-//    public void testUserInfo() throws Exception {
-//        // Set up the authentication context to simulate a logged-in user
-//        Authentication authentication = new UsernamePasswordAuthenticationToken(user.getEmail(), user.getPassword());
-//        SecurityContextHolder.getContext().setAuthentication(authentication);
-//
-//        when(userRepository.findById(Mockito.anyString())).thenReturn(Optional.of(user));
-//        when(userRepository.findById("test@test.com")).thenReturn(Optional.of(user));
-//
-//
-//
-//        // Send a GET request to the /api/v1/userInfo endpoint
-//        MvcResult result = mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/userInfo"))
-//                .andReturn();
-//
-//        // Verify that the response status code is 200
-//        assertEquals(200, result.getResponse().getStatus());
-//
-//        // Parse the response body as a User object
-//        User actualUser = new ObjectMapper().readValue(result.getResponse().getContentAsString(), User.class);
-//
-//        // Verify that the user information in the response matches the expected user information
-//        assertEquals(user.getEmail(), actualUser.getEmail());
-//    //    assertEquals(user.getName(), actualUser.getName());
-//    //    assertEquals(user.getDateOfBirth(), actualUser.getDateOfBirth());
-//    }
+    
+
+
+
 
     private static String asJsonString(final Object obj) {
         try {

@@ -2,8 +2,7 @@ package com.gtbackend.gtbackend.service;
 
 import com.gtbackend.gtbackend.dao.UserRepository;
 import com.gtbackend.gtbackend.model.User;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -23,6 +22,8 @@ import java.util.Optional;
 public class UserService implements UserDetailsService {
 
     private UserRepository userRepository;
+    private Key jwtSecretKey = Keys.secretKeyFor(SignatureAlgorithm.HS512);
+
 
     @Value("${jwt.secret}")
     private String jwtSecret;
@@ -64,13 +65,23 @@ public class UserService implements UserDetailsService {
     public String generateToken(User user) {
         Date now = new Date();
         Date expiryDate = Date.from(ZonedDateTime.now().plusHours(8).toInstant());
-//        Key key = Keys.hmacShaKeyFor(jwtSecret.getBytes());
-        Key key = Keys.secretKeyFor(SignatureAlgorithm.HS512);
-        return Jwts.builder()
+        String token = Jwts.builder()
                 .setSubject(user.getEmail())
                 .setIssuedAt(now)
                 .setExpiration(expiryDate)
-                .signWith(key)
+                .signWith(jwtSecretKey)
                 .compact();
+        return "Bearer " + token;
+    }
+    public Claims decodeToken(String token) {
+        try {
+            Jws<Claims> jws = Jwts.parserBuilder()
+                    .setSigningKey(jwtSecretKey)
+                    .build()
+                    .parseClaimsJws(token);
+            return jws.getBody();
+        } catch (JwtException e) {
+            throw new JwtException("Invalid token", e);
+        }
     }
 }
