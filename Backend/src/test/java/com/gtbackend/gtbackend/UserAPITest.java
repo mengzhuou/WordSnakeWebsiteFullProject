@@ -27,7 +27,11 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
-import static org.mockito.Mockito.when;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
@@ -78,13 +82,6 @@ public class UserAPITest {
         when(userService.getUser(email)).thenReturn(Optional.of(user));
         //we need to generate this token for the requestBody
         when(jwtService.generateToken(user)).thenReturn(token);
-        // Perform the login request and verify the response
-//        mockMvc.perform(post("/api/v1/login")
-//                        .contentType(MediaType.APPLICATION_JSON)
-//                        .content(new ObjectMapper().writeValueAsString(requestBody)))
-//                .andExpect(status().isOk())
-//                .andExpect(content().string(token));
-
         MvcResult result = mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/login")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(new ObjectMapper().writeValueAsString(requestBody)))
@@ -92,18 +89,23 @@ public class UserAPITest {
                 .andReturn();
         generatedToken = result.getResponse().getContentAsString();
     }
-//    @Test
-//    public void testUserInfo() throws Exception {
-//        SecurityContextHolder.getContext().setAuthentication(
-//                new UsernamePasswordAuthenticationToken(user, null, new ArrayList<>()));
-//        String userEmail = jwtService.extractUsername(token);
-//        assertEquals(user.getEmail(), userEmail);
-//    }
-    private static String asJsonString(final Object obj) {
-        try {
-            return new com.fasterxml.jackson.databind.ObjectMapper().writeValueAsString(obj);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+
+    @Test
+    public void testGetUserEmailLoggedIn() throws Exception{
+        User user = new User();
+        user.setEmail("test@test.com");
+        Optional<User> optionalUser = Optional.of(user);
+        when(userService.getUser(anyString())).thenReturn(optionalUser);
+
+        when(jwtService.extractUsername(anyString())).thenReturn("test@test.com");
+
+        MvcResult result = mockMvc.perform(get("/api/v1/getUserEmail")
+                        .header("Authorization", "Bearer " + token))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        String responseBody = result.getResponse().getContentAsString();
+        assertThat(responseBody, is("test@test.com"));
+        verify(userService, times(1)).getUser("test@test.com");
     }
 }

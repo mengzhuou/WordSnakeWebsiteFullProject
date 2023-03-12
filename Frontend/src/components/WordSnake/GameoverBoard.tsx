@@ -58,6 +58,8 @@ class GameoverBoard extends React.Component<any, any>{
                 </div>
                 <p className="goTitle">Game Over</p>
                 <p className="scoreStyle">Your Score: {wordList.length}</p>
+                <p className="scoreStyle">Your Best Score: {bestScore}</p>
+
                 <div className="wordListStyle">
                     {Array.isArray(sortedWords) && sortedWords.map((word: string, index: number) => (
                         <li key={index}>{word}</li>

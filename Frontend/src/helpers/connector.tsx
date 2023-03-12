@@ -56,15 +56,6 @@ export async function getWordAndDef(inputWord: string): Promise<String[]>{
     return content.data;
 }
 
-export async function getWordAndDefTest(): Promise<String[]>{
-    let content = await client({
-        method: 'get',
-        url: url+"getWordAndDefTest",
-        withCredentials: true
-    });
-    return content.data;
-}
-
 export async function getRandomStart(): Promise<String>{
     let content = await client({
         method: 'get',
@@ -116,7 +107,7 @@ export async function getBestScore(){
         method: 'get',
         url: url+"getBestScore"
     });
-    return content;
+    return content.data;
 }
 
 

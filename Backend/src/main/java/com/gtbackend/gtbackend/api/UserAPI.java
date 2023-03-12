@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.naming.AuthenticationException;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
-import java.security.Principal;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 import java.util.Map;
@@ -44,22 +43,24 @@ public class UserAPI {
 
     @GetMapping("/getBestScore")
     @ResponseBody
-    public int getBestScore(Principal principal) {
-        if (principal != null){
-            String userEmail = principal.getName();
-            Optional<User> user = userService.getUser(userEmail);
-            if (!user.isPresent()) {
-                throw new IllegalArgumentException("User not found!");
-            }
-            Integer bestScore = userRepository.getBestScore(user.get().getUsername());
-            return bestScore;
-        }
-        else
-        {
-            System.out.print("nuts");
-            return -1;
+    public int getBestScore() {
+        ResponseEntity<String> userEmailResponse = getUserEmail();
+        if (userEmailResponse.getStatusCode().is2xxSuccessful()) {
+            String userEmail = userEmailResponse.getBody();
+            Integer bestScore = userRepository.getBestScore(userEmail);
+            return bestScore != null ? bestScore : 0;
+        } else {
+            return 0;
         }
     }
+
+//    @GetMapping("/setBestScore")
+//    @ResponseBody
+//    public int setBestScore() {
+//        ResponseEntity<String> user = getUserEmail();
+//        Integer bestScore = userRepository.getBestScore(user.toString());
+//        return bestScore;
+//    }
 
     @PostMapping("/logout")
     public void logout(HttpServletRequest request) throws ServletException {
@@ -109,6 +110,20 @@ public class UserAPI {
         }
     }
 
+    @RequestMapping("/getUserEmail")
+    public ResponseEntity<String> getUserEmail(){
+        String userEmail = jwtService.extractUsername(token);
+
+        Optional<User> user = userService.getUser(userEmail);
+        if (user.isPresent()){
+            User emailOnlyUser = new User();
+            emailOnlyUser.setEmail(user.get().getEmail());
+            return ResponseEntity.ok(emailOnlyUser.getEmail());
+        } else{
+            return ResponseEntity.notFound().build();
+        }
+    }
+
 //    @PostMapping("/updateBestScore")
 //    public void updateBestScore(Principal principal, @RequestParam int score){
 //        if (principal != null){
@@ -121,20 +136,4 @@ public class UserAPI {
 //        }
 //    }
 
-    //    @GetMapping("/getBestScore")
-//    public int getBestScore(Principal principal){
-//        String email = "";
-//        if (principal != null){
-//            email = principal.getName();
-//            Optional<User> user = userService.getUser(email);
-//            if (!user.isPresent()) {
-//                throw new IllegalArgumentException("User not found!");
-//            }
-//        }
-//        Integer bestScore = userRepository.getBestScore(email);
-//        if (bestScore == null){
-//            return 0;
-//        }
-//        return bestScore;
-//    }
 }
