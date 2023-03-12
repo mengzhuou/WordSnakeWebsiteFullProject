@@ -6,7 +6,6 @@ import com.gtbackend.gtbackend.dao.UserRepository;
 import com.gtbackend.gtbackend.model.User;
 import com.gtbackend.gtbackend.security.JwtService;
 import com.gtbackend.gtbackend.service.UserService;
-import io.jsonwebtoken.Claims;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -19,6 +18,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.time.LocalDate;
@@ -26,15 +27,13 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
 public class UserAPITest {
-    String token = "";
+    String token = "token";
+    String generatedToken = "";
 
     @Mock
     private UserRepository userRepository;
@@ -54,9 +53,6 @@ public class UserAPITest {
         passwordEncoder = new BCryptPasswordEncoder();
         UserAPI userAPI = new UserAPI(userService, passwordEncoder, jwtService);
         mockMvc = MockMvcBuilders.standaloneSetup(userAPI).build();
-        Claims claims = mock(Claims.class);
-        when(jwtService.generateToken(user)).thenReturn(token);
-
 
         user = new User(
                 "test@test.com",
@@ -83,18 +79,26 @@ public class UserAPITest {
         //we need to generate this token for the requestBody
         when(jwtService.generateToken(user)).thenReturn(token);
         // Perform the login request and verify the response
-        mockMvc.perform(post("/api/v1/login")
+//        mockMvc.perform(post("/api/v1/login")
+//                        .contentType(MediaType.APPLICATION_JSON)
+//                        .content(new ObjectMapper().writeValueAsString(requestBody)))
+//                .andExpect(status().isOk())
+//                .andExpect(content().string(token));
+
+        MvcResult result = mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/login")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(new ObjectMapper().writeValueAsString(requestBody)))
                 .andExpect(status().isOk())
-                .andExpect(content().string(token));
+                .andReturn();
+        generatedToken = result.getResponse().getContentAsString();
     }
-
-
-
-
-
-
+//    @Test
+//    public void testUserInfo() throws Exception {
+//        SecurityContextHolder.getContext().setAuthentication(
+//                new UsernamePasswordAuthenticationToken(user, null, new ArrayList<>()));
+//        String userEmail = jwtService.extractUsername(token);
+//        assertEquals(user.getEmail(), userEmail);
+//    }
     private static String asJsonString(final Object obj) {
         try {
             return new com.fasterxml.jackson.databind.ObjectMapper().writeValueAsString(obj);
@@ -102,30 +106,4 @@ public class UserAPITest {
             throw new RuntimeException(e);
         }
     }
-
-    //    @Test
-//    public void testLoginWithWrongPassword() throws Exception {
-//        Map<String, String> loginRequest = new HashMap<>();
-//        loginRequest.put("email", "test@test.com");
-//        loginRequest.put("password", "wrongPassword");
-////        MvcResult result = mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/login")
-////                        .content(asJsonString(loginRequest))
-////                        .contentType(MediaType.APPLICATION_JSON))
-////                .andReturn();
-//
-//        mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/login")
-//                        .content(asJsonString(loginRequest))
-//                        .contentType(MediaType.APPLICATION_JSON))
-//                .andExpect(status().isUnauthorized())
-//                .andExpect(result -> assertTrue(result.getResolvedException() instanceof NestedServletException))
-//                .andExpect(result -> {
-//                    Exception resolvedException = result.getResolvedException();
-//                    Throwable cause = resolvedException.getCause();
-//                    assertNotNull(cause);
-//                    assertTrue(cause instanceof BadCredentialsException);
-//                    assertEquals("Email or Password does not match our records.", cause.getMessage());
-//                });
-//
-//    }
-//
 }

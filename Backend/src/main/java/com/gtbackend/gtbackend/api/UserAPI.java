@@ -5,12 +5,10 @@ import com.gtbackend.gtbackend.model.Role;
 import com.gtbackend.gtbackend.model.User;
 import com.gtbackend.gtbackend.security.JwtService;
 import com.gtbackend.gtbackend.service.UserService;
-import io.jsonwebtoken.Claims;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
@@ -31,6 +29,7 @@ public class UserAPI {
     @Autowired
     private UserService userService;
     private PasswordEncoder passwordEncoder;
+    String token = "";
     @Autowired
     private JwtService jwtService;
     @Autowired
@@ -79,7 +78,7 @@ public class UserAPI {
         if (passwordEncoder.matches(password, usr.getPassword())) {
             SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(usr.getUsername(),
             usr.getPassword()));
-            String token = jwtService.generateToken(usr);
+            token = jwtService.generateToken(usr);
             return ResponseEntity.ok(token);
         } else {
             throw new BadCredentialsException("Email or Password does not match our records.");
@@ -99,9 +98,8 @@ public class UserAPI {
     }
 
     @RequestMapping("/userInfo")
-    public ResponseEntity<User> userInfo(Authentication authentication, @RequestParam("token") String token){
-        Claims claims = jwtService.decodeToken(token);
-        String userEmail = claims.getSubject();
+    public ResponseEntity<User> userInfo(){
+        String userEmail = jwtService.extractUsername(token);
 
         Optional<User> user = userService.getUser(userEmail);
         if (user.isPresent()){

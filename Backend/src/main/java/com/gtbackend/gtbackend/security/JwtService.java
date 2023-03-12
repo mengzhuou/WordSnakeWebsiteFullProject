@@ -33,7 +33,7 @@ public class JwtService {
                 .setExpiration(expiryDate)
                 .signWith(jwtSecretKey)
                 .compact();
-        return "Bearer " + token;
+        return token;
     }
 
     public boolean validateToken(String token, UserDetails userDetails) {
@@ -70,17 +70,5 @@ public class JwtService {
     public List<String> extractRoles(String token) {
         Claims claims = extractAllClaims(token);
         return (List<String>) claims.get("roles");
-    }
-
-    public Claims decodeToken(String token) {
-        try {
-            Jws<Claims> jws = Jwts.parserBuilder()
-                    .setSigningKey(jwtSecretKey)
-                    .build()
-                    .parseClaimsJws(token);
-            return jws.getBody();
-        } catch (JwtException e) {
-            throw new JwtException("Invalid token", e);
-        }
     }
 }
