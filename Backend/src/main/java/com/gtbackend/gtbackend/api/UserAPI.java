@@ -41,35 +41,6 @@ public class UserAPI {
         this.jwtService = jwtService;
     }
 
-    @GetMapping("/getBestScore")
-    @ResponseBody
-    public int getBestScore() {
-        ResponseEntity<String> userEmailResponse = getUserEmail();
-        if (userEmailResponse.getStatusCode().is2xxSuccessful()) {
-            String userEmail = userEmailResponse.getBody();
-            Integer bestScore = userRepository.getBestScore(userEmail);
-            return bestScore != null ? bestScore : 0;
-        } else {
-            return 0;
-        }
-    }
-
-    @GetMapping("/updateBestScore")
-    @ResponseBody
-    public int updateBestScore(@RequestParam int currentScore) {
-        ResponseEntity<String> userEmailResponse = getUserEmail();
-        if (userEmailResponse.getStatusCode().is2xxSuccessful()) {
-            String userEmail = userEmailResponse.getBody();
-            Integer previousBestScore = getBestScore();
-            if (previousBestScore < currentScore) {
-                userRepository.updateBestScore(userEmail, currentScore);
-                return currentScore;
-            };
-            return previousBestScore;
-        }
-        return -1;
-    }
-
     @PostMapping("/logout")
     public void logout(HttpServletRequest request) throws ServletException {
         request.logout();
@@ -130,5 +101,39 @@ public class UserAPI {
         } else{
             return ResponseEntity.notFound().build();
         }
+    }
+
+    @GetMapping("/getBestScore")
+    @ResponseBody
+    public int getBestScore() {
+        ResponseEntity<String> userEmailResponse = getUserEmail();
+        if (userEmailResponse.getStatusCode().is2xxSuccessful()) {
+            String userEmail = userEmailResponse.getBody();
+            Integer bestScore = userRepository.getBestScore(userEmail);
+            return bestScore != null ? bestScore : 0;
+        } else {
+            return 0;
+        }
+    }
+
+    @GetMapping("/updateBestScore")
+    @ResponseBody
+    public int updateBestScore(@RequestParam int currentScore) {
+        ResponseEntity<String> userEmailResponse = getUserEmail();
+        if (userEmailResponse.getStatusCode().is2xxSuccessful()) {
+            String userEmail = userEmailResponse.getBody();
+            Integer previousBestScore = getBestScore();
+            if (previousBestScore < currentScore) {
+                userRepository.updateBestScore(userEmail, currentScore);
+                return currentScore;
+            };
+            return previousBestScore;
+        }
+        return -1;
+    }
+
+    @GetMapping("/getNumOfUsers")
+    public int getNumOfUsers(){
+        return userRepository.numOfUsers();
     }
 }

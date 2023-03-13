@@ -18,4 +18,7 @@ public interface UserRepository extends JpaRepository<User, String> {
     @Transactional
     @Query("UPDATE User u SET u.bestScore = :score WHERE u.email = :email")
     void updateBestScore(@Param("email") String email, @Param("score") int score);
+
+    @Query("SELECT count(*) FROM User")
+    Integer numOfUsers();
 }
