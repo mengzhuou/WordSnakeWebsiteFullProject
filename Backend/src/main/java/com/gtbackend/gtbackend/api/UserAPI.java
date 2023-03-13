@@ -3,6 +3,7 @@ package com.gtbackend.gtbackend.api;
 import com.gtbackend.gtbackend.dao.UserRepository;
 import com.gtbackend.gtbackend.model.Role;
 import com.gtbackend.gtbackend.model.User;
+import com.gtbackend.gtbackend.security.JwtService;
 import com.gtbackend.gtbackend.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -15,11 +16,9 @@ import org.springframework.web.bind.annotation.*;
 import javax.naming.AuthenticationException;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
-import java.security.Principal;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 import java.util.Map;
-import java.util.NoSuchElementException;
 import java.util.Optional;
 
 @RestController
@@ -29,33 +28,17 @@ public class UserAPI {
     @Autowired
     private UserService userService;
     private PasswordEncoder passwordEncoder;
-
+    String token = "";
+    @Autowired
+    private JwtService jwtService;
     @Autowired
     private UserRepository userRepository;
 
     @Autowired
-    public UserAPI(UserService userService, PasswordEncoder passwordEncoder) {
+    public UserAPI(UserService userService, PasswordEncoder passwordEncoder, JwtService jwtService) {
         this.userService = userService;
         this.passwordEncoder = passwordEncoder;
-    }
-
-    @GetMapping("/getBestScore")
-    @ResponseBody
-    public int getBestScore(Principal principal) {
-        if (principal != null){
-            String userEmail = principal.getName();
-            Optional<User> user = userService.getUser(userEmail);
-            if (!user.isPresent()) {
-                throw new IllegalArgumentException("User not found!");
-            }
-            Integer bestScore = userRepository.getBestScore(user.get().getUsername());
-            return bestScore;
-        }
-        else
-        {
-            System.out.print("nuts");
-            return -1;
-        }
+        this.jwtService = jwtService;
     }
 
     @PostMapping("/logout")
@@ -64,18 +47,20 @@ public class UserAPI {
     }
 
     @PostMapping("/login")
-    public void login(@RequestBody Map<String, String> body) throws AuthenticationException, NoSuchElementException {
+    public ResponseEntity<String> login(@RequestBody Map<String, String> body) throws AuthenticationException, BadCredentialsException {
         String email = body.get("email");
         String password = body.get("password");
         Optional<User> tmp = userService.getUser(email);
         User usr = tmp.get();
-        if (tmp.isEmpty()){
+        if (tmp.isEmpty()) {
             throw new BadCredentialsException("Please enter your email or password.");
         }
-        if(passwordEncoder.matches(password, usr.getPassword())){
+        if (passwordEncoder.matches(password, usr.getPassword())) {
             SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(usr.getUsername(),
-                    usr.getPassword()));
-        }else{
+            usr.getPassword()));
+            token = jwtService.generateToken(usr);
+            return ResponseEntity.ok(token);
+        } else {
             throw new BadCredentialsException("Email or Password does not match our records.");
         }
     }
@@ -92,43 +77,63 @@ public class UserAPI {
         userService.addUser(user);
     }
 
-    @GetMapping("/userInfo")
-    public ResponseEntity<User> userInfo(Principal principal){
-        String userEmail = principal.getName();
-        Optional<User> user = userRepository.findById(userEmail);
-        if (user == null) {
-            return ResponseEntity.notFound().build();
-        } else {
+    @RequestMapping("/userInfo")
+    public ResponseEntity<User> userInfo(){
+        String userEmail = jwtService.extractUsername(token);
+
+        Optional<User> user = userService.getUser(userEmail);
+        if (user.isPresent()){
             return ResponseEntity.ok(user.get());
+        } else{
+            return ResponseEntity.notFound().build();
         }
     }
 
-//    @PostMapping("/updateBestScore")
-//    public void updateBestScore(Principal principal, @RequestParam int score){
-//        if (principal != null){
-//            String email = principal.getName();
-//            Optional<User> user = userService.getUser(email);
-//            if (!user.isPresent()) {
-//                throw new IllegalArgumentException("User not found!");
-//            }
-//            userService.updateBestScore(email, score);
-//        }
-//    }
+    @RequestMapping("/getUserEmail")
+    public ResponseEntity<String> getUserEmail(){
+        String userEmail = jwtService.extractUsername(token);
 
-    //    @GetMapping("/getBestScore")
-//    public int getBestScore(Principal principal){
-//        String email = "";
-//        if (principal != null){
-//            email = principal.getName();
-//            Optional<User> user = userService.getUser(email);
-//            if (!user.isPresent()) {
-//                throw new IllegalArgumentException("User not found!");
-//            }
-//        }
-//        Integer bestScore = userRepository.getBestScore(email);
-//        if (bestScore == null){
-//            return 0;
-//        }
-//        return bestScore;
-//    }
+        Optional<User> user = userService.getUser(userEmail);
+        if (user.isPresent()){
+            User emailOnlyUser = new User();
+            emailOnlyUser.setEmail(user.get().getEmail());
+            return ResponseEntity.ok(emailOnlyUser.getEmail());
+        } else{
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @GetMapping("/getBestScore")
+    @ResponseBody
+    public int getBestScore() {
+        ResponseEntity<String> userEmailResponse = getUserEmail();
+        if (userEmailResponse.getStatusCode().is2xxSuccessful()) {
+            String userEmail = userEmailResponse.getBody();
+            Integer bestScore = userRepository.getBestScore(userEmail);
+            return bestScore != null ? bestScore : 0;
+        } else {
+            return 0;
+        }
+    }
+
+    @GetMapping("/updateBestScore")
+    @ResponseBody
+    public int updateBestScore(@RequestParam int currentScore) {
+        ResponseEntity<String> userEmailResponse = getUserEmail();
+        if (userEmailResponse.getStatusCode().is2xxSuccessful()) {
+            String userEmail = userEmailResponse.getBody();
+            Integer previousBestScore = getBestScore();
+            if (previousBestScore < currentScore) {
+                userRepository.updateBestScore(userEmail, currentScore);
+                return currentScore;
+            };
+            return previousBestScore;
+        }
+        return -1;
+    }
+
+    @GetMapping("/getNumOfUsers")
+    public int getNumOfUsers(){
+        return userRepository.numOfUsers();
+    }
 }

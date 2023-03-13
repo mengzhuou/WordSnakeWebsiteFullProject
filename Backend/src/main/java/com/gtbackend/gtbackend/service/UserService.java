@@ -2,12 +2,14 @@ package com.gtbackend.gtbackend.service;
 
 import com.gtbackend.gtbackend.dao.UserRepository;
 import com.gtbackend.gtbackend.model.User;
+import com.gtbackend.gtbackend.security.JwtService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+
 import java.util.List;
 import java.util.Optional;
 
@@ -15,9 +17,12 @@ import java.util.Optional;
 public class UserService implements UserDetailsService {
 
     private UserRepository userRepository;
+    private JwtService jwtService;
+
     @Autowired
-    public UserService(UserRepository userRepository) {
+    public UserService(UserRepository userRepository, JwtService jwtService) {
         this.userRepository = userRepository;
+        this.jwtService = jwtService;
     }
 
     public Optional<User> getUser(String email){

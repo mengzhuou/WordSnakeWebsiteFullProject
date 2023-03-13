@@ -1,7 +1,7 @@
 import "./GameoverBoard.css";
 
 import { withFuncProps } from "../withFuncProps";
-import { logout, getBestScore } from '../../helpers/connector';
+import { logout, getBestScore, updateBestScore } from '../../helpers/connector';
 import React from "react";
 
 class GameoverBoard extends React.Component<any, any>{
@@ -33,7 +33,9 @@ class GameoverBoard extends React.Component<any, any>{
     }
 
     bestScore = async() => {
-        getBestScore().then((response) => {
+        const { wordList } = this.state;
+
+        updateBestScore(wordList.length).then((response) => {
             this.setState({ bestScore: response })
         })
         .catch((error) => {
@@ -58,6 +60,8 @@ class GameoverBoard extends React.Component<any, any>{
                 </div>
                 <p className="goTitle">Game Over</p>
                 <p className="scoreStyle">Your Score: {wordList.length}</p>
+                <p className="scoreStyle">Your Best Score: {bestScore}</p>
+
                 <div className="wordListStyle">
                     {Array.isArray(sortedWords) && sortedWords.map((word: string, index: number) => (
                         <li key={index}>{word}</li>

@@ -1,39 +1,39 @@
 package com.gtbackend.gtbackend.security;
 
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import com.gtbackend.gtbackend.model.User;
+import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.security.Key;
+import java.time.ZonedDateTime;
 import java.util.Date;
 import java.util.List;
 import java.util.function.Function;
 
 @Service
 public class JwtService {
-
     @Value("${jwt.secret}")
-    private String secret;
+    private String jwtSecret;
+    private Key jwtSecretKey = Keys.secretKeyFor(SignatureAlgorithm.HS512);
 
-    @Value("${jwt.expiration}")
-    private Long expiration;
 
-    private Key getSigningKey() {
-        byte[] keyBytes = secret.getBytes();
-        return Keys.hmacShaKeyFor(keyBytes);
+    public void setJwtSecret(String jwtSecret) {
+        this.jwtSecret = jwtSecret;
     }
 
-    public String generateToken(UserDetails userDetails) {
-        return Jwts.builder()
-                .setSubject(userDetails.getUsername())
-                .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + expiration * 1000))
-                .signWith(getSigningKey(), SignatureAlgorithm.HS512)
+    public String generateToken(User user) {
+        Date now = new Date();
+        Date expiryDate = Date.from(ZonedDateTime.now().plusHours(8).toInstant());
+        String token = Jwts.builder()
+                .setSubject(user.getEmail())
+                .setIssuedAt(now)
+                .setExpiration(expiryDate)
+                .signWith(jwtSecretKey)
                 .compact();
+        return token;
     }
 
     public boolean validateToken(String token, UserDetails userDetails) {
@@ -48,7 +48,7 @@ public class JwtService {
 
     private Claims extractAllClaims(String token) {
         return Jwts.parserBuilder()
-                .setSigningKey(getSigningKey())
+                .setSigningKey(jwtSecretKey)
                 .build()
                 .parseClaimsJws(token)
                 .getBody();
@@ -71,6 +71,4 @@ public class JwtService {
         Claims claims = extractAllClaims(token);
         return (List<String>) claims.get("roles");
     }
-
-
 }
