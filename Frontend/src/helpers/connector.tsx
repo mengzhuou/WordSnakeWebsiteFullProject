@@ -110,5 +110,16 @@ export async function getBestScore(){
     return content.data;
 }
 
+export async function updateBestScore(currentScore: number): Promise<number[][]>{
+    let content = await client({
+        method: 'get',
+        url: url+"updateBestScore",
+        params: {
+            currentScore: currentScore
+        },
+    });
+    return content.data;
+}
+
 
 

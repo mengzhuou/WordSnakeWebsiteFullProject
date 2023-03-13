@@ -54,13 +54,21 @@ public class UserAPI {
         }
     }
 
-//    @GetMapping("/setBestScore")
-//    @ResponseBody
-//    public int setBestScore() {
-//        ResponseEntity<String> user = getUserEmail();
-//        Integer bestScore = userRepository.getBestScore(user.toString());
-//        return bestScore;
-//    }
+    @GetMapping("/updateBestScore")
+    @ResponseBody
+    public int updateBestScore(@RequestParam int currentScore) {
+        ResponseEntity<String> userEmailResponse = getUserEmail();
+        if (userEmailResponse.getStatusCode().is2xxSuccessful()) {
+            String userEmail = userEmailResponse.getBody();
+            Integer previousBestScore = getBestScore();
+            if (previousBestScore < currentScore) {
+                userRepository.updateBestScore(userEmail, currentScore);
+                return currentScore;
+            };
+            return previousBestScore;
+        }
+        return -1;
+    }
 
     @PostMapping("/logout")
     public void logout(HttpServletRequest request) throws ServletException {
@@ -123,17 +131,4 @@ public class UserAPI {
             return ResponseEntity.notFound().build();
         }
     }
-
-//    @PostMapping("/updateBestScore")
-//    public void updateBestScore(Principal principal, @RequestParam int score){
-//        if (principal != null){
-//            String email = principal.getName();
-//            Optional<User> user = userService.getUser(email);
-//            if (!user.isPresent()) {
-//                throw new IllegalArgumentException("User not found!");
-//            }
-//            userService.updateBestScore(email, score);
-//        }
-//    }
-
 }
