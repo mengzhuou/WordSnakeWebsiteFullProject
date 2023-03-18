@@ -34,6 +34,7 @@ class ClassicMode extends React.Component<any, any>{
                 if (inputValue[0] == lastLetter) {
                     const words = await getLetterFromPreviousWord(inputValue);
                     let wordList = this.state.wordList.concat(inputValue);
+                    this.handleCloseHint();
                     
                     this.setState({
                         lastWord: lastWord,
@@ -122,11 +123,21 @@ class ClassicMode extends React.Component<any, any>{
     updateGameState = async (isGameStarted: boolean, isGameOver: boolean) => {
         if (isGameStarted) {
             const fWord = await getRandomStart();
-            this.setState({ isGameStarted: true, isGameOver: false, wordList: this.state.wordList.concat(fWord), firstWord: fWord, lastLetter: fWord });
+            this.setState({ 
+                isGameStarted: true, isGameOver: false, 
+                wordList: this.state.wordList.concat(fWord), 
+                firstWord: fWord, 
+                lastLetter: fWord 
+            });
         }
 
         if (isGameOver) {
-            this.setState({ isGameStarted: false, isGameOver: true, wordList: [], errMessage: "" })
+            this.setState({ 
+                isGameStarted: false, 
+                isGameOver: true, 
+                wordList: [], 
+                errMessage: "" 
+            })
             this.props.navigate("/ResultListFunc", {
                 state: {
                   wordList: this.state.history
@@ -166,17 +177,17 @@ class ClassicMode extends React.Component<any, any>{
                     <button className="topnavButton" onClick={this.menuNav}>Menu</button>
                     <button className="topnavButton" onClick={this.pagelogout}>Logout</button>
                 </div>
-                <div className="sidenav" hidden={isGameStarted ? false : true} >
-                    <button className="sidenavButton" onClick={this.handleShowWords} hidden={isGameStarted ? false : true}>{showWords ? 'Hide Words' : 'Show Words'}</button>
-
-                    <button className="sidenavButton" onClick={this.handleGiveHints} hidden={isGameStarted && !showHints ? false : true}>Hint</button>
+                {this.state.isGameStarted ? (
+                    <div className="sidenav">
+                    <button className="sidenavButton" onClick={this.handleShowWords}>{showWords ? 'Hide Words' : 'Show Words'}</button>
+                    <button className="sidenavButton" onClick={this.handleGiveHints}>Hint</button>
                     {showHints && <HintPopup hint={printHints} onClose={this.handleCloseHint} />}
-
-
                 </div>
+                ) : null}
+            
                 <h1 className="wsTitle">Word Snake</h1>
                 {isGameStarted ? (
-                    <CountdownTimer duration={8} onTimeUp={this.handleTimeUp} />
+                    <CountdownTimer duration={10000} onTimeUp={this.handleTimeUp} />
                 ) : (
                     <button className="topnavButton" onClick={() => this.updateGameState(true, false)} hidden={isGameStarted ? true : false}>Start Game</button>
                 )}
