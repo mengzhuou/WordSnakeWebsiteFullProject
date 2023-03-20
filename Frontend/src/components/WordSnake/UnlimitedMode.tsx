@@ -4,10 +4,10 @@ import { withFuncProps } from "../withFuncProps";
 import { logout, getLetterFromPreviousWord, getRandomStart, getHintWordAndDef } from '../../helpers/connector';
 import { TextField, FormHelperText } from "@mui/material";
 import React from "react";
-import CountdownTimer from "./CountdownTimer";
+import UnlimitedCountdownTimer from "./UnlimitedCountdownTimer";
 import HintPopup from "./HintPopupProps";
 
-class ClassicMode extends React.Component<any, any>{
+class UnlimitedMode extends React.Component<any, any>{
     constructor(props: any) {
         super(props);
         this.state = {
@@ -19,7 +19,7 @@ class ClassicMode extends React.Component<any, any>{
             inputValue: '',
             storedInputValue: '', inputValidString: '',
             errMessage: '', 
-            timeLeft: 60, wordList: [], history: []
+            timeLeft: 10, wordList: [], history: []
         };
         this.menuNav = this.menuNav.bind(this);
     }
@@ -35,13 +35,14 @@ class ClassicMode extends React.Component<any, any>{
                     const words = await getLetterFromPreviousWord(inputValue);
                     let wordList = this.state.wordList.concat(inputValue);
                     this.handleCloseHint();
-                    
+                    this.handleTimeTick();
                     this.setState({
                         lastWord: lastWord,
                         errMessage: '',
                         firstWord: words,
                         ForceUpdateNow: false,
                         wordList: wordList,
+                        // timeLeft: this.state.timeLeft + 10
                     });
                     let hisArr = this.state.history.concat(inputValue);
                     const lastWordForHint = hisArr[hisArr.length - 1]
@@ -59,7 +60,7 @@ class ClassicMode extends React.Component<any, any>{
         
     };
 
-    handleTimeUp = () => {
+    handleEndGame = () => {
         this.updateGameState(false, true)
     };
 
@@ -138,7 +139,7 @@ class ClassicMode extends React.Component<any, any>{
                 wordList: [], 
                 errMessage: "" 
             })
-            this.props.navigate("/ResultListFunc", {
+            this.props.navigate("/UnlimitedResultListFunc", {
                 state: {
                   wordList: this.state.history
                 }
@@ -164,6 +165,15 @@ class ClassicMode extends React.Component<any, any>{
     handleCloseHint = () => {
         this.setState({ showHints: false, printHints: []})
     }
+
+    componentDidUpdate(){
+        console.log(this.state.timeLeft); // check if the default value is being set correctly
+    }
+
+    handleTimeTick = () => {
+        const newTimeLeft = this.state.timeLeft + 10;
+        this.setState({ timeLeft: newTimeLeft })
+    }
     render() {
         const { firstWord, inputValue, wordList, errMessage, 
             isGameStarted, showWords, printHints, showHints,
@@ -186,9 +196,9 @@ class ClassicMode extends React.Component<any, any>{
                 </div>
                 ) : null}
             
-                <h1 className="wsTitle">Word Snake</h1>
+                <h1 className="wsTitle">Unlimited Word Snake</h1>
                 {isGameStarted ? (
-                    <CountdownTimer duration={60} onTimeUp={this.handleTimeUp}/>
+                    <UnlimitedCountdownTimer duration={timeLeft} onTimeUp={this.handleEndGame} onTimeTick={this.handleTimeTick}/>
                 ) : (
                     <button className="topnavButton" onClick={() => this.updateGameState(true, false)} hidden={isGameStarted ? true : false}>Start Game</button>
                 )}
@@ -224,4 +234,4 @@ class ClassicMode extends React.Component<any, any>{
 }
 
 
-export default withFuncProps(ClassicMode);
+export default withFuncProps(UnlimitedMode);

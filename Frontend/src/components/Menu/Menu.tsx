@@ -30,6 +30,9 @@ class Menu extends React.Component<any,any>{
     classicModeNav = () => {
         this.props.navigate("/ClassicMode")
     }
+    unlimitedModeNav = () => {
+        this.props.navigate("/UnlimitedMode")
+    }
     displayUserNum = async () => {
         const num = await getNumOfUsers();
         this.setState({ totalUserNum: num })
@@ -45,6 +48,9 @@ class Menu extends React.Component<any,any>{
                 <div className="buttonContainer">
                     <div className="buttonRow">
                         <button className="menuButton" onClick={this.defModeNav}>Definition Mode</button>
+                    </div>
+                    <div className="buttonRow">
+                        <button className="menuButton" onClick={this.unlimitedModeNav}>Unlimited Mode</button>
                     </div>
                     <div className="buttonRow">
                         <button className="menuButton" onClick={this.classicModeNav}>Classic Mode</button>

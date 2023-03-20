@@ -7,6 +7,10 @@ import Main from "./components/Main/Main";
 import ClassicMode from "./components/WordSnake/ClassicMode";
 import CountdownTimer from "./components/WordSnake/CountdownTimer";
 import GameoverBoard from "./components/WordSnake/GameoverBoard";
+import UnlimitedGameoverBoard from "./components/WordSnake/UnlimitedGameoverBoard";
+import UnlimitedResultListFunc from "./components/WordSnake/UnlimitedResultListFunc";
+import UnlimitedCountdownTimer from "./components/WordSnake/UnlimitedCountdownTimer";
+import UnlimitedMode from "./components/WordSnake/UnlimitedMode";
 import ResultListFunc from "./components/WordSnake/ResultListFunc";
 import DefinitionMode from "./components/WordDefinition/DefinitionMode";
 
@@ -50,13 +54,26 @@ class App extends React.Component<any,any>{
           <Route path="/Menu" element={<Menu/>}/>
           <Route path="/ClassicMode" element={<ClassicMode/>}/>
           <Route path="/GameoverBoard" element={<GameoverBoard/>}/>
+          <Route path="/UnlimitedGameoverBoard" element={<UnlimitedGameoverBoard/>}/>
+          <Route path="/UnlimitedMode" element={<UnlimitedMode/>}/>
           <Route path="/CountdownTimer" element={
             <CountdownTimer
-              duration={90}
+              duration={60}
               onTimeUp={ ()=>console.log('Time is up!') }
             />
           }/>
+          <Route path="/UnlimitedCountdownTimer" element={
+            <UnlimitedCountdownTimer
+              duration={10}
+              onTimeUp={ ()=>console.log('Time is up!') }
+              onTimeTick={timeLeft => console.log('tick tick!', timeLeft)}
+            />
+          }/>
           <Route path="/ResultListFunc" element={<ResultListFunc
+              wordList={this.props.wordList}
+          />}/>
+
+          <Route path="/UnlimitedResultListFunc" element={<UnlimitedResultListFunc
               wordList={this.props.wordList}
           />}/>
           
