@@ -169,12 +169,9 @@ class UnlimitedMode extends React.Component<any, any>{
     }
 
     componentDidUpdate(){
-        console.log("is updated? ", this.state.isTimerUpdated); 
         if (this.state.isTimerUpdated === true) {
             this.setState({isTimerUpdated: false});
         }
-
-        console.log("is updated after set to false? ", this.state.isTimerUpdated); 
     }
     render() {
         const { firstWord, inputValue, wordList, errMessage, 
@@ -189,7 +186,6 @@ class UnlimitedMode extends React.Component<any, any>{
               duration={timeLeft}
               onTimeUp={this.handleEndGame}
               isTimerUpdated ={isTimerUpdated}
-
             />
           );
 
