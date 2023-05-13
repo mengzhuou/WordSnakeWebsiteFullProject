@@ -1,12 +1,12 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 
 type Props = {
   duration: number;
   onTimeUp: () => void;
-  onTimeTick: (timeLeft: number) => void; //update every time the timer is running
+  isTimerUpdated: boolean;
 };
 
-const UnlimitedCountdownTimer: React.FC<Props> = ({ duration, onTimeUp, onTimeTick }) => {
+const UnlimitedCountdownTimer: React.FC<Props> = ({ duration, onTimeUp, isTimerUpdated }) => {
   const [timeLeft, setTimeLeft] = useState(duration);
 
   useEffect(() => {
@@ -20,12 +20,16 @@ const UnlimitedCountdownTimer: React.FC<Props> = ({ duration, onTimeUp, onTimeTi
   }, []);
 
   useEffect(() => {
-    onTimeTick(timeLeft);
-
     if (timeLeft === 0) {
       onTimeUp();
     }
   }, [timeLeft]);
+
+  useEffect(() => {
+    if (isTimerUpdated) {
+      setTimeLeft(timeLeft => timeLeft + 5);
+    }
+  }, [isTimerUpdated]);
 
   const formatTime = (time: number) => {
     const minutes = Math.floor(time / 60);

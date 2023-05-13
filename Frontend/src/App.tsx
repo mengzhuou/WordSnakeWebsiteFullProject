@@ -66,7 +66,7 @@ class App extends React.Component<any,any>{
             <UnlimitedCountdownTimer
               duration={10}
               onTimeUp={ ()=>console.log('Time is up!') }
-              onTimeTick={timeLeft => console.log('tick tick!', timeLeft)}
+              isTimerUpdated = {false}
             />
           }/>
           <Route path="/ResultListFunc" element={<ResultListFunc

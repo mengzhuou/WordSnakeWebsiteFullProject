@@ -14,6 +14,7 @@ class UnlimitedMode extends React.Component<any, any>{
             isGameStarted: false,
             ForceUpdateNow: false, 
             isGameOver: false, showWords: true, 
+            isTimerUpdated: false,
             printHints: [], showHints: false,
             lastWord:"", lastLetter: "", firstWord: "", 
             inputValue: '',
@@ -35,27 +36,28 @@ class UnlimitedMode extends React.Component<any, any>{
                     const words = await getLetterFromPreviousWord(inputValue);
                     let wordList = this.state.wordList.concat(inputValue);
                     this.handleCloseHint();
-                    this.handleTimeTick();
                     this.setState({
                         lastWord: lastWord,
                         errMessage: '',
                         firstWord: words,
                         ForceUpdateNow: false,
                         wordList: wordList,
-                        // timeLeft: this.state.timeLeft + 10
+                        timeLeft: this.state.timeLeft,
+                        isTimerUpdated: true
                     });
+
                     let hisArr = this.state.history.concat(inputValue);
                     const lastWordForHint = hisArr[hisArr.length - 1]
                     const lastLetter = lastWordForHint[lastWordForHint.length - 1]
                     
                     this.setState({history: hisArr, lastLetter: lastLetter})
                 } else {
-                    this.setState({ errMessage: `The word must start with '${lastLetter}'` })
+                    this.setState({ isTimerUpdated: false, errMessage: `The word must start with '${lastLetter}'` })
                 }
             }
         } catch (error) {
             console.error("Error fetching word in the database:", error);
-            this.setState({ errMessage: 'The word does not exist. Please enter a valid word.' });
+            this.setState({ isTimerUpdated: false, errMessage: 'The word does not exist. Please enter a valid word.' });
         }
         
     };
@@ -167,20 +169,30 @@ class UnlimitedMode extends React.Component<any, any>{
     }
 
     componentDidUpdate(){
-        console.log(this.state.timeLeft); // check if the default value is being set correctly
-    }
+        console.log("is updated? ", this.state.isTimerUpdated); 
+        if (this.state.isTimerUpdated === true) {
+            this.setState({isTimerUpdated: false});
+        }
 
-    handleTimeTick = () => {
-        const newTimeLeft = this.state.timeLeft + 10;
-        this.setState({ timeLeft: newTimeLeft })
+        console.log("is updated after set to false? ", this.state.isTimerUpdated); 
     }
     render() {
         const { firstWord, inputValue, wordList, errMessage, 
             isGameStarted, showWords, printHints, showHints,
-            timeLeft
+            timeLeft, isTimerUpdated
         } = this.state;
         const wordListWithoutFirst = wordList.slice(1);
         const sortedWords = [...wordListWithoutFirst].sort();
+
+        const countdownTimer = (
+            <UnlimitedCountdownTimer
+              duration={timeLeft}
+              onTimeUp={this.handleEndGame}
+              isTimerUpdated ={isTimerUpdated}
+
+            />
+          );
+
         return (
             <div className="App">
                 <div className="topnav">
@@ -197,8 +209,8 @@ class UnlimitedMode extends React.Component<any, any>{
                 ) : null}
             
                 <h1 className="wsTitle">Unlimited Word Snake</h1>
-                {isGameStarted ? (
-                    <UnlimitedCountdownTimer duration={timeLeft} onTimeUp={this.handleEndGame} onTimeTick={this.handleTimeTick}/>
+                {isGameStarted? (
+                    countdownTimer
                 ) : (
                     <button className="topnavButton" onClick={() => this.updateGameState(true, false)} hidden={isGameStarted ? true : false}>Start Game</button>
                 )}
