@@ -4,22 +4,23 @@ import { withFuncProps } from "../withFuncProps";
 import { logout, getLetterFromPreviousWord, getRandomStart, getHintWordAndDef } from '../../helpers/connector';
 import { TextField, FormHelperText } from "@mui/material";
 import React from "react";
-import CountdownTimer from "./CountdownTimer";
+import UnlimitedCountdownTimer from "./UnlimitedCountdownTimer";
 import HintPopup from "./HintPopupProps";
 
-class ClassicMode extends React.Component<any, any>{
+class UnlimitedMode extends React.Component<any, any>{
     constructor(props: any) {
         super(props);
         this.state = {
             isGameStarted: false,
             ForceUpdateNow: false, 
             isGameOver: false, showWords: true, 
+            isTimerUpdated: false,
             printHints: [], showHints: false,
             lastWord:"", lastLetter: "", firstWord: "", 
             inputValue: '',
             storedInputValue: '', inputValidString: '',
             errMessage: '', 
-            timeLeft: 60, wordList: [], history: []
+            timeLeft: 10, wordList: [], history: []
         };
         this.menuNav = this.menuNav.bind(this);
     }
@@ -35,31 +36,33 @@ class ClassicMode extends React.Component<any, any>{
                     const words = await getLetterFromPreviousWord(inputValue);
                     let wordList = this.state.wordList.concat(inputValue);
                     this.handleCloseHint();
-                    
                     this.setState({
                         lastWord: lastWord,
                         errMessage: '',
                         firstWord: words,
                         ForceUpdateNow: false,
                         wordList: wordList,
+                        timeLeft: this.state.timeLeft,
+                        isTimerUpdated: true
                     });
+
                     let hisArr = this.state.history.concat(inputValue);
                     const lastWordForHint = hisArr[hisArr.length - 1]
                     const lastLetter = lastWordForHint[lastWordForHint.length - 1]
                     
                     this.setState({history: hisArr, lastLetter: lastLetter})
                 } else {
-                    this.setState({ errMessage: `The word must start with '${lastLetter}'` })
+                    this.setState({ isTimerUpdated: false, errMessage: `The word must start with '${lastLetter}'` })
                 }
             }
         } catch (error) {
             console.error("Error fetching word in the database:", error);
-            this.setState({ errMessage: 'The word does not exist. Please enter a valid word.' });
+            this.setState({ isTimerUpdated: false, errMessage: 'The word does not exist. Please enter a valid word.' });
         }
         
     };
 
-    handleTimeUp = () => {
+    handleEndGame = () => {
         this.updateGameState(false, true)
     };
 
@@ -138,7 +141,7 @@ class ClassicMode extends React.Component<any, any>{
                 wordList: [], 
                 errMessage: "" 
             })
-            this.props.navigate("/ResultListFunc", {
+            this.props.navigate("/UnlimitedResultListFunc", {
                 state: {
                   wordList: this.state.history
                 }
@@ -164,13 +167,32 @@ class ClassicMode extends React.Component<any, any>{
     handleCloseHint = () => {
         this.setState({ showHints: false, printHints: []})
     }
+
+    componentDidUpdate(){
+        console.log("is updated? ", this.state.isTimerUpdated); 
+        if (this.state.isTimerUpdated === true) {
+            this.setState({isTimerUpdated: false});
+        }
+
+        console.log("is updated after set to false? ", this.state.isTimerUpdated); 
+    }
     render() {
         const { firstWord, inputValue, wordList, errMessage, 
             isGameStarted, showWords, printHints, showHints,
-            timeLeft
+            timeLeft, isTimerUpdated
         } = this.state;
         const wordListWithoutFirst = wordList.slice(1);
         const sortedWords = [...wordListWithoutFirst].sort();
+
+        const countdownTimer = (
+            <UnlimitedCountdownTimer
+              duration={timeLeft}
+              onTimeUp={this.handleEndGame}
+              isTimerUpdated ={isTimerUpdated}
+
+            />
+          );
+
         return (
             <div className="App">
                 <div className="topnav">
@@ -186,9 +208,9 @@ class ClassicMode extends React.Component<any, any>{
                 </div>
                 ) : null}
             
-                <h1 className="wsTitle">Word Snake</h1>
-                {isGameStarted ? (
-                    <CountdownTimer duration={60} onTimeUp={this.handleTimeUp}/>
+                <h1 className="wsTitle">Unlimited Word Snake</h1>
+                {isGameStarted? (
+                    countdownTimer
                 ) : (
                     <button className="topnavButton" onClick={() => this.updateGameState(true, false)} hidden={isGameStarted ? true : false}>Start Game</button>
                 )}
@@ -224,4 +246,4 @@ class ClassicMode extends React.Component<any, any>{
 }
 
 
-export default withFuncProps(ClassicMode);
+export default withFuncProps(UnlimitedMode);

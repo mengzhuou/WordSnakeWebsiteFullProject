@@ -4,7 +4,7 @@ import { withFuncProps } from "../withFuncProps";
 import { logout, getBestScore, updateBestScore } from '../../helpers/connector';
 import React from "react";
 
-class GameoverBoard extends React.Component<any, any>{
+class UnlimitedGameoverBoard extends React.Component<any, any>{
     constructor(props: any) {
         super(props);
         this.state = {
@@ -19,7 +19,7 @@ class GameoverBoard extends React.Component<any, any>{
 
 
     reStart = () => {
-        this.props.navigate("/ClassicMode")
+        this.props.navigate("/UnlimitedMode")
     }
 
     menuNav = () => {
@@ -57,9 +57,9 @@ class GameoverBoard extends React.Component<any, any>{
                     <button className="topnavButton" onClick={this.menuNav}>Menu</button>
                     <button className="topnavButton" onClick={this.pagelogout}>Logout</button>
                 </div>
-                <p className="goTitle">Game Over</p>
-                <p className="scoreStyle">Your Score: {wordList.length}</p>
-                <p className="scoreStyle">Your Best Score: {bestScore}</p>
+                <p className="goTitle">Unlimited Mode Game Over</p>
+                {/* <p className="scoreStyle">Your Score: {wordList.length}</p>
+                <p className="scoreStyle">Your Best Score: {bestScore}</p> */}
 
                 <div className="wordListStyle">
                     {Array.isArray(sortedWords) && sortedWords.map((word: string, index: number) => (
@@ -72,4 +72,4 @@ class GameoverBoard extends React.Component<any, any>{
 }
 
 
-export default withFuncProps(GameoverBoard);
+export default withFuncProps(UnlimitedGameoverBoard);
