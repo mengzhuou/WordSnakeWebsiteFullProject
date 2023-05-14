@@ -46,7 +46,8 @@ const UnlimitedCountdownTimer: React.FC<Props> = ({ duration, onTimeUp, isTimerU
   return (
     <div className='countdownTimer'>
       {formatTime(timeLeft)}
-      <p className={`bonusMessage ${isMessageVisible ? '' : 'fade-out'}`}></p>
+      {isMessageVisible && <p className='bonusMessage'> 5 seconds bonus are added </p>}
+
     </div>
   );
 };
