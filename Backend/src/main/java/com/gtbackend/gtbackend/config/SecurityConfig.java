@@ -49,7 +49,7 @@ public class SecurityConfig {
                         "/api/v1/updateBestScore", "/api/v1/getBestScore",
                         "/api/v1/getWords", "/api/v1/getWordAndDef", "/api/v1/getRandomStart", "/api/v1/isWordExist",
                         "/api/v1/getLetterFromPreviousWord", "/api/v1/getHintWordAndDef",
-                        "/api/v1/getWordAndDefTest", "/api/v1/getDefTest", "/api/v1/isWordExistTest").permitAll()
+                        "/api/v1/getWordAndDefTest", "/api/v1/getDefTest", "/api/v1/isWordExistTest", "/api/v1/getScoreRank").permitAll()
                 .antMatchers("/api/v1/**").hasAnyRole("USER","ADMIN").anyRequest().authenticated().and()
                 .rememberMe(); // todo: enable csrf protection after testing
         return http.build();

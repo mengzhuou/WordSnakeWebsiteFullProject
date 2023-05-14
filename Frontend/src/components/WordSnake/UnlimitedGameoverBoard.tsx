@@ -48,7 +48,7 @@ class UnlimitedGameoverBoard extends React.Component<any, any>{
     }
 
     render() {
-        const { wordList, bestScore } = this.state;
+        const { wordList, bestScore, getLeaderBoard } = this.state;
         const sortedWords = [...wordList].sort();
         return (
             <div className="App">

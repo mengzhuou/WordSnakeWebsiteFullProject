@@ -81,8 +81,6 @@ class ClassicMode extends React.Component<any, any>{
                 this.setState({ errMessage: 'Special character(s) or number(s) are not accepted. Please type a valid word.' })
             }
         }
-
-
     }
 
     handleEnterKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {

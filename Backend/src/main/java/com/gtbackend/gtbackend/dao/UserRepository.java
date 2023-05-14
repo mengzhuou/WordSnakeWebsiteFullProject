@@ -8,6 +8,8 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Repository
 public interface UserRepository extends JpaRepository<User, String> {
 
@@ -21,4 +23,8 @@ public interface UserRepository extends JpaRepository<User, String> {
 
     @Query("SELECT count(*) FROM User")
     Integer numOfUsers();
+
+    @Query("SELECT u.name, u.bestScore FROM User u ORDER BY u.bestScore DESC")
+    List<Object[]> getLeaderBoard();
+
 }

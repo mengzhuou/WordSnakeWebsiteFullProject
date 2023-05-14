@@ -129,5 +129,13 @@ export async function getNumOfUsers(){
     return content.data;
 }
 
+export async function getLeaderBoard(){
+    let content = await client({
+        method: 'get',
+        url: url+"getLeaderBoard"
+    });
+    return content.data;
+}
+
 
 

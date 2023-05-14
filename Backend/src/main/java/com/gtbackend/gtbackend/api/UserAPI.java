@@ -18,6 +18,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -136,4 +137,7 @@ public class UserAPI {
     public int getNumOfUsers(){
         return userRepository.numOfUsers();
     }
+
+    @GetMapping("/getLeaderBoard")
+    public List<Object[]> getLeaderBoard(){ return userRepository.getLeaderBoard(); }
 }

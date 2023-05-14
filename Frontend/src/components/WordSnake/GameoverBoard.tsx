@@ -1,7 +1,7 @@
 import "./GameoverBoard.css";
 
 import { withFuncProps } from "../withFuncProps";
-import { logout, getBestScore, updateBestScore } from '../../helpers/connector';
+import { logout, getBestScore, updateBestScore, getLeaderBoard } from '../../helpers/connector';
 import React from "react";
 
 class GameoverBoard extends React.Component<any, any>{
@@ -48,7 +48,7 @@ class GameoverBoard extends React.Component<any, any>{
     }
 
     render() {
-        const { wordList, bestScore } = this.state;
+        const { wordList, bestScore, getLeaderBoard } = this.state;
         const sortedWords = [...wordList].sort();
         return (
             <div className="App">
