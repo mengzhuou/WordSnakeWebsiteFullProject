@@ -1,6 +1,5 @@
 .goTitle{
   margin-top: 10%;
-  z-index: 3;
   letter-spacing: 2px;
   font-size: 80px;
 }
@@ -12,10 +11,41 @@
   background: cadetblue;
   height: 100vh;
   box-shadow: 0px 0px 10px 0px rgb(0 0 0 / 50%);
-  margin: 5px;
+  margin: 30px 40px 10px 40px;
   border-radius: 5px;
+  justify-content: center;
 }
 
 .scoreStyle{
   font-size: 30px;
+}
+
+.leaderBoard {
+  margin-top: 20px;
+}
+
+.leaderBoard table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.leaderBoard th,
+.leaderBoard td {
+  padding: 8px;
+  text-align: left;
+  /* border-bottom: 1px solid #ddd; */
+  border-bottom: thick double 
+}
+
+.leaderBoard th {
+  background-color: #f2f2f2;
+}
+
+.leaderBoard tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+.leaderBoardTitle {
+  text-align: center; 
+  margin-bottom: 1px; 
 }

@@ -186,7 +186,7 @@ class ClassicMode extends React.Component<any, any>{
             
                 <h1 className="wsTitle">Word Snake</h1>
                 {isGameStarted ? (
-                    <CountdownTimer duration={60} onTimeUp={this.handleTimeUp}/>
+                    <CountdownTimer duration={30} onTimeUp={this.handleTimeUp}/>
                 ) : (
                     <button className="topnavButton" onClick={() => this.updateGameState(true, false)} hidden={isGameStarted ? true : false}>Start Game</button>
                 )}
