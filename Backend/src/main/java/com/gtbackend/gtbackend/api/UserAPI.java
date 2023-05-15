@@ -47,6 +47,7 @@ public class UserAPI {
         request.logout();
     }
 
+    //can get Bearer token from here, the last two rows are used for access user info
     @PostMapping("/login")
     public ResponseEntity<String> login(@RequestBody Map<String, String> body) throws AuthenticationException, BadCredentialsException {
         String email = body.get("email");
@@ -117,7 +118,20 @@ public class UserAPI {
         }
     }
 
-    @GetMapping("/updateBestScore")
+    @GetMapping("/getUnlimitedBestScore")
+    @ResponseBody
+    public int getUnlimitedBestScore() {
+        ResponseEntity<String> userEmailResponse = getUserEmail();
+        if (userEmailResponse.getStatusCode().is2xxSuccessful()) {
+            String userEmail = userEmailResponse.getBody();
+            Integer bestScore = userRepository.getUnlimitedBestScore(userEmail);
+            return bestScore != null ? bestScore : 0;
+        } else {
+            return 0;
+        }
+    }
+
+    @PostMapping("/updateBestScore")
     @ResponseBody
     public int updateBestScore(@RequestParam int currentScore) {
         ResponseEntity<String> userEmailResponse = getUserEmail();
@@ -126,6 +140,23 @@ public class UserAPI {
             Integer previousBestScore = getBestScore();
             if (previousBestScore < currentScore) {
                 userRepository.updateBestScore(userEmail, currentScore);
+                return currentScore;
+            };
+            return previousBestScore;
+        }
+        return -1;
+    }
+
+
+    @PostMapping("/updateUnlimitedBestScore")
+    @ResponseBody
+    public int updateUnlimitedBestScore(@RequestParam int currentScore) {
+        ResponseEntity<String> userEmailResponse = getUserEmail();
+        if (userEmailResponse.getStatusCode().is2xxSuccessful()) {
+            String userEmail = userEmailResponse.getBody();
+            Integer previousBestScore = getUnlimitedBestScore();
+            if (previousBestScore < currentScore) {
+                userRepository.updateUnlimitedBestScore(userEmail, currentScore);
                 return currentScore;
             };
             return previousBestScore;

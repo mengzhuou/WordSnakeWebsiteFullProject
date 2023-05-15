@@ -16,10 +16,18 @@ public interface UserRepository extends JpaRepository<User, String> {
     @Query("SELECT u.bestScore FROM User u WHERE u.email = :email")
     Integer getBestScore(@Param("email") String email);
 
+    @Query("SELECT u.unlimitedBestScore FROM User u WHERE u.email = :email")
+    Integer getUnlimitedBestScore(@Param("email") String email);
+
     @Modifying
     @Transactional
     @Query("UPDATE User u SET u.bestScore = :score WHERE u.email = :email")
     void updateBestScore(@Param("email") String email, @Param("score") int score);
+
+    @Modifying
+    @Transactional
+    @Query("UPDATE User u SET u.unlimitedBestScore = :score WHERE u.email = :email")
+    void updateUnlimitedBestScore(@Param("email") String email, @Param("score") int score);
 
     @Query("SELECT count(*) FROM User")
     Integer numOfUsers();
