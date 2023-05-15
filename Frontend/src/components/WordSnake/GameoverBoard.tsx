@@ -47,7 +47,6 @@ class GameoverBoard extends React.Component<any, any>{
     leaderBoard = async () => {
         getLeaderBoard()
           .then((response) => {
-            console.log(response);
             this.setState({ leaderBoardList: response });
           })
           .catch((error) => {
