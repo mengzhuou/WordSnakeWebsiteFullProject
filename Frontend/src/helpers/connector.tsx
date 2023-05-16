@@ -112,7 +112,7 @@ export async function getBestScore(){
 
 export async function updateBestScore(currentScore: number): Promise<number[][]>{
     let content = await client({
-        method: 'get',
+        method: 'post',
         url: url+"updateBestScore",
         params: {
             currentScore: currentScore
@@ -120,6 +120,26 @@ export async function updateBestScore(currentScore: number): Promise<number[][]>
     });
     return content.data;
 }
+
+export async function getUnlimitedBestScore(){
+    let content = await client({
+        method: 'get',
+        url: url+"getUnlimitedBestScore"
+    });
+    return content.data;
+}
+
+export async function updateUnlimitedBestScore(currentScore: number): Promise<number[][]>{
+    let content = await client({
+        method: 'post',
+        url: url+"updateUnlimitedBestScore",
+        params: {
+            currentScore: currentScore
+        },
+    });
+    return content.data;
+}
+
 
 export async function getNumOfUsers(){
     let content = await client({
@@ -133,6 +153,14 @@ export async function getLeaderBoard(){
     let content = await client({
         method: 'get',
         url: url+"getLeaderBoard"
+    });
+    return content.data;
+}
+
+export async function getUnlimitedLeaderBoard(){
+    let content = await client({
+        method: 'get',
+        url: url+"getUnlimitedLeaderBoard"
     });
     return content.data;
 }

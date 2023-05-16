@@ -35,4 +35,7 @@ public interface UserRepository extends JpaRepository<User, String> {
     @Query("SELECT u.name, u.bestScore FROM User u ORDER BY u.bestScore DESC")
     List<Object[]> getLeaderBoard();
 
+    @Query("SELECT u.name, u.unlimitedBestScore FROM User u ORDER BY u.unlimitedBestScore DESC")
+    List<Object[]> getUnlimitedLeaderBoard();
+
 }

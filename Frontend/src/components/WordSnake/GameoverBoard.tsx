@@ -10,7 +10,6 @@ class GameoverBoard extends React.Component<any, any>{
         this.state = {
             username: '',
             bestScore: -1,
-            isSent: false,
             wordList: this.props.wordList,
             leaderBoardList: [],
         };

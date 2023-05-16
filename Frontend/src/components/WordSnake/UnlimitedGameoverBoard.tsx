@@ -1,7 +1,7 @@
 import "./GameoverBoard.css";
 
 import { withFuncProps } from "../withFuncProps";
-import { logout, getBestScore, updateBestScore } from '../../helpers/connector';
+import { logout, updateUnlimitedBestScore, getUnlimitedLeaderBoard } from '../../helpers/connector';
 import React from "react";
 
 class UnlimitedGameoverBoard extends React.Component<any, any>{
@@ -10,8 +10,8 @@ class UnlimitedGameoverBoard extends React.Component<any, any>{
         this.state = {
             username: '',
             bestScore: -1,
-            isSent: false,
-            wordList: this.props.wordList
+            wordList: this.props.wordList,
+            leaderBoardList: [],
         };
         this.menuNav = this.menuNav.bind(this);
         this.bestScore = this.bestScore.bind(this);
@@ -35,20 +35,36 @@ class UnlimitedGameoverBoard extends React.Component<any, any>{
     bestScore = async() => {
         const { wordList } = this.state;
 
-        updateBestScore(wordList.length).then((response) => {
+        updateUnlimitedBestScore(wordList.length).then((response) => {
             this.setState({ bestScore: response })
         })
         .catch((error) => {
             console.log("Error when fetching data.")
         });
     }
+
+    leaderBoard = async () => {
+        getUnlimitedLeaderBoard()
+          .then((response) => {
+            this.setState({ leaderBoardList: response });
+          })
+          .catch((error) => {
+            console.log("Error loading leaderboard data.");
+          });
+      };
     
-    componentDidMount(): void {
+      componentDidMount(): void {
         this.bestScore();
+        this.leaderBoard();
     }
 
+    componentDidUpdate(prevProps: Readonly<any>, prevState: Readonly<any>, snapshot?: any): void {
+        if (prevState.leaderBoardList !== this.state.leaderBoardList) {
+            this.leaderBoard();
+        }
+    }
     render() {
-        const { wordList, bestScore, getLeaderBoard } = this.state;
+        const { wordList, bestScore, leaderBoardList } = this.state;
         const sortedWords = [...wordList].sort();
         return (
             <div className="App">
@@ -58,9 +74,28 @@ class UnlimitedGameoverBoard extends React.Component<any, any>{
                     <button className="topnavButton" onClick={this.pagelogout}>Logout</button>
                 </div>
                 <p className="goTitle">Unlimited Mode Game Over</p>
-                {/* <p className="scoreStyle">Your Score: {wordList.length}</p>
-                <p className="scoreStyle">Your Best Score: {bestScore}</p> */}
+                <p className="scoreStyle">Your Score: {wordList.length}</p>
+                <p className="scoreStyle">Your Best Score: {bestScore}</p>
 
+                <h1 className="leaderBoardTitle">Leader Board</h1>
+                <div className="leaderBoard">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Score</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {leaderBoardList.map((item: any, index: number) => (
+                                <tr key={index}>
+                                    <td>{item[0]}</td>
+                                    <td>{item[1]}</td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
                 <div className="wordListStyle">
                     {Array.isArray(sortedWords) && sortedWords.map((word: string, index: number) => (
                         <li key={index}>{word}</li>

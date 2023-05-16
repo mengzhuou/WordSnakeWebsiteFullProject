@@ -171,4 +171,7 @@ public class UserAPI {
 
     @GetMapping("/getLeaderBoard")
     public List<Object[]> getLeaderBoard(){ return userRepository.getLeaderBoard(); }
+
+    @GetMapping("/getUnlimitedLeaderBoard")
+    public List<Object[]> getUnlimitedLeaderBoard(){ return userRepository.getUnlimitedLeaderBoard(); }
 }
