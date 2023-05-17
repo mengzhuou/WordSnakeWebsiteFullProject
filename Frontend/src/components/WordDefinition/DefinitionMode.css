@@ -15,20 +15,21 @@ li {
 }
 
 .topnav {
-    background-color: rgb(161, 181, 161);
-    position: fixed;
-    top: 0;
-    opacity: 1;
-    width: 100%;
-    overflow: hidden;
-    justify-content: space-around;
-    display: flex;
-    align-content: center;
-    align-items: center;
-    margin: 0px 20px 0px 0px;
-  }
-  
-  .topnavButton {
+  background-color: rgb(161, 181, 161);
+  position: fixed;
+  top: 0;
+  opacity: 1;
+  width: 100vw;
+  overflow: hidden;
+  justify-content: space-around;
+  display: flex;
+  align-content: center;
+  align-items: center;
+  margin: 0px 20px 0px 0px;
+}
+
+
+.topnavButton {
   float: left;
   color: black;
   text-align: center;
@@ -41,11 +42,20 @@ li {
   font-family: "Neucha", cursive;
   border-radius: 5%;
   font-weight: bold;
-  }
+}
 
+.wsTitle{
+  margin-top: 7%;
+  z-index: 3;
+  letter-spacing: 2px;
+  font-size: 50px;
+}
+
+@media (max-width: 700px){
   .wsTitle{
-    margin-top: 7%;
+    margin-top: 7% 0% 0% 3%;
     z-index: 3;
     letter-spacing: 2px;
-    font-size: 50px;
+    font-size: 40px;
   }
+}
