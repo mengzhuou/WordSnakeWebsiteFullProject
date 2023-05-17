@@ -33,7 +33,7 @@ const UnlimitedCountdownTimer: React.FC<Props> = ({ duration, onTimeUp, isTimerU
       });
       setTimeout(() => {
         setIsMessageVisible(false);
-      }, 3000);
+      }, 1500);
     }
   }, [isTimerUpdated]);
 

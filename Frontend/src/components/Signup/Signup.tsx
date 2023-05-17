@@ -1,12 +1,13 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import "./Signup.css";
 import { useFormik } from 'formik';
 import { emailValidator } from '../../helpers/emailValidator'
 import { passwordValidator } from '../../helpers/passwordValidator'
 import { register, login } from '../../helpers/connector'
-import { useNavigate } from 'react-router-dom';
-
+import { useNavigate } from 'react-router-dom'
+import DatePicker from 'react-datepicker'
+import 'react-datepicker/dist/react-datepicker.css'; 
 
 function SignUpPage() {
   
@@ -22,7 +23,7 @@ function SignUpPage() {
 
     onSubmit: values=>{
       var text:string = "Email = ";
-      text += values.email + "\nPassword: " + values.password + "\nName = " + values.name + "\nDate of birth: " + values.dob;
+      text += values.email + "\nPassword: " + values.password + "\nName = " + values.name + "\nDate of birth: " + dateResult;
       if(window.confirm(text)){
         const emailError = emailValidator(values.email)
         const passwordError = passwordValidator(values.password)
@@ -31,7 +32,7 @@ function SignUpPage() {
           alert("invalid name, email or password")
           return
         }else{
-          register(values.email, values.password, values.name, values.dob).then(()=>{
+          register(values.email, values.password, values.name, dateResult).then(()=>{
             login(values.email, values.password).then(()=>{
               console.log("loggin")
               navigate("/menu")
@@ -45,6 +46,9 @@ function SignUpPage() {
       }
     }
   })
+
+  const [date, setDate] = useState<Date | null>(null);
+  const dateResult = JSON.stringify(date).substring(1,11);
   
   return (
     <div className="App">
@@ -64,9 +68,27 @@ function SignUpPage() {
           <input onChange={formik.handleChange} value={formik.values.name} id='name' name='name'></input>
           {/* {formik.errors.name ? <div>{formik.errors.name}</div>: null} */}
         </div>
-        <div className="hasMargin">
-          <label htmlFor='name'> Date of Birth : </label>
+
+
+        {/* <div className="hasMargin">
+          <label htmlFor='dob'> Date of Birth : </label>
           <input placeholder='yyyy-mm-dd' onChange={formik.handleChange} value={formik.values.dob} id='dob' name='dob'></input>
+        </div> */}
+
+        <div className='hasMargin'>
+          <div className='datetime'>
+            <label htmlFor='dob'>
+              Date of Birth : 
+            </label>
+          </div>
+          <div className='datetime'>
+            <DatePicker
+              dateFormat = "yyyy-MM-dd"
+              selected = {date}
+              onChange = {setDate}
+              placeholderText = "YYYY/MM/DD"
+            />
+          </div>
         </div>
         <div>
           <button className="RegisterButton" type="submit">Register</button>

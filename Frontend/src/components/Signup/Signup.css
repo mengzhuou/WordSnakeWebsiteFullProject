@@ -55,3 +55,49 @@
     cursor: pointer;
     font-family: "Neucha", cursive;
 }
+
+
+
+
+.datetime{
+    float:left;
+    padding-right: 1%;
+    padding-bottom: 1%;
+}
+
+.datetime
+.rc-time-picker
+.rc-time-picker-clear
+{
+    line-height: 15px;
+}
+
+.datetime
+.rc-time-picker
+.rc-time-picker-input {
+    height: 23px;
+    cursor: text;
+    font-family: 'Courier New', Courier, monospace;
+    color: rgb(0, 0, 0);
+    background-color: rgb(255, 255, 255);
+    background-image: none;
+    border: 2px dashed rgb(116 66 126);
+    border-radius: 8px;
+    text-align: center;
+    transition: border 0.2s cubic-bezier(0.645, 0.045, 0.355, 1), background 0.2s cubic-bezier(0.645, 0.045, 0.355, 1), box-shadow 0.2s cubic-bezier(0.645, 0.045, 0.355, 1);
+}
+
+.datetime
+.react-datepicker-wrapper
+.react-datepicker__input-container
+.react-datepicker-ignore-onclickoutside{
+    height: 17px;
+    cursor: text;
+    font-family: 'Courier New', Courier, monospace;
+    color: rgb(0, 0, 0);
+    background-color: rgb(255, 255, 255);
+    background-image: none;
+    border: 2px dashed rgb(116 66 126);
+    border-radius: 8px;
+    transition: border 0.2s cubic-bezier(0.645, 0.045, 0.355, 1), background 0.2s cubic-bezier(0.645, 0.045, 0.355, 1), box-shadow 0.2s cubic-bezier(0.645, 0.045, 0.355, 1);
+}
