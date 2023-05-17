@@ -165,5 +165,13 @@ export async function getUnlimitedLeaderBoard(){
     return content.data;
 }
 
+export async function getSignupRank(){
+    let content = await client({
+        method: 'get',
+        url: url+"getSignupRank"
+    });
+    return content.data;
+}
+
 
 

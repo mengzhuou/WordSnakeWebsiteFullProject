@@ -29,7 +29,7 @@ public interface UserRepository extends JpaRepository<User, String> {
     @Query("UPDATE User u SET u.unlimitedBestScore = :score WHERE u.email = :email")
     void updateUnlimitedBestScore(@Param("email") String email, @Param("score") int score);
 
-    @Query("SELECT count(*) FROM User")
+    @Query("SELECT count(*)-1 FROM User")
     Integer numOfUsers();
 
     @Query("SELECT u.name, u.bestScore FROM User u ORDER BY u.bestScore DESC")
@@ -37,5 +37,13 @@ public interface UserRepository extends JpaRepository<User, String> {
 
     @Query("SELECT u.name, u.unlimitedBestScore FROM User u ORDER BY u.unlimitedBestScore DESC")
     List<Object[]> getUnlimitedLeaderBoard();
+
+    @Modifying
+    @Transactional
+    @Query(value = "UPDATE Users u, (SELECT COUNT(*)-1 AS signupRank FROM Users) AS subQ SET u.signup_rank = subQ.signupRank WHERE u.email = ?1", nativeQuery = true)
+    void updateSignupRank(@Param("email") String email);
+
+    @Query("SELECT u.signupRank FROM User u WHERE u.email = :email")
+    Integer getSignupRank(@Param("email") String email);
 
 }

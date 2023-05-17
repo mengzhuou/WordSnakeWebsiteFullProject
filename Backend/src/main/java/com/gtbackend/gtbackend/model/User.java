@@ -29,6 +29,9 @@ public class User implements UserDetails {
     @Column(name="role")
     @Enumerated(EnumType.STRING)
     private Role role;
+
+    @Column(name = "signupRank", columnDefinition = "INT DEFAULT 0", nullable = false)
+    private Integer signupRank = 0;
     @Column(name = "bestScore", columnDefinition = "INT DEFAULT 0", nullable = false)
     private Integer bestScore = 0;
 

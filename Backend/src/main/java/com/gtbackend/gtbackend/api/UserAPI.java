@@ -169,6 +169,20 @@ public class UserAPI {
         return userRepository.numOfUsers();
     }
 
+    @GetMapping("/getSignupRank")
+    @ResponseBody
+    public int getSignupRank() {
+        ResponseEntity<String> userEmailResponse = getUserEmail();
+        if (userEmailResponse.getStatusCode().is2xxSuccessful()) {
+            String userEmail = userEmailResponse.getBody();
+            Integer rank = userRepository.getSignupRank(userEmail);
+            System.out.println("Why is rank null? " + rank);
+            return rank != null ? rank : -1;
+        } else {
+            return -2;
+        }
+    }
+
     @GetMapping("/getLeaderBoard")
     public List<Object[]> getLeaderBoard(){ return userRepository.getLeaderBoard(); }
 
