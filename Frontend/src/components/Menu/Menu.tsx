@@ -1,5 +1,5 @@
 import { withFuncProps } from "../withFuncProps";
-import {logout, getNumOfUsers, getSignupRank} from '../../helpers/connector';
+import {logout, getNumOfUsers, getSignupRank, isAdmin} from '../../helpers/connector';
 import React from "react";
 import "./Menu.css";
 
@@ -9,7 +9,8 @@ class Menu extends React.Component<any,any>{
         super(props);
         this.state = {
             totalUserNum: -1,
-            signupRank: -1
+            signupRank: -1,
+            admin: false
         }
         this.defModeNav = this.defModeNav.bind(this);
         this.classicModeNav = this.classicModeNav.bind(this);
@@ -18,6 +19,7 @@ class Menu extends React.Component<any,any>{
     componentDidMount() {
         this.displayUserNum();
         this.displayUserSignupRank();
+        this.displayAdmin();
     }
 
     pagelogout = ()=>{
@@ -44,14 +46,24 @@ class Menu extends React.Component<any,any>{
         const num = await getSignupRank();
         this.setState({ signupRank: num })
     }
+
+    displayAdmin = async () => {
+        const isAdminTrue = await isAdmin();
+        this.setState({ admin: isAdminTrue })
+    }
     
     render(){
-        const {totalUserNum, signupRank} = this.state;
+        const {totalUserNum, signupRank, admin} = this.state;
         return (
             <div className="App">
                 <div className="labelContainer">
-                    <p className="totalCountLabel">Registered Users : {totalUserNum}</p>
-                    <p className="totalCountLabel">Your User ID : {signupRank}</p>
+                    {admin ? 
+                        <p className="adminMenuLabel">ADMIN</p>
+                        :
+                        null
+                    }
+                    <p className="menuLabel">Registered Users : {totalUserNum}</p>
+                    <p className="menuLabel">Your User ID : {signupRank}</p>
                 </div>
                 <div className="buttonContainer">
                     <div className="buttonRow">

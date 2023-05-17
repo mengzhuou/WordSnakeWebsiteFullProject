@@ -188,4 +188,30 @@ public class UserAPI {
 
     @GetMapping("/getUnlimitedLeaderBoard")
     public List<Object[]> getUnlimitedLeaderBoard(){ return userRepository.getUnlimitedLeaderBoard(); }
+
+    @GetMapping("/getRole")
+    public String getRole() {
+        ResponseEntity<String> userEmailResponse = getUserEmail();
+        if (userEmailResponse.getStatusCode().is2xxSuccessful()) {
+            String userEmail = userEmailResponse.getBody();
+            String role = userRepository.getRole(userEmail);
+            return role;
+        } else {
+            return "Error getting email";
+        }
+    }
+    @GetMapping("/isAdmin")
+    public boolean isAdmin(){
+        ResponseEntity<String> userEmailResponse = getUserEmail();
+        if (userEmailResponse.getStatusCode().is2xxSuccessful()) {
+            String userEmail = userEmailResponse.getBody();
+            String role = userRepository.getRole(userEmail);
+            if (role == "ADMIN"){
+                return true;
+            }
+        } else {
+            return false;
+        }
+        return false;
+    }
 }

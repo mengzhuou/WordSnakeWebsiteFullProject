@@ -173,5 +173,13 @@ export async function getSignupRank(){
     return content.data;
 }
 
+export async function isAdmin(){
+    let content = await client({
+        method: 'get',
+        url: url+"isAdmin"
+    });
+    return content.data;
+}
+
 
 
