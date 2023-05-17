@@ -18,13 +18,14 @@ li {
     background-color: rgb(161, 181, 161);
     position: fixed;
     top: 0;
-    z-index: 2;
+    opacity: 1;
     width: 100%;
     overflow: hidden;
     justify-content: space-around;
     display: flex;
     align-content: center;
     align-items: center;
+    margin: 0px 20px 0px 0px;
   }
   
   .topnavButton {

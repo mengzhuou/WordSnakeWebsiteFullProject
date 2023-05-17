@@ -18,6 +18,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -46,6 +47,7 @@ public class UserAPI {
         request.logout();
     }
 
+    //can get Bearer token from here, the last two rows are used for access user info
     @PostMapping("/login")
     public ResponseEntity<String> login(@RequestBody Map<String, String> body) throws AuthenticationException, BadCredentialsException {
         String email = body.get("email");
@@ -116,7 +118,20 @@ public class UserAPI {
         }
     }
 
-    @GetMapping("/updateBestScore")
+    @GetMapping("/getUnlimitedBestScore")
+    @ResponseBody
+    public int getUnlimitedBestScore() {
+        ResponseEntity<String> userEmailResponse = getUserEmail();
+        if (userEmailResponse.getStatusCode().is2xxSuccessful()) {
+            String userEmail = userEmailResponse.getBody();
+            Integer bestScore = userRepository.getUnlimitedBestScore(userEmail);
+            return bestScore != null ? bestScore : 0;
+        } else {
+            return 0;
+        }
+    }
+
+    @PostMapping("/updateBestScore")
     @ResponseBody
     public int updateBestScore(@RequestParam int currentScore) {
         ResponseEntity<String> userEmailResponse = getUserEmail();
@@ -132,8 +147,45 @@ public class UserAPI {
         return -1;
     }
 
+
+    @PostMapping("/updateUnlimitedBestScore")
+    @ResponseBody
+    public int updateUnlimitedBestScore(@RequestParam int currentScore) {
+        ResponseEntity<String> userEmailResponse = getUserEmail();
+        if (userEmailResponse.getStatusCode().is2xxSuccessful()) {
+            String userEmail = userEmailResponse.getBody();
+            Integer previousBestScore = getUnlimitedBestScore();
+            if (previousBestScore < currentScore) {
+                userRepository.updateUnlimitedBestScore(userEmail, currentScore);
+                return currentScore;
+            };
+            return previousBestScore;
+        }
+        return -1;
+    }
+
     @GetMapping("/getNumOfUsers")
     public int getNumOfUsers(){
         return userRepository.numOfUsers();
     }
+
+    @GetMapping("/getSignupRank")
+    @ResponseBody
+    public int getSignupRank() {
+        ResponseEntity<String> userEmailResponse = getUserEmail();
+        if (userEmailResponse.getStatusCode().is2xxSuccessful()) {
+            String userEmail = userEmailResponse.getBody();
+            Integer rank = userRepository.getSignupRank(userEmail);
+            System.out.println("Why is rank null? " + rank);
+            return rank != null ? rank : -1;
+        } else {
+            return -2;
+        }
+    }
+
+    @GetMapping("/getLeaderBoard")
+    public List<Object[]> getLeaderBoard(){ return userRepository.getLeaderBoard(); }
+
+    @GetMapping("/getUnlimitedLeaderBoard")
+    public List<Object[]> getUnlimitedLeaderBoard(){ return userRepository.getUnlimitedLeaderBoard(); }
 }

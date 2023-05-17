@@ -36,6 +36,7 @@ public class UserService implements UserDetailsService {
     public void addUser(User user) {
         if(userRepository.findById(user.getUsername()).isEmpty()){
             userRepository.save(user);
+            userRepository.updateSignupRank(user.getEmail());
         }else{
             throw new DuplicateKeyException("User account (email) already exist");
         }

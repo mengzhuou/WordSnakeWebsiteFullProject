@@ -29,8 +29,14 @@ public class User implements UserDetails {
     @Column(name="role")
     @Enumerated(EnumType.STRING)
     private Role role;
+
+    @Column(name = "signupRank", columnDefinition = "INT DEFAULT 0", nullable = false)
+    private Integer signupRank = 0;
     @Column(name = "bestScore", columnDefinition = "INT DEFAULT 0", nullable = false)
     private Integer bestScore = 0;
+
+    @Column(name = "unlimitedBestScore", columnDefinition = "INT DEFAULT 0", nullable = false)
+    private Integer unlimitedBestScore = 0;
 
     public User() {
     }
@@ -45,6 +51,10 @@ public class User implements UserDetails {
 
     public void setBestScore(Integer bestScore) {
         this.bestScore = bestScore;
+    }
+
+    public void setUnlimitedBestScore(Integer unlimitedBestScore) {
+        this.unlimitedBestScore = unlimitedBestScore;
     }
 
     public Role getRole() {

@@ -1,7 +1,7 @@
 import "./GameoverBoard.css";
 
 import { withFuncProps } from "../withFuncProps";
-import { logout, getBestScore, updateBestScore } from '../../helpers/connector';
+import { logout, getBestScore, updateBestScore, getLeaderBoard } from '../../helpers/connector';
 import React from "react";
 
 class GameoverBoard extends React.Component<any, any>{
@@ -10,8 +10,8 @@ class GameoverBoard extends React.Component<any, any>{
         this.state = {
             username: '',
             bestScore: -1,
-            isSent: false,
-            wordList: this.props.wordList
+            wordList: this.props.wordList,
+            leaderBoardList: [],
         };
         this.menuNav = this.menuNav.bind(this);
         this.bestScore = this.bestScore.bind(this);
@@ -42,14 +42,32 @@ class GameoverBoard extends React.Component<any, any>{
             console.log("Error when fetching data.")
         });
     }
+
+    leaderBoard = async () => {
+        getLeaderBoard()
+          .then((response) => {
+            this.setState({ leaderBoardList: response });
+          })
+          .catch((error) => {
+            console.log("Error loading leaderboard data.");
+          });
+      };
     
     componentDidMount(): void {
         this.bestScore();
+        this.leaderBoard();
+    }
+
+    componentDidUpdate(prevProps: Readonly<any>, prevState: Readonly<any>, snapshot?: any): void {
+        if (prevState.leaderBoardList !== this.state.leaderBoardList) {
+            this.leaderBoard();
+        }
     }
 
     render() {
-        const { wordList, bestScore } = this.state;
+        const { wordList, bestScore, leaderBoardList } = this.state;
         const sortedWords = [...wordList].sort();
+
         return (
             <div className="App">
                 <div className="topnav">
@@ -61,6 +79,25 @@ class GameoverBoard extends React.Component<any, any>{
                 <p className="scoreStyle">Your Score: {wordList.length}</p>
                 <p className="scoreStyle">Your Best Score: {bestScore}</p>
 
+                <h1 className="leaderBoardTitle">Leader Board</h1>
+                <div className="leaderBoard">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Score</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {leaderBoardList.map((item: any, index: number) => (
+                                <tr key={index}>
+                                    <td>{item[0]}</td>
+                                    <td>{item[1]}</td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
                 <div className="wordListStyle">
                     {Array.isArray(sortedWords) && sortedWords.map((word: string, index: number) => (
                         <li key={index}>{word}</li>

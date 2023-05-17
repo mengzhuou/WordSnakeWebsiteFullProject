@@ -8,7 +8,7 @@ type Props = {
 
 const UnlimitedCountdownTimer: React.FC<Props> = ({ duration, onTimeUp, isTimerUpdated }) => {
   const [timeLeft, setTimeLeft] = useState(duration);
-
+  const [isMessageVisible, setIsMessageVisible] = useState(false);
   useEffect(() => {
     const intervalId = setInterval(() => {
       setTimeLeft(timeLeft => timeLeft > 0 ? timeLeft - 1 : 0);
@@ -27,7 +27,13 @@ const UnlimitedCountdownTimer: React.FC<Props> = ({ duration, onTimeUp, isTimerU
 
   useEffect(() => {
     if (isTimerUpdated) {
-      setTimeLeft(timeLeft => timeLeft + 5);
+      setTimeLeft(timeLeft => {
+        setIsMessageVisible(true);
+        return timeLeft + 5;
+      });
+      setTimeout(() => {
+        setIsMessageVisible(false);
+      }, 1500);
     }
   }, [isTimerUpdated]);
 
@@ -38,7 +44,11 @@ const UnlimitedCountdownTimer: React.FC<Props> = ({ duration, onTimeUp, isTimerU
   };
 
   return (
-    <div className='countdownTimer'>{formatTime(timeLeft)}</div>
+    <div className='countdownTimer'>
+      {formatTime(timeLeft)}
+      {isMessageVisible && <p className='bonusMessage'> 5 seconds bonus are added </p>}
+
+    </div>
   );
 };
 

@@ -81,8 +81,6 @@ class ClassicMode extends React.Component<any, any>{
                 this.setState({ errMessage: 'Special character(s) or number(s) are not accepted. Please type a valid word.' })
             }
         }
-
-
     }
 
     handleEnterKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
@@ -188,7 +186,7 @@ class ClassicMode extends React.Component<any, any>{
             
                 <h1 className="wsTitle">Word Snake</h1>
                 {isGameStarted ? (
-                    <CountdownTimer duration={60} onTimeUp={this.handleTimeUp}/>
+                    <CountdownTimer duration={999} onTimeUp={this.handleTimeUp}/>
                 ) : (
                     <button className="topnavButton" onClick={() => this.updateGameState(true, false)} hidden={isGameStarted ? true : false}>Start Game</button>
                 )}
