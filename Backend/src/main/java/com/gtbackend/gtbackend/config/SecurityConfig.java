@@ -42,17 +42,12 @@ public class SecurityConfig {
         }
         return null;
     }
+
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http, JwtFilter jwtFilter) throws Exception{
-        http.cors().and().csrf().disable().addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class).authorizeRequests().antMatchers("/api/v1/register","/api/v1/login",
-                        "/api/v1/logout", "/api/v1/userInfo", "/api/v1/getUserEmail", "/api/v1/getNumOfUsers",
-                        "/api/v1/updateBestScore", "/api/v1/getBestScore",
-                        "/api/v1/getWords", "/api/v1/getWordAndDef", "/api/v1/getRandomStart", "/api/v1/isWordExist",
-                        "/api/v1/getLetterFromPreviousWord", "/api/v1/getHintWordAndDef",
-                        "/api/v1/getWordAndDefTest", "/api/v1/getDefTest", "/api/v1/isWordExistTest",
-                        "/api/v1/getLeaderBoard","/api/v1/getUnlimitedLeaderBoard", "/api/v1/updateUnlimitedBestScore", "/api/v1/getUnlimitedBestScore").permitAll()
-                .antMatchers("/api/v1/**").hasAnyRole("USER","ADMIN").anyRequest().authenticated().and()
-                .rememberMe(); // todo: enable csrf protection after testing
+        http.cors().and().csrf().disable().addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class).authorizeRequests()
+                .antMatchers("/api/v1/**").permitAll().anyRequest().authenticated()
+                .and().rememberMe(); // todo: enable csrf protection after testing
         return http.build();
     }
 
