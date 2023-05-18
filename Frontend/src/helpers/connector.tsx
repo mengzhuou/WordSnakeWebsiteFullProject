@@ -181,5 +181,12 @@ export async function isAdmin(){
     return content.data;
 }
 
+export async function addFeedback(){
+    let content = await client({
+        method: 'post',
+        url: url+"addFeedback"
+    });
+    return content.data;
+}
 
 
