@@ -51,16 +51,19 @@ class GameoverBoard extends React.Component<any, any>{
           .catch((error) => {
             console.log("Error loading leaderboard data.");
           });
-      };
-    
+    };
+
     componentDidMount(): void {
         this.bestScore();
         this.leaderBoard();
-    }
 
-    componentDidUpdate(prevProps: Readonly<any>, prevState: Readonly<any>, snapshot?: any): void {
-        if (prevState.leaderBoardList !== this.state.leaderBoardList) {
-            this.leaderBoard();
+        let counter = 0;
+        const maxUpdates = 2; 
+        this.componentDidUpdate = (prevProps: Readonly<any>, prevState: Readonly<any>) => {
+            if (prevState.leaderBoardList !== this.state.leaderBoardList && counter < maxUpdates) {
+                this.leaderBoard();
+                counter++;
+            }
         }
     }
 
