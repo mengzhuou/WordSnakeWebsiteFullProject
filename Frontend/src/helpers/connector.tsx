@@ -181,12 +181,13 @@ export async function isAdmin(){
     return content.data;
 }
 
-export async function addFeedback(){
+export async function addFeedback(message: string): Promise<String[]>{
     let content = await client({
         method: 'post',
-        url: url+"addFeedback"
+        url: url+"addFeedback",
+        params: {
+            message: message
+        }
     });
     return content.data;
 }
-
-

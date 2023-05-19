@@ -176,7 +176,6 @@ public class UserAPI {
         if (userEmailResponse.getStatusCode().is2xxSuccessful()) {
             String userEmail = userEmailResponse.getBody();
             Integer rank = userRepository.getSignupRank(userEmail);
-            System.out.println("Why is rank null? " + rank);
             return rank != null ? rank : -1;
         } else {
             return -2;
