@@ -77,7 +77,7 @@
 }
 
 .fbClose-btn{
-    background-color: #2196F3;
+    background-color: #86c7fb;
     border-radius: 10px;
     position: relative;
     margin-left: 95%;
@@ -94,7 +94,7 @@
 textarea{
     width: 95%;
     height: 80%;
-    margin: auto;
+    margin: 1% 0% 5% 0;
     display: block;
 }
 
@@ -117,3 +117,20 @@ form{
     cursor: pointer;
     font-family: "Neucha", cursive;
 }
+
+.ratingContainer {
+    display: flex;
+    margin-bottom: 2%;
+}
+  
+.star {
+    font-size: 40px;
+    color: #ccc;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+  
+.selected {
+    color: #ffc107;
+}
+  

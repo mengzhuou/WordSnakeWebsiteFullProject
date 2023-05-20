@@ -14,7 +14,8 @@ class Menu extends React.Component<any,any>{
             signupRank: -1,
             admin: false,
             showFeedbackModel: false,
-            feedbackMessage: ""
+            feedbackMessage: "",
+            rating: 5
         }
         this.defModeNav = this.defModeNav.bind(this);
         this.classicModeNav = this.classicModeNav.bind(this);
@@ -68,11 +69,16 @@ class Menu extends React.Component<any,any>{
         this.setState({ feedbackMessage: event.target.value });
     }
 
-    handleFeedbackSubmit = () => {
-        const { feedbackMessage } = this.state;
+    handleRatingChange = (rating: number) => {
+        this.setState({ rating: rating });
+    }
 
-        addFeedback(feedbackMessage).then(() => {
-            this.setState({ feedbackMessage: "" })
+    handleFeedbackSubmit = () => {
+        const { feedbackMessage, rating } = this.state;
+        console.log("rating passed? ", this.state.rating)
+
+        addFeedback(feedbackMessage, rating).then(() => {
+            this.setState({ feedbackMessage: "", rating: -1 })
             alert("Feedback is sent")
             this.handleFeedbackModelClose();
         }).catch((error: Error) => {
@@ -81,7 +87,7 @@ class Menu extends React.Component<any,any>{
     }
     
     render(){
-        const {totalUserNum, signupRank, admin, showFeedbackModel, feedbackMessage} = this.state;
+        const {totalUserNum, signupRank, admin, showFeedbackModel, feedbackMessage, rating} = this.state;
         return (
             <div className="App">
                 <div className="labelContainer">
@@ -98,8 +104,10 @@ class Menu extends React.Component<any,any>{
                     {showFeedbackModel && 
                         <FeedbackModel
                             message={feedbackMessage}
+                            rating={rating}
                             onClose={this.handleFeedbackModelClose}
                             onChange={this.handleFeedbackMessageChange}
+                            onRatingChange={this.handleRatingChange}
                             onSubmit={this.handleFeedbackSubmit}
                         />
                     }

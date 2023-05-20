@@ -1,7 +1,6 @@
 package com.gtbackend.gtbackend.model;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "feedback")
@@ -15,10 +14,13 @@ public class Feedback {
     private String email;
 
     @Column(name = "timestamp")
-    private LocalDateTime timestamp;
+    private String timestamp;
 
     @Column(name = "message")
     private String message;
+
+    @Column(name = "rating")
+    private Float rating;
 
     @Column(name = "status")
     private String status;
@@ -26,14 +28,14 @@ public class Feedback {
     public Feedback() {
     }
 
-    public Feedback(String email, String message, LocalDateTime timestamp, String status) {
+    public Feedback(Long id, String email, String timestamp, String message, Float rating, String status) {
+        this.id = id;
         this.email = email;
-        this.message = message;
         this.timestamp = timestamp;
+        this.message = message;
+        this.rating = rating;
         this.status = status;
     }
-
-    // Getters and setters
 
     public Long getId() {
         return id;
@@ -51,6 +53,14 @@ public class Feedback {
         this.email = email;
     }
 
+    public String getTimestamp() {
+        return timestamp;
+    }
+
+    public void setTimestamp(String timestamp) {
+        this.timestamp = timestamp;
+    }
+
     public String getMessage() {
         return message;
     }
@@ -59,12 +69,12 @@ public class Feedback {
         this.message = message;
     }
 
-    public LocalDateTime getTimestamp() {
-        return timestamp;
+    public Float getRating() {
+        return rating;
     }
 
-    public void setTimestamp(LocalDateTime timestamp) {
-        this.timestamp = timestamp;
+    public void setRating(Float rating) {
+        this.rating = rating;
     }
 
     public String getStatus() {
