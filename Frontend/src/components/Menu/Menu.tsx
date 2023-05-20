@@ -75,10 +75,9 @@ class Menu extends React.Component<any,any>{
 
     handleFeedbackSubmit = () => {
         const { feedbackMessage, rating } = this.state;
-        console.log("rating passed? ", this.state.rating)
 
         addFeedback(feedbackMessage, rating).then(() => {
-            this.setState({ feedbackMessage: "", rating: -1 })
+            this.setState({ feedbackMessage: "", rating: 5 })
             alert("Feedback is sent")
             this.handleFeedbackModelClose();
         }).catch((error: Error) => {
@@ -98,19 +97,6 @@ class Menu extends React.Component<any,any>{
                     }
                     <p className="menuLabel">Registered Users : {totalUserNum}</p>
                     <p className="menuLabel">Your User ID : {signupRank}</p>
-                    <button 
-                        className="menuLabel" onClick={this.handleFeedbackModelOpen}>Feedback
-                    </button>
-                    {showFeedbackModel && 
-                        <FeedbackModel
-                            message={feedbackMessage}
-                            rating={rating}
-                            onClose={this.handleFeedbackModelClose}
-                            onChange={this.handleFeedbackMessageChange}
-                            onRatingChange={this.handleRatingChange}
-                            onSubmit={this.handleFeedbackSubmit}
-                        />
-                    }
 
                     
                 </div>
@@ -123,6 +109,21 @@ class Menu extends React.Component<any,any>{
                     </div>
                     <div className="buttonRow">
                         <button className="menuButton" onClick={this.classicModeNav}>Classic Mode</button>
+                    </div>
+                    <div className="buttonRow">
+                        <button 
+                            className="menuButton" onClick={this.handleFeedbackModelOpen}>Feedback
+                        </button>
+                        {showFeedbackModel && 
+                            <FeedbackModel
+                                message={feedbackMessage}
+                                rating={rating}
+                                onClose={this.handleFeedbackModelClose}
+                                onChange={this.handleFeedbackMessageChange}
+                                onRatingChange={this.handleRatingChange}
+                                onSubmit={this.handleFeedbackSubmit}
+                            />
+                        }
                     </div>
                     <div className="buttonRow">
                         <button className="menuButton" onClick={this.pagelogout}>Logout</button>

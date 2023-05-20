@@ -13,7 +13,6 @@ interface FeedbackModelProps {
 const FeedbackModel: React.FC<FeedbackModelProps> = ({ message, rating, onClose, onChange, onRatingChange, onSubmit }) => {
     
     const handleSelectedStar = (selectedStar: number) => {
-        console.log("Selected Star: ", selectedStar);
         onRatingChange(selectedStar);
     };
 
@@ -32,7 +31,7 @@ const FeedbackModel: React.FC<FeedbackModelProps> = ({ message, rating, onClose,
                     <span
                         key = {star}
                         className = {`star ${star <= rating ? "selected" : ""}`}
-                        onClick={() => {console.log(`Star ${star} clicked`); handleSelectedStar(star);}}
+                        onClick={() => {handleSelectedStar(star);}}
                     >
                         &#9733;
                     </span>
