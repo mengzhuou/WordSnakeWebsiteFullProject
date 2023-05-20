@@ -1,5 +1,5 @@
 import { withFuncProps } from "../withFuncProps";
-import {logout, getNumOfUsers, getSignupRank, isAdmin, addFeedback} from '../../helpers/connector';
+import {logout, getNumOfUsers, getSignupRank, isAdmin, addFeedback, getFeedback} from '../../helpers/connector';
 import React from "react";
 import "./Menu.css";
 import FeedbackModel from "./FeedbackModel";

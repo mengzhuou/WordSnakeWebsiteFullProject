@@ -20,4 +20,9 @@ public interface FeedbackRepository extends JpaRepository<Feedback, String> {
 
     @Query(value = "SELECT * FROM feedback", nativeQuery = true)
     List<String> getFeedback();
+
+    @Modifying
+    @Transactional
+    @Query(value = "UPDATE Feedback f SET f.status = :status where f.id = :id")
+    void updateFeedbackStatus(@Param("id") Long id, @Param("status") String status);
 }

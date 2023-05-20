@@ -38,4 +38,10 @@ public class FeedbackAPI {
     public List<String> getFeedback(){
         return feedbackRepository.getFeedback();
     }
+
+    @PostMapping("/updateFeedbackStatus")
+    @ResponseBody
+    public void updateFeedbackStatus(@RequestParam Long id, String status){
+        feedbackRepository.updateFeedbackStatus(id, status);
+    }
 }

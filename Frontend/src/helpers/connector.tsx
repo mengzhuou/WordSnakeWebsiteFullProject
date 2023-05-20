@@ -200,3 +200,11 @@ export async function getFeedback(){
     });
     return content.data;
 }
+
+export async function updateFeedbackStatus(){
+    let content = await client({
+        method: 'post',
+        url: url+"updateFeedbackStatus"
+    });
+    return content.data;
+}
