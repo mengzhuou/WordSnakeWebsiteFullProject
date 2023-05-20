@@ -3,6 +3,7 @@ import {logout, getNumOfUsers, getSignupRank, isAdmin, addFeedback, getFeedback}
 import React from "react";
 import "./Menu.css";
 import FeedbackModel from "./FeedbackModel";
+import AdminFeedbackModel from "./AdminFeedbackModel";
 
 
 
@@ -14,11 +15,14 @@ class Menu extends React.Component<any,any>{
             signupRank: -1,
             admin: false,
             showFeedbackModel: false,
+            showAdminFeedbackModel: false,
             feedbackMessage: "",
-            rating: 5
+            rating: 5,
+            adminFeedbackMessages: [],
         }
         this.defModeNav = this.defModeNav.bind(this);
         this.classicModeNav = this.classicModeNav.bind(this);
+        this.displayFeedback = this.displayFeedback.bind(this);
     }
 
     componentDidMount() {
@@ -64,13 +68,25 @@ class Menu extends React.Component<any,any>{
     handleFeedbackModelClose = () => {
         this.setState({ showFeedbackModel: false })
     }
-
+    
     handleFeedbackMessageChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
         this.setState({ feedbackMessage: event.target.value });
     }
 
     handleRatingChange = (rating: number) => {
         this.setState({ rating: rating });
+    }
+
+    handleAdminFeedbackOpen = () => {
+        this.displayFeedback();
+        console.log("handleAdminFeedbackOpen is clicked")
+        this.setState({ showAdminFeedbackModel: true })
+    }
+    
+    handleAdminFeedbackClose = () => {
+        console.log("handleAdminFeedbackclose is closed")
+
+        this.setState({ showAdminFeedbackModel: false })
     }
 
     handleFeedbackSubmit = () => {
@@ -84,9 +100,16 @@ class Menu extends React.Component<any,any>{
             console.error("Error submitting feedback: ", error);
         })
     }
+
+    displayFeedback = async () => {
+        console.log("displayFeedback is clicked")
+
+        const fbContent = await getFeedback();
+        this.setState({ adminFeedbackMessages: fbContent})
+    }
     
     render(){
-        const {totalUserNum, signupRank, admin, showFeedbackModel, feedbackMessage, rating} = this.state;
+        const {totalUserNum, signupRank, admin, showFeedbackModel, feedbackMessage, rating, adminFeedbackMessages, showAdminFeedbackModel} = this.state;
         return (
             <div className="App">
                 <div className="labelContainer">
@@ -111,18 +134,36 @@ class Menu extends React.Component<any,any>{
                         <button className="menuButton" onClick={this.classicModeNav}>Classic Mode</button>
                     </div>
                     <div className="buttonRow">
-                        <button 
-                            className="menuButton" onClick={this.handleFeedbackModelOpen}>Feedback
-                        </button>
-                        {showFeedbackModel && 
-                            <FeedbackModel
-                                message={feedbackMessage}
-                                rating={rating}
-                                onClose={this.handleFeedbackModelClose}
-                                onChange={this.handleFeedbackMessageChange}
-                                onRatingChange={this.handleRatingChange}
-                                onSubmit={this.handleFeedbackSubmit}
-                            />
+                        {admin? 
+                            (
+                                <>
+                                    <button 
+                                        className="menuButton" onClick={this.handleAdminFeedbackOpen}> Feedback
+                                    </button>
+                                    {showAdminFeedbackModel && (
+                                        <AdminFeedbackModel
+                                            adminFeedbackMessages={adminFeedbackMessages}
+                                            onClose={this.handleAdminFeedbackClose}
+                                        />
+                                    )}
+                                </>
+                            )
+                            :
+                                <>
+                                    <button 
+                                        className="menuButton" onClick={this.handleFeedbackModelOpen}>Feedback
+                                    </button>
+                                    {showFeedbackModel && 
+                                        <FeedbackModel
+                                            message={feedbackMessage}
+                                            rating={rating}
+                                            onClose={this.handleFeedbackModelClose}
+                                            onChange={this.handleFeedbackMessageChange}
+                                            onRatingChange={this.handleRatingChange}
+                                            onSubmit={this.handleFeedbackSubmit}
+                                        />
+                                    }
+                                </>
                         }
                     </div>
                     <div className="buttonRow">
