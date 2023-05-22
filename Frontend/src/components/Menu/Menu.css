@@ -209,3 +209,8 @@ form{
     font-family: "Neucha", cursive;
 }
 
+.statusCss{
+    background-color: #fff3c8;
+    padding: 8px;
+    text-align: left;
+}

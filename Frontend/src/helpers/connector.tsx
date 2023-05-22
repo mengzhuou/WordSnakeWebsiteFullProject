@@ -201,10 +201,14 @@ export async function getFeedback(){
     return content.data;
 }
 
-export async function updateFeedbackStatus(){
+export async function updateFeedbackStatus(id: number, status: string){
     let content = await client({
         method: 'post',
-        url: url+"updateFeedbackStatus"
+        url: url+"updateFeedbackStatus",
+        params: {
+            id: id,
+            status: status
+        }
     });
     return content.data;
 }

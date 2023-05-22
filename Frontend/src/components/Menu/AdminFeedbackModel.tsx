@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Draggable from 'react-draggable';
+import {updateFeedbackStatus} from '../../helpers/connector';
+
 
 interface AdminFeedbackModelProps {
     adminFeedbackMessages: string[];
@@ -39,6 +41,23 @@ const AdminFeedbackModel: React.FC<AdminFeedbackModelProps> = ({ adminFeedbackMe
         }
     }
 
+    const handleStatusUpdate = (fbId: string, newStatus: string) => {
+        const feedbackId = parseInt(fbId,10);
+        updateFeedbackStatus(feedbackId, newStatus).then(()=>{
+            const updatedMessages = sortedMessage.map((message)=>{
+                const [id, email, feedback, rating, status, timestamp] = message.split(',');
+                if (id === fbId){
+                    return [id, email, feedback, rating, newStatus, timestamp].join(',');
+                } else{
+                    return message;
+                }
+            })
+            setSortedMessage(updatedMessages);
+        }).catch((error: Error)=>{
+            console.error("Error updating feedback status: ", error);
+        })
+    }
+
     return (
         <Draggable>
         <div className="adminFBpopup">
@@ -64,14 +83,43 @@ const AdminFeedbackModel: React.FC<AdminFeedbackModelProps> = ({ adminFeedbackMe
                         </tr>
                     </thead>
                     <tbody>
+                        {sortedMessage.map((message, index) => {
+                            const [id, email, feedback, rating, status, timestamp] = message.split(',');
+
+                            return (
+                                <tr key={id} className="feedbackItem">
+                                    <td>{id}</td>
+                                    <td>{email}</td>
+                                    <td>{feedback}</td>
+                                    <td>{rating}</td>
+                                    <td>
+                                        <select
+                                            className="statusCss"
+                                            value={status}
+                                            onChange={(e) => handleStatusUpdate(id, e.target.value)}
+                                        >
+                                            <option value="Pending">Pending</option>
+                                            <option value="New">New</option>
+                                            <option value="Done">Done</option>
+                                        </select>
+                                    </td>
+                                    <td>{timestamp}</td>
+                                </tr>
+                            );
+                        })}
+                    </tbody>
+                    {/* <tbody>
                         {sortedMessage.map((message, index) => (
                             <tr key={index} className="feedbackItem">
                                 {message.split(',').map((column, columnIndex) => (
-                                    <td key={columnIndex}>{column}</td>
+                                    <td 
+                                        key={columnIndex}>{column}
+                                    
+                                    </td>
                                 ))}
                             </tr>
                         ))}
-                    </tbody>
+                    </tbody> */}
                 </table>
             </div>
 
