@@ -12,33 +12,21 @@ const AdminFeedbackModel: React.FC<AdminFeedbackModelProps> = ({ adminFeedbackMe
     
     const [sortedMessage, setSortedMessage] = useState(adminFeedbackMessages);
     const [statusSort, setStatusSort] = useState(false);
-    const [isSort, setIsSort] = useState(false);
 
     const statusOrder = { "Pending": 1, "New": 2, "Done": 3};
 
     useEffect(() => {
-        if(isSort){
-            const sorted = [...adminFeedbackMessages].sort((a,b) => {
-                const aStatus = a.split(',')[4];
-                const bStatus = b.split(',')[4];
-                const order = statusSort ? 1 : -1;
-                return (statusOrder[aStatus as keyof typeof statusOrder] - statusOrder[bStatus as keyof typeof statusOrder]) * order;
-            });
-            setSortedMessage(sorted);
-        }
-        else{
-            setSortedMessage(adminFeedbackMessages)
-        }
-    }, [adminFeedbackMessages, statusSort, isSort]);
+        const sorted = [...adminFeedbackMessages].sort((a,b) => {
+            const aStatus = a.split(',')[4];
+            const bStatus = b.split(',')[4];
+            const order = statusSort ? 1 : -1;
+            return (statusOrder[aStatus as keyof typeof statusOrder] - statusOrder[bStatus as keyof typeof statusOrder]) * order;
+        });
+        setSortedMessage(sorted);
+    }, [adminFeedbackMessages, statusSort]);
 
     const handleStatusHeaderClick = () => {
         setStatusSort((prevSortAscending) => !prevSortAscending);
-        if (isSort){
-            setIsSort(false);
-        }
-        else{
-            setIsSort(true);
-        }
     }
 
     const handleStatusUpdate = (fbId: string, newStatus: string) => {
@@ -108,18 +96,6 @@ const AdminFeedbackModel: React.FC<AdminFeedbackModelProps> = ({ adminFeedbackMe
                             );
                         })}
                     </tbody>
-                    {/* <tbody>
-                        {sortedMessage.map((message, index) => (
-                            <tr key={index} className="feedbackItem">
-                                {message.split(',').map((column, columnIndex) => (
-                                    <td 
-                                        key={columnIndex}>{column}
-                                    
-                                    </td>
-                                ))}
-                            </tr>
-                        ))}
-                    </tbody> */}
                 </table>
             </div>
 
