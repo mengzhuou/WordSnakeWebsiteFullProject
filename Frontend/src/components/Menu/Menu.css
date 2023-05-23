@@ -98,7 +98,7 @@ textarea{
     display: block;
 }
 
-form{
+.fbform{
     display: flex;
     flex-direction: column;
     justify-content: center;

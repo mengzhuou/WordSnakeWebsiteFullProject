@@ -23,7 +23,7 @@ const FeedbackModel: React.FC<FeedbackModelProps> = ({ message, rating, onClose,
             X
             </button>
 
-            <form onSubmit={(event) => {event.preventDefault(); onSubmit();}}>
+            <form className="fbform" onSubmit={(event) => {event.preventDefault(); onSubmit();}}>
                 <textarea value={message} onChange={onChange}></textarea>
 
                 <div className="ratingContainer">

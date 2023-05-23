@@ -82,7 +82,7 @@ function SignUpPage() {
             />
           </div>
         </div>
-        <div>
+        <div className='registerDiv'>
           <button className="RegisterButton" type="submit">Register</button>
         </div>
       </form>
