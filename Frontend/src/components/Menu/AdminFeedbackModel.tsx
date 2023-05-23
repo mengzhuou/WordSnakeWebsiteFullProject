@@ -1,107 +1,134 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import Draggable from 'react-draggable';
-import {updateFeedbackStatus} from '../../helpers/connector';
-
+import { updateFeedbackStatus, getFeedback } from '../../helpers/connector';
 
 interface AdminFeedbackModelProps {
-    adminFeedbackMessages: string[];
     onClose: () => void;
 }
 
-const AdminFeedbackModel: React.FC<AdminFeedbackModelProps> = ({ adminFeedbackMessages, onClose }) => {
-    
-    const [sortedMessage, setSortedMessage] = useState(adminFeedbackMessages);
-    const [statusSort, setStatusSort] = useState(false);
+interface AdminFeedbackModelState {
+    sortedMessage: string[];
+    statusSort: boolean;
+    adminFeedbackMessages: string[];
+}
 
-    const statusOrder = { "Pending": 1, "New": 2, "Done": 3};
+class AdminFeedbackModel extends React.Component<AdminFeedbackModelProps, AdminFeedbackModelState> {
+    private statusOrder = { "Pending": 1, "New": 2, "Done": 3 };
 
-    useEffect(() => {
-        const sorted = [...adminFeedbackMessages].sort((a,b) => {
-            const aStatus = a.split(',')[4];
-            const bStatus = b.split(',')[4];
-            const order = statusSort ? 1 : -1;
-            return (statusOrder[aStatus as keyof typeof statusOrder] - statusOrder[bStatus as keyof typeof statusOrder]) * order;
-        });
-        setSortedMessage(sorted);
-    }, [adminFeedbackMessages, statusSort]);
-
-    const handleStatusHeaderClick = () => {
-        setStatusSort((prevSortAscending) => !prevSortAscending);
+    constructor(props: AdminFeedbackModelProps) {
+        super(props);
+        this.state = {
+            sortedMessage: [],
+            statusSort: false,
+            adminFeedbackMessages: []
+        };
     }
 
-    const handleStatusUpdate = (fbId: string, newStatus: string) => {
-        const feedbackId = parseInt(fbId,10);
-        updateFeedbackStatus(feedbackId, newStatus).then(()=>{
-            const updatedMessages = sortedMessage.map((message)=>{
+    componentDidMount() {
+        this.displayFeedback();
+    }
+
+    displayFeedback = async () => {
+        console.log("displayFeedback is clicked");
+        const fbContent = await getFeedback();
+        this.setState({ adminFeedbackMessages: fbContent});
+    }
+
+    componentDidUpdate(prevProps: AdminFeedbackModelProps, prevState: AdminFeedbackModelState) {
+        if (
+            this.state.adminFeedbackMessages !== prevState.adminFeedbackMessages ||
+            this.state.statusSort !== prevState.statusSort
+        ) {
+            this.displayFeedback();
+            const sorted = [...this.state.adminFeedbackMessages].sort((a, b) => {
+                const aStatus = a.split(',')[4];
+                const bStatus = b.split(',')[4];
+                const order = this.state.statusSort ? 1 : -1;
+                return (this.statusOrder[aStatus as keyof typeof this.statusOrder] - this.statusOrder[bStatus as keyof typeof this.statusOrder]) * order;
+            });
+            this.setState({ sortedMessage: sorted });
+        }
+    }
+    
+    handleStatusHeaderClick = () => {
+        this.setState((prevState) => ({ statusSort: !prevState.statusSort }));
+    }
+
+    handleStatusUpdate = (fbId: string, newStatus: string) => {
+        const feedbackId = parseInt(fbId, 10);
+        updateFeedbackStatus(feedbackId, newStatus).then(() => {
+            const updatedMessages = this.state.adminFeedbackMessages.map((message) => {
                 const [id, email, feedback, rating, status, timestamp] = message.split(',');
-                if (id === fbId){
+                if (id === fbId) {
                     return [id, email, feedback, rating, newStatus, timestamp].join(',');
-                } else{
+                } else {
                     return message;
                 }
             })
-            setSortedMessage(updatedMessages);
-        }).catch((error: Error)=>{
+            this.setState({ sortedMessage: updatedMessages });
+        }).catch((error: Error) => {
             console.error("Error updating feedback status: ", error);
         })
     }
 
-    return (
-        <Draggable>
-        <div className="adminFBpopup">
-            <button className="adminFbClose-btn" onClick={onClose}>
-            X
-            </button>
+    render() {
+        return (
+            <Draggable>
+                <div className="adminFBpopup">
+                    <button className="adminFbClose-btn" onClick={this.props.onClose}>
+                        X
+                    </button>
 
-            <div className="adminFB">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Email</th>
-                            <th>Feedback</th>
-                            <th>Rating</th>
-                            <th>
-                                <button className="statusHeader" onClick={handleStatusHeaderClick}>
-                                    Status {statusSort ? '▲' : '▼'}
+                    <div className="adminFB">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Email</th>
+                                    <th>Feedback</th>
+                                    <th>Rating</th>
+                                    <th>
+                                        <button className="statusHeader" onClick={this.handleStatusHeaderClick}>
+                                            Status {this.state.statusSort ? '▲' : '▼'}
 
-                                </button>
-                            </th>
-                            <th>Timestamp</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {sortedMessage.map((message, index) => {
-                            const [id, email, feedback, rating, status, timestamp] = message.split(',');
-
-                            return (
-                                <tr key={id} className="feedbackItem">
-                                    <td>{id}</td>
-                                    <td>{email}</td>
-                                    <td>{feedback}</td>
-                                    <td>{rating}</td>
-                                    <td>
-                                        <select
-                                            className="statusCss"
-                                            value={status}
-                                            onChange={(e) => handleStatusUpdate(id, e.target.value)}
-                                        >
-                                            <option value="Pending">Pending</option>
-                                            <option value="New">New</option>
-                                            <option value="Done">Done</option>
-                                        </select>
-                                    </td>
-                                    <td>{timestamp}</td>
+                                        </button>
+                                    </th>
+                                    <th>Timestamp</th>
                                 </tr>
-                            );
-                        })}
-                    </tbody>
-                </table>
-            </div>
+                            </thead>
+                            <tbody>
+                                {this.state.sortedMessage.map((message, index) => {
+                                    const [id, email, feedback, rating, status, timestamp] = message.split(',');
 
-        </div>
-        </Draggable>
-    );
+                                    return (
+                                        <tr key={id} className="feedbackItem">
+                                            <td>{id}</td>
+                                            <td>{email}</td>
+                                            <td>{feedback}</td>
+                                            <td>{rating}</td>
+                                            <td>
+                                                <select
+                                                    className="statusCss"
+                                                    value={status}
+                                                    onChange={(e) => this.handleStatusUpdate(id, e.target.value)}
+                                                >
+                                                    <option value="Pending">Pending</option>
+                                                    <option value="New">New</option>
+                                                    <option value="Done">Done</option>
+                                                </select>
+                                            </td>
+                                            <td>{timestamp}</td>
+                                        </tr>
+                                    );
+                                })}
+                            </tbody>
+                        </table>
+                    </div>
+
+                </div>
+            </Draggable>
+        );
+    }
 };
 
 export default AdminFeedbackModel;

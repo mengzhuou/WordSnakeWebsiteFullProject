@@ -1,5 +1,5 @@
 import { withFuncProps } from "../withFuncProps";
-import {logout, getNumOfUsers, getSignupRank, isAdmin, addFeedback, getFeedback} from '../../helpers/connector';
+import {logout, getNumOfUsers, getSignupRank, isAdmin, addFeedback} from '../../helpers/connector';
 import React from "react";
 import "./Menu.css";
 import FeedbackModel from "./FeedbackModel";
@@ -22,7 +22,6 @@ class Menu extends React.Component<any,any>{
         }
         this.defModeNav = this.defModeNav.bind(this);
         this.classicModeNav = this.classicModeNav.bind(this);
-        this.displayFeedback = this.displayFeedback.bind(this);
     }
 
     componentDidMount() {
@@ -78,14 +77,10 @@ class Menu extends React.Component<any,any>{
     }
 
     handleAdminFeedbackOpen = () => {
-        this.displayFeedback();
-        console.log("handleAdminFeedbackOpen is clicked")
         this.setState({ showAdminFeedbackModel: true })
     }
     
     handleAdminFeedbackClose = () => {
-        console.log("handleAdminFeedbackclose is closed")
-
         this.setState({ showAdminFeedbackModel: false })
     }
 
@@ -100,14 +95,6 @@ class Menu extends React.Component<any,any>{
             console.error("Error submitting feedback: ", error);
         })
     }
-
-    displayFeedback = async () => {
-        console.log("displayFeedback is clicked")
-
-        const fbContent = await getFeedback();
-        this.setState({ adminFeedbackMessages: fbContent})
-    }
-    
     render(){
         const {totalUserNum, signupRank, admin, showFeedbackModel, feedbackMessage, rating, adminFeedbackMessages, showAdminFeedbackModel} = this.state;
         return (
@@ -142,7 +129,6 @@ class Menu extends React.Component<any,any>{
                                     </button>
                                     {showAdminFeedbackModel && (
                                         <AdminFeedbackModel
-                                            adminFeedbackMessages={adminFeedbackMessages}
                                             onClose={this.handleAdminFeedbackClose}
                                         />
                                     )}
