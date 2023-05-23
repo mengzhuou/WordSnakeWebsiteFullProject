@@ -11,6 +11,8 @@ interface AdminFeedbackModelState {
     statusSort: boolean;
     adminFeedbackMessages: string[];
     idSort: boolean;
+    timeSort: boolean;
+    ratingSort: boolean;
 }
 
 class AdminFeedbackModel extends React.Component<AdminFeedbackModelProps, AdminFeedbackModelState> {
@@ -23,7 +25,8 @@ class AdminFeedbackModel extends React.Component<AdminFeedbackModelProps, AdminF
             statusSort: false,
             adminFeedbackMessages: [],
             idSort: false,
-
+            timeSort: false,
+            ratingSort: false
         };
     }
 
@@ -38,11 +41,12 @@ class AdminFeedbackModel extends React.Component<AdminFeedbackModelProps, AdminF
     }
 
     componentDidUpdate(prevProps: AdminFeedbackModelProps, prevState: AdminFeedbackModelState) {
+        let sorted = [...this.state.adminFeedbackMessages];
+
         if (
             this.state.adminFeedbackMessages !== prevState.adminFeedbackMessages ||
             this.state.statusSort !== prevState.statusSort
         ) {
-            let sorted = [...this.state.adminFeedbackMessages];
             sorted.sort((a, b) => {
                 const aStatus = a.split(',')[4];
                 const bStatus = b.split(',')[4];
@@ -56,7 +60,6 @@ class AdminFeedbackModel extends React.Component<AdminFeedbackModelProps, AdminF
             this.state.adminFeedbackMessages !== prevState.adminFeedbackMessages ||
             this.state.idSort !== prevState.idSort
         ) {
-            let sorted = [...this.state.adminFeedbackMessages];
             sorted.sort((a, b) => {
                 const aId = parseInt(a.split(',')[0]);
                 const bId = parseInt(b.split(',')[0]);
@@ -64,6 +67,31 @@ class AdminFeedbackModel extends React.Component<AdminFeedbackModelProps, AdminF
             });
             this.setState({ sortedMessage: sorted });
         }
+
+        if (
+            this.state.adminFeedbackMessages !== prevState.adminFeedbackMessages ||
+            this.state.timeSort !== prevState.timeSort
+        ) {
+            sorted.sort((a, b) => {
+                const aTime = new Date(a.split(',')[5]).getTime();
+                const bTime = new Date(b.split(',')[5]).getTime();
+                return this.state.timeSort ? bTime - aTime : aTime - bTime; 
+            });
+            this.setState({ sortedMessage: sorted });
+        }
+
+        if (
+            this.state.adminFeedbackMessages !== prevState.adminFeedbackMessages ||
+            this.state.ratingSort !== prevState.ratingSort
+        ) {
+            sorted.sort((a, b) => {
+                const aRating = parseInt(a.split(',')[3]);
+                const bRating = parseInt(b.split(',')[3]);
+                return this.state.ratingSort ? bRating - aRating : aRating - bRating; 
+            });
+            this.setState({ sortedMessage: sorted });
+        }
+
     }
     
     
@@ -73,6 +101,14 @@ class AdminFeedbackModel extends React.Component<AdminFeedbackModelProps, AdminF
 
     handleIdHeaderClick = () => {
         this.setState((prevState) => ({ idSort: !prevState.idSort }));
+    }
+
+    handleRatingHeaderClick = () => {
+        this.setState((prevState) => ({ ratingSort: !prevState.ratingSort }));
+    }
+
+    handleTimeHeaderClick = () => {
+        this.setState((prevState) => ({ timeSort: !prevState.timeSort }));
     }
 
     handleStatusUpdate = (fbId: string, newStatus: string) => {
@@ -113,14 +149,22 @@ class AdminFeedbackModel extends React.Component<AdminFeedbackModelProps, AdminF
                                     </th>
                                     <th>Email</th>
                                     <th>Feedback</th>
-                                    <th>Rating</th>
+                                    <th>
+                                        <button className="sortHeader" onClick={this.handleRatingHeaderClick}>
+                                            Rating {this.state.ratingSort ? '▲' : '▼'}
+                                        </button>
+                                    </th>
                                     <th>
                                         <button className="sortHeader" onClick={this.handleStatusHeaderClick}>
                                             Status {this.state.statusSort ? '▲' : '▼'}
 
                                         </button>
                                     </th>
-                                    <th>Timestamp</th>
+                                    <th>
+                                        <button className="sortHeader" onClick={this.handleTimeHeaderClick}>
+                                            Timestamp {this.state.timeSort ? '▲' : '▼'}
+                                        </button>
+                                    </th>
                                 </tr>
                             </thead>
                             <tbody>
