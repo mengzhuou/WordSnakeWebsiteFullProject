@@ -23,7 +23,6 @@
 .welcomeLink{
     margin: 3% 0% 5% 0%;
     position: relative;
-    /* left: 3%; */
     color: rgb(101, 58, 97);
     text-align: center;
     width: 90px;
@@ -38,33 +37,38 @@
     box-shadow: rgba(50, 50, 93, 0.25) 0px 50px 100px -20px, rgba(0, 0, 0, 0.3) 0px 30px 60px -30px, rgba(10, 37, 64, 0.35) 0px -2px 6px 0px inset;
     background: linear-gradient(#e0d6d9, #6adc95) padding-box;
     height: 400px;
-    padding-top: 1%;
     padding-left: 1%;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.registerDiv{
+    margin-top: 10%;
+    width: 100%;
 }
 
 .RegisterButton{
-    margin-top: 30%;
-    margin-right: 5%;
-    float: right;
+    margin-top: 30% 0% 2% 0%;
     color: rgb(101, 58, 97);
     background-color: #effff9;
     border-radius: 5%;
-    width: 23%;
     font-size: 18px;
     font-weight: bold;
     cursor: pointer;
     font-family: "Neucha", cursive;
+    text-align: center;
 }
 
 .signUpName{
     font-size: 20px;
+    text-align: center;
+    width: 100%;
 }
 
 
 .datetime{
     float:left;
-    padding-right: 1%;
-    padding-bottom: 1%;
 }
 
 .datetime

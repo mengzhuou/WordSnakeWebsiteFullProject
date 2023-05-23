@@ -46,4 +46,7 @@ public interface UserRepository extends JpaRepository<User, String> {
     @Query("SELECT u.signupRank FROM User u WHERE u.email = :email")
     Integer getSignupRank(@Param("email") String email);
 
+    @Query("SELECT u.role FROM User u WHERE u.email = :email")
+    String getRole(@Param("email") String email);
+
 }

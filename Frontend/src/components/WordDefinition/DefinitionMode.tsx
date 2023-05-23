@@ -81,13 +81,6 @@ class DefinitionMode extends React.Component<any,any>{
     componentDidMount(): void {
         this.setState({ errMessage: "",  inputValue: "", wordList: []})
     }
-
-    // componentDidUpdate(prevProps: Readonly<any>, prevState: Readonly<any>, snapshot?: any): void {
-    //     if(this.state.ForceUpdateNow){
-    //         this.forceup();
-    //     }
-    // }
-
     
     render(){
         const { wordList, errMessage } = this.state;

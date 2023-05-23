@@ -173,5 +173,42 @@ export async function getSignupRank(){
     return content.data;
 }
 
+export async function isAdmin(){
+    let content = await client({
+        method: 'get',
+        url: url+"isAdmin"
+    });
+    return content.data;
+}
 
+export async function addFeedback(message: string, rating: number): Promise<String[]>{
+    let content = await client({
+        method: 'post',
+        url: url+"addFeedback",
+        params: {
+            message: message,
+            rating: rating
+        }
+    });
+    return content.data;
+}
 
+export async function getFeedback(){
+    let content = await client({
+        method: 'get',
+        url: url+"getFeedback"
+    });
+    return content.data;
+}
+
+export async function updateFeedbackStatus(id: number, status: string){
+    let content = await client({
+        method: 'post',
+        url: url+"updateFeedbackStatus",
+        params: {
+            id: id,
+            status: status
+        }
+    });
+    return content.data;
+}

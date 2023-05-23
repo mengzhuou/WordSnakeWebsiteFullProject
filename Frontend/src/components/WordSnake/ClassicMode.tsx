@@ -31,7 +31,7 @@ class ClassicMode extends React.Component<any, any>{
             } else {
                 const lastWord = this.state.wordList[this.state.wordList.length - 1]
                 const lastLetter = lastWord[lastWord.length - 1]
-                if (inputValue[0] == lastLetter) {
+                if (inputValue[0] === lastLetter) {
                     const words = await getLetterFromPreviousWord(inputValue);
                     let wordList = this.state.wordList.concat(inputValue);
                     this.handleCloseHint();
@@ -65,20 +65,31 @@ class ClassicMode extends React.Component<any, any>{
 
     handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const inputString = event.target.value;
-        if (inputString === "") {
+        if (
+            inputString.startsWith('-') || 
+            inputString.startsWith('\'') || 
+            inputString.endsWith('-') || 
+            inputString.endsWith('\'')) 
+        {
+            this.setState({ 
+                errMessage: 'Apostrophes and/or hyphens cannot be used in the beginning or ending of a word. Please type a valid word.' 
+            });
+        } 
+        else if (inputString === "") {
             this.setState({
                 inputValue: "",
                 errMessage: ""
             });
         } else {
-            const isValid = /^[a-zA-Z]+$/.test(inputString);
+            const isValid = /^[a-zA-Z'-]*$/.test(inputString);
+
             if (isValid) {
                 this.setState({
                     inputValue: inputString,
                     errMessage: ""
                 });
             } else {
-                this.setState({ errMessage: 'Special character(s) or number(s) are not accepted. Please type a valid word.' })
+                this.setState({ errMessage: 'Special character(s) or number(s) are not accepted (except apostrophes, hyphens). Please type a valid word.' })
             }
         }
     }
@@ -186,7 +197,7 @@ class ClassicMode extends React.Component<any, any>{
             
                 <h1 className="wsTitle">Word Snake</h1>
                 {isGameStarted ? (
-                    <CountdownTimer duration={999} onTimeUp={this.handleTimeUp}/>
+                    <CountdownTimer duration={30} onTimeUp={this.handleTimeUp}/>
                 ) : (
                     <button className="topnavButton" onClick={() => this.updateGameState(true, false)} hidden={isGameStarted ? true : false}>Start Game</button>
                 )}

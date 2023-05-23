@@ -1,11 +1,10 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
 import "./Signup.css";
 import { useFormik } from 'formik';
 import { emailValidator } from '../../helpers/emailValidator'
 import { passwordValidator } from '../../helpers/passwordValidator'
 import { register, login } from '../../helpers/connector'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, Link } from 'react-router-dom'
 import DatePicker from 'react-datepicker'
 import 'react-datepicker/dist/react-datepicker.css'; 
 
@@ -66,7 +65,6 @@ function SignUpPage() {
         <div className="hasMargin">
           <label htmlFor='name'> Username : </label>
           <input onChange={formik.handleChange} value={formik.values.name} id='name' name='name'></input>
-          {/* {formik.errors.name ? <div>{formik.errors.name}</div>: null} */}
         </div>
 
         <div className='hasMargin'>
@@ -84,7 +82,7 @@ function SignUpPage() {
             />
           </div>
         </div>
-        <div>
+        <div className='registerDiv'>
           <button className="RegisterButton" type="submit">Register</button>
         </div>
       </form>

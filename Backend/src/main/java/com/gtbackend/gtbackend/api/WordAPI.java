@@ -25,9 +25,12 @@ public class WordAPI {
     public List<String> getHintWordAndDef(@RequestParam String inputWordLetter) throws IllegalArgumentException{
         List<String> hintWordsAndDefs = wordRepository.getHintWordAndDef(inputWordLetter, PageRequest.of(0,5));
         List<String> numberedHintWordsAndDefs = new ArrayList<>();
+        Random random = new Random();
         int counter = 1;
         for (String hintWordAndDef : hintWordsAndDefs){
-            numberedHintWordsAndDefs.add(counter + ". " + hintWordAndDef + "\n");
+            int randomIndex = random.nextInt(hintWordsAndDefs.size());
+            String randomHintWordAndDef  = hintWordsAndDefs.get(randomIndex);
+            numberedHintWordsAndDefs.add(counter + ". " + randomHintWordAndDef + "\n");
             counter++;
         }
         return numberedHintWordsAndDefs;

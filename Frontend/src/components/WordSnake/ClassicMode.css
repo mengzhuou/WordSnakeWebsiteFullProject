@@ -105,3 +105,17 @@
   animation: fadeIn 0.5s ease-in-out;
   opacity: 1;
 }
+
+@media (max-width: 700px) {
+  .bonusMessage{
+    margin-bottom: 20px;
+    font-size: 25px;
+    display: inline-block;
+    background-color: #effff9;
+    position: absolute;
+    top: 36%;
+    right: 31%;
+    animation: fadeIn 0.5s ease-in-out;
+    opacity: 1;
+  }
+}
