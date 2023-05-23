@@ -10,6 +10,7 @@ interface AdminFeedbackModelState {
     sortedMessage: string[];
     statusSort: boolean;
     adminFeedbackMessages: string[];
+    idSort: boolean;
 }
 
 class AdminFeedbackModel extends React.Component<AdminFeedbackModelProps, AdminFeedbackModelState> {
@@ -20,7 +21,9 @@ class AdminFeedbackModel extends React.Component<AdminFeedbackModelProps, AdminF
         this.state = {
             sortedMessage: [],
             statusSort: false,
-            adminFeedbackMessages: []
+            adminFeedbackMessages: [],
+            idSort: false,
+
         };
     }
 
@@ -39,8 +42,8 @@ class AdminFeedbackModel extends React.Component<AdminFeedbackModelProps, AdminF
             this.state.adminFeedbackMessages !== prevState.adminFeedbackMessages ||
             this.state.statusSort !== prevState.statusSort
         ) {
-            this.displayFeedback();
-            const sorted = [...this.state.adminFeedbackMessages].sort((a, b) => {
+            let sorted = [...this.state.adminFeedbackMessages];
+            sorted.sort((a, b) => {
                 const aStatus = a.split(',')[4];
                 const bStatus = b.split(',')[4];
                 const order = this.state.statusSort ? 1 : -1;
@@ -48,10 +51,28 @@ class AdminFeedbackModel extends React.Component<AdminFeedbackModelProps, AdminF
             });
             this.setState({ sortedMessage: sorted });
         }
+
+        if (
+            this.state.adminFeedbackMessages !== prevState.adminFeedbackMessages ||
+            this.state.idSort !== prevState.idSort
+        ) {
+            let sorted = [...this.state.adminFeedbackMessages];
+            sorted.sort((a, b) => {
+                const aId = parseInt(a.split(',')[0]);
+                const bId = parseInt(b.split(',')[0]);
+                return this.state.idSort ? bId - aId : aId - bId; 
+            });
+            this.setState({ sortedMessage: sorted });
+        }
     }
+    
     
     handleStatusHeaderClick = () => {
         this.setState((prevState) => ({ statusSort: !prevState.statusSort }));
+    }
+
+    handleIdHeaderClick = () => {
+        this.setState((prevState) => ({ idSort: !prevState.idSort }));
     }
 
     handleStatusUpdate = (fbId: string, newStatus: string) => {
@@ -83,12 +104,18 @@ class AdminFeedbackModel extends React.Component<AdminFeedbackModelProps, AdminF
                         <table>
                             <thead>
                                 <tr>
-                                    <th>ID</th>
+                                    <th>
+                                        <button className="sortHeader" onClick={this.handleIdHeaderClick}>
+                                            ID {this.state.idSort ? '▲' : '▼'}
+
+                                        </button>
+
+                                    </th>
                                     <th>Email</th>
                                     <th>Feedback</th>
                                     <th>Rating</th>
                                     <th>
-                                        <button className="statusHeader" onClick={this.handleStatusHeaderClick}>
+                                        <button className="sortHeader" onClick={this.handleStatusHeaderClick}>
                                             Status {this.state.statusSort ? '▲' : '▼'}
 
                                         </button>
