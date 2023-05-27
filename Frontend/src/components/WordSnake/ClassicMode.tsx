@@ -67,12 +67,10 @@ class ClassicMode extends React.Component<any, any>{
         const inputString = event.target.value;
         if (
             inputString.startsWith('-') || 
-            inputString.startsWith('\'') || 
-            inputString.endsWith('-') || 
-            inputString.endsWith('\'')) 
+            inputString.startsWith('\''))
         {
             this.setState({ 
-                errMessage: 'Apostrophes and/or hyphens cannot be used in the beginning or ending of a word. Please type a valid word.' 
+                errMessage: 'Apostrophes and/or hyphens cannot be used in the beginning of a word.' 
             });
         } 
         else if (inputString === "") {
@@ -89,7 +87,7 @@ class ClassicMode extends React.Component<any, any>{
                     errMessage: ""
                 });
             } else {
-                this.setState({ errMessage: 'Special character(s) or number(s) are not accepted (except apostrophes, hyphens). Please type a valid word.' })
+                this.setState({ errMessage: 'Special character(s) or number(s) are not accepted (except apostrophes, hyphens).' })
             }
         }
     }
@@ -106,9 +104,16 @@ class ClassicMode extends React.Component<any, any>{
     storeInputValue = async (inputValue: string) => {
         try {
             if (inputValue !== this.state.storedInputValue) {
-                const lowerInput = inputValue.toLowerCase();
-                this.setState({ storedInputValue: lowerInput, ForceUpdateNow: true })
-                this.forceup(lowerInput);
+                if (inputValue.endsWith('\'') || inputValue.endsWith('-')){
+                    this.setState({ 
+                        errMessage: 'Apostrophes and/or hyphens cannot be used in the ending of a word.' 
+                    });
+                }
+                else{
+                    const lowerInput = inputValue.toLowerCase();
+                    this.setState({ storedInputValue: lowerInput, ForceUpdateNow: true })
+                    this.forceup(lowerInput);
+                }
             }
         } catch (error) {
             console.error(error)

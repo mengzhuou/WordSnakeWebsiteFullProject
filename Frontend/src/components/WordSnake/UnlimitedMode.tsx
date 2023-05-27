@@ -68,32 +68,45 @@ class UnlimitedMode extends React.Component<any, any>{
 
     handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const inputString = event.target.value;
-        if (inputString === "") {
+        if (
+            inputString.startsWith('-') || 
+            inputString.startsWith('\''))
+        {
+            this.setState({ 
+                errMessage: 'Apostrophes and/or hyphens cannot be used in the beginning of a word.' 
+            });
+        } 
+        else if (inputString === "") {
             this.setState({
                 inputValue: "",
                 errMessage: ""
             });
         } else {
-            const isValid = /^[a-zA-Z]+$/.test(inputString);
+            const isValid = /^[a-zA-Z'-]*$/.test(inputString);
+
             if (isValid) {
                 this.setState({
                     inputValue: inputString,
                     errMessage: ""
                 });
             } else {
-                this.setState({ errMessage: 'Special character(s) or number(s) are not accepted. Please type a valid word.' })
+                this.setState({ errMessage: 'Special character(s) or number(s) are not accepted (except apostrophes, hyphens).' })
             }
         }
-
-
     }
 
     handleEnterKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
         if (event.key === "Enter") {
-            this.storeInputValue(this.state.inputValue).then(() => {
-                this.setState({ inputValue: "" });
-            });
-
+            const { inputValue } = this.state;
+            if (inputValue.endsWith('\'') || inputValue.endsWith('-')) {
+                this.setState({ 
+                    errMessage: 'Apostrophes and/or hyphens cannot be used in the ending of a word.' 
+                });
+            } else {
+                this.storeInputValue(this.state.inputValue).then(() => {
+                    this.setState({ inputValue: "" });
+                });
+            }
         }
     }
 
