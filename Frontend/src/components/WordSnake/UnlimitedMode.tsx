@@ -52,12 +52,12 @@ class UnlimitedMode extends React.Component<any, any>{
                     
                     this.setState({history: hisArr, lastLetter: lastLetter})
                 } else {
-                    this.setState({ isTimerUpdated: false, errMessage: `The word must start with '${lastLetter}'` })
+                    this.setState({ isTimerUpdated: false, errMessage: `The word must start with '${lastLetter}'`,  inputValue: "", storedInputValue: "" })
                 }
             }
         } catch (error) {
             console.error("Error fetching word in the database:", error);
-            this.setState({ isTimerUpdated: false, errMessage: 'The word does not exist. Please enter a valid word.' });
+            this.setState({ isTimerUpdated: false, errMessage: 'The word does not exist. Please enter a valid word.',  inputValue: "", storedInputValue: "" });
         }
         
     };
