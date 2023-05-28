@@ -17,7 +17,6 @@ const FeedbackModel: React.FC<FeedbackModelProps> = ({ message, rating, onClose,
     };
 
     return (
-        <Draggable>
         <div className="fbpopup">
             <button className="fbClose-btn" onClick={onClose}>
             X
@@ -41,7 +40,6 @@ const FeedbackModel: React.FC<FeedbackModelProps> = ({ message, rating, onClose,
                 <button type="submit" className="fbSubmitButton">Submit</button>
             </form>
         </div>
-        </Draggable>
     );
 };
 

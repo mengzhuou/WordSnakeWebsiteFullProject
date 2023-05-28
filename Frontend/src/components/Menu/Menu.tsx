@@ -4,7 +4,6 @@ import React from "react";
 import "./Menu.css";
 import FeedbackModel from "./FeedbackModel";
 import AdminFeedbackModel from "./AdminFeedbackModel";
-import { TextField } from "@mui/material";
 import AddWordModel from "./AddWordModel";
 
 
@@ -35,46 +34,6 @@ class Menu extends React.Component<any,any>{
         this.displayAdmin();
     }
 
-    handleChatGPTSearch = async(searchingWord: string) => {
-        console.log("call chatgpt")
-
-        const res = await getChatGPTSearchingDefinition(searchingWord);
-        if (Array.isArray(res)){
-            this.setState({ searchingDefinition: res })
-        } else{
-            console.error('Expected an array from getChatGPTSearchingDefinition, got:', res);
-        }
-    }
-
-    
-    handleSearchValueChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        const inputString = event.target.value;
-        console.log("value changing", inputString)
-        
-        this.setState({
-            searchingWord: inputString,
-            errMessage: ""
-        });
-        
-    }
-
-    handleEnterKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
-        if (event.key === "Enter") {
-            console.log("Key down")
-            this.storeSearchValue(this.state.searchingWord).then(() => {
-                this.setState({ searchingWord: "" });
-            });
-        }
-    }
-
-    storeSearchValue = async (inputValue: string) => {
-
-        this.handleChatGPTSearch(inputValue);
-        this.setState({ searchingWord: inputValue })
-    }
-
-
-
     pagelogout = ()=>{
         logout().then(()=>{
             this.props.navigate("/")
@@ -99,16 +58,16 @@ class Menu extends React.Component<any,any>{
         const num = await getSignupRank();
         this.setState({ signupRank: num })
     }
-
+    
     displayAdmin = async () => {
         const isAdminTrue = await isAdmin();
         this.setState({ admin: isAdminTrue })
     }
-
+    
     handleFeedbackModelOpen = () => {
         this.setState({ showFeedbackModel: true })
     }
-
+    
     handleFeedbackModelClose = () => {
         this.setState({ showFeedbackModel: false })
     }
@@ -116,11 +75,11 @@ class Menu extends React.Component<any,any>{
     handleFeedbackMessageChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
         this.setState({ feedbackMessage: event.target.value });
     }
-
+    
     handleRatingChange = (rating: number) => {
         this.setState({ rating: rating });
     }
-
+    
     handleAdminFeedbackOpen = () => {
         this.setState({ showAdminFeedbackModel: true })
     }
@@ -128,10 +87,10 @@ class Menu extends React.Component<any,any>{
     handleAdminFeedbackClose = () => {
         this.setState({ showAdminFeedbackModel: false })
     }
-
+    
     handleFeedbackSubmit = () => {
         const { feedbackMessage, rating } = this.state;
-
+        
         addFeedback(feedbackMessage, rating).then(() => {
             this.setState({ feedbackMessage: "", rating: 5 })
             alert("Feedback is sent")
@@ -140,6 +99,9 @@ class Menu extends React.Component<any,any>{
             console.error("Error submitting feedback: ", error);
         })
     }
+
+
+
 
     handleAddWordModelOpen = () => {
         this.setState({ showAddWordModel: true })
@@ -178,6 +140,14 @@ class Menu extends React.Component<any,any>{
                         <button className="menuButton" onClick={this.classicModeNav}>Classic Mode</button>
                     </div>
                     <div className="buttonRow">
+                        <button className="menuButton" onClick={this.handleAddWordModelOpen}>Add Word</button>
+                        {showAddWordModel &&
+                            <AddWordModel
+                                onClose={this.handleAddWordModelClose}
+                            />
+                        }
+                    </div>
+                    <div className="buttonRow">
                         {admin? 
                             (
                                 <>
@@ -210,27 +180,7 @@ class Menu extends React.Component<any,any>{
                         }
                     </div>
                     <div className="buttonRow">
-                        <button className="menuButton" onClick={this.handleAddWordModelOpen}>Add Word</button>
-                        {showAddWordModel &&
-                            <AddWordModel
-                                
-                            />
-                        }
-                    </div>
-                    <div className="buttonRow">
                         <button className="menuButton" onClick={this.pagelogout}>Logout</button>
-                    </div>
-
-                    <div>
-                        <TextField
-                            label={`Search word online: `}
-                            value={searchingWord}
-                            onChange={this.handleSearchValueChange}
-                            onKeyDown={this.handleEnterKeyDown}
-                        />
-                        {Array.isArray(searchingDefinition) && searchingDefinition.map((definition: string, index: number)=>(
-                            <p key={index}>{definition}</p>
-                        ))}
                     </div>
                 </div>
 
