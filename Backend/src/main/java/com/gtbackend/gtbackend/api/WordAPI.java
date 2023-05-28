@@ -2,6 +2,7 @@ package com.gtbackend.gtbackend.api;
 
 import com.gtbackend.gtbackend.dao.WordRepository;
 import com.gtbackend.gtbackend.model.Word;
+import com.gtbackend.gtbackend.service.WordService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.web.bind.annotation.*;
@@ -15,6 +16,13 @@ import java.util.Random;
 public class WordAPI {
     @Autowired
     private WordRepository wordRepository;
+    @Autowired
+    private WordService wordService;
+
+    @PostMapping("getChatGPTSearchingDefinition")
+    public List<String> getChatGPTSearchingDefinition(@RequestParam String word){
+        return wordService.getChatGPTSearchingDefinition(word);
+    }
 
     @RequestMapping("/getWords")
     public List<Word> getWords(){

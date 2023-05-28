@@ -19,7 +19,6 @@ public interface WordRepository extends JpaRepository<Word, Integer> {
     @Query("SELECT CONCAT(w.word, ': ', w.definition) FROM words w WHERE w.word LIKE :inputWordLetter% AND LENGTH(w.word) >= 4")
     List<String> getHintWordAndDef(@Param("inputWordLetter") String inputWordLetter, Pageable pageable);
 
-
     @Query("SELECT w.definition FROM words w WHERE w.word = :inputWord")
     List<String> getWordAndDef(@Param("inputWord") String inputWord);
 

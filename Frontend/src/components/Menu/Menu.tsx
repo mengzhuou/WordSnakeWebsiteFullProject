@@ -1,9 +1,11 @@
 import { withFuncProps } from "../withFuncProps";
-import {logout, getNumOfUsers, getSignupRank, isAdmin, addFeedback} from '../../helpers/connector';
+import {logout, getNumOfUsers, getSignupRank, isAdmin, addFeedback, getChatGPTSearchingDefinition} from '../../helpers/connector';
 import React from "react";
 import "./Menu.css";
 import FeedbackModel from "./FeedbackModel";
 import AdminFeedbackModel from "./AdminFeedbackModel";
+import { TextField } from "@mui/material";
+import AddWordModel from "./AddWordModel";
 
 
 
@@ -16,9 +18,12 @@ class Menu extends React.Component<any,any>{
             admin: false,
             showFeedbackModel: false,
             showAdminFeedbackModel: false,
+            showAddWordModel: false,
             feedbackMessage: "",
             rating: 5,
             adminFeedbackMessages: [],
+            searchingWord: "",
+            searchingDefinition: []
         }
         this.defModeNav = this.defModeNav.bind(this);
         this.classicModeNav = this.classicModeNav.bind(this);
@@ -29,6 +34,46 @@ class Menu extends React.Component<any,any>{
         this.displayUserSignupRank();
         this.displayAdmin();
     }
+
+    handleChatGPTSearch = async(searchingWord: string) => {
+        console.log("call chatgpt")
+
+        const res = await getChatGPTSearchingDefinition(searchingWord);
+        if (Array.isArray(res)){
+            this.setState({ searchingDefinition: res })
+        } else{
+            console.error('Expected an array from getChatGPTSearchingDefinition, got:', res);
+        }
+    }
+
+    
+    handleSearchValueChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const inputString = event.target.value;
+        console.log("value changing", inputString)
+        
+        this.setState({
+            searchingWord: inputString,
+            errMessage: ""
+        });
+        
+    }
+
+    handleEnterKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+        if (event.key === "Enter") {
+            console.log("Key down")
+            this.storeSearchValue(this.state.searchingWord).then(() => {
+                this.setState({ searchingWord: "" });
+            });
+        }
+    }
+
+    storeSearchValue = async (inputValue: string) => {
+
+        this.handleChatGPTSearch(inputValue);
+        this.setState({ searchingWord: inputValue })
+    }
+
+
 
     pagelogout = ()=>{
         logout().then(()=>{
@@ -95,8 +140,20 @@ class Menu extends React.Component<any,any>{
             console.error("Error submitting feedback: ", error);
         })
     }
+
+    handleAddWordModelOpen = () => {
+        this.setState({ showAddWordModel: true })
+    }
+    handleAddWordModelClose = () => {
+        this.setState({ showAddWordModel: false })
+    }
     render(){
-        const {totalUserNum, signupRank, admin, showFeedbackModel, feedbackMessage, rating, adminFeedbackMessages, showAdminFeedbackModel} = this.state;
+        const {totalUserNum, signupRank, admin, 
+            showFeedbackModel, feedbackMessage, 
+            rating, showAdminFeedbackModel, 
+            searchingWord, searchingDefinition,
+            showAddWordModel
+        } = this.state;
         return (
             <div className="App">
                 <div className="labelContainer">
@@ -153,7 +210,27 @@ class Menu extends React.Component<any,any>{
                         }
                     </div>
                     <div className="buttonRow">
+                        <button className="menuButton" onClick={this.handleAddWordModelOpen}>Add Word</button>
+                        {showAddWordModel &&
+                            <AddWordModel
+                                
+                            />
+                        }
+                    </div>
+                    <div className="buttonRow">
                         <button className="menuButton" onClick={this.pagelogout}>Logout</button>
+                    </div>
+
+                    <div>
+                        <TextField
+                            label={`Search word online: `}
+                            value={searchingWord}
+                            onChange={this.handleSearchValueChange}
+                            onKeyDown={this.handleEnterKeyDown}
+                        />
+                        {Array.isArray(searchingDefinition) && searchingDefinition.map((definition: string, index: number)=>(
+                            <p key={index}>{definition}</p>
+                        ))}
                     </div>
                 </div>
 

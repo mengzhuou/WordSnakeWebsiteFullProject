@@ -97,7 +97,6 @@ class ClassicMode extends React.Component<any, any>{
             this.storeInputValue(this.state.inputValue).then(() => {
                 this.setState({ inputValue: "" });
             });
-
         }
     }
 

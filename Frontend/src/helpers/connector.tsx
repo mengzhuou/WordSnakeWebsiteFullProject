@@ -212,3 +212,14 @@ export async function updateFeedbackStatus(id: number, status: string){
     });
     return content.data;
 }
+
+export async function getChatGPTSearchingDefinition(word: string){
+    let content = await client({
+        method: 'post',
+        url: url+"getChatGPTSearchingDefinition",
+        params:{
+            word: word
+        }
+    });
+    return content.data;
+}
