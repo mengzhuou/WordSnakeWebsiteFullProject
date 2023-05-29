@@ -21,7 +21,7 @@ public class WordService {
     private RestTemplate restTemplate; // Used for making HTTP requests
 
     public List<String> getChatGPTSearchingDefinition(String word) {
-        String apiKey = "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";
+        String apiKey = System.getenv("OPENAI_API_KEY");
         String apiUrl = "https://api.openai.com/v1/completions";
 
         String wordTypesPrompt = "Define the word types for '" + word + "'.";
