@@ -23,63 +23,47 @@ class UserAddWordModel extends React.Component<UserAddWordModelProps, UserAddWor
     };
   }
 
-  handleSearchValueChange = (event: ChangeEvent<HTMLInputElement>) => {
+  handleSearchValueChange = async (event: ChangeEvent<HTMLInputElement>) => {
     const inputString = event.target.value;
-
     this.setState({
       searchingWord: inputString,
     });
+    await this.checkWordExistence(inputString);
   }
 
-  handleEnterKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
-    if (event.key === "Enter") {
-
-      this.storeSearchValue(this.state.searchingWord).then(() => {
-        this.setState({ searchingWord: ""});
-      });
-    }
+  checkWordExistence = async (inputWord: string) => {
+    const exist = await isWordExist(inputWord);
+    this.setState({
+      wordExist: exist,
+    });
   }
-
-  storeSearchValue = async (inputValue: string) => {
-    const exist = await isWordExist(inputValue);
-
-    this.setState({ searchingWord: inputValue, typedWord: inputValue, wordExist: exist })
-  }
-
-//   handleAddWordModelSubmit = () => {
-//     onSubmit();
-//   }
 
   render() {
     const { onClose } = this.props;
     const { searchingWord, typedWord, wordExist } = this.state;
 
     return (
-    //   <Draggable>
-        <div className="addWordModelPopup">
-            <button className="fbClose-btn" onClick={onClose}>
-                X
-            </button>
-            <div className="searchWord">
-              <TextField
-                label={`Search word online: `}
-                value={searchingWord}
-                onChange={this.handleSearchValueChange}
-                onKeyDown={this.handleEnterKeyDown}
-              />
-            </div>
-            <div className="typedWord">
-                {typedWord.toUpperCase()}
-            </div>
-            <div className="typedWord">
-                {wordExist? 
-                    "The word already exist in our database"
-                    :
-                    "The word does not exist in our database"
-                }
-            </div>
-            {/* <button type="submit" className="fbSubmitButton">Submit</button> */}
+      <div className="addWordModelPopup">
+        <button className="fbClose-btn" onClick={onClose}>
+          X
+        </button>
+        <div className="searchWord">
+          <TextField
+            label={`Search word online: `}
+            value={searchingWord}
+            onChange={this.handleSearchValueChange}
+          />
         </div>
+        <div className="typedWord">
+          {typedWord.toUpperCase()}
+        </div>
+        {searchingWord && (
+          <div className="typedWord">
+            {wordExist ? "The word already exists in our database" : "The word does not exist in our database"}
+          </div>
+        )}
+        {/* <button type="submit" className="fbSubmitButton">Submit</button> */}
+      </div>
     );
   }
 }
