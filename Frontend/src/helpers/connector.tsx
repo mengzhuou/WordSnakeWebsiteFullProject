@@ -75,7 +75,7 @@ export async function isWordExist(inputWord: string): Promise<boolean>{
         },
         withCredentials: true
     });
-    return content.data.exist;
+    return content.data;
 }
 
 export async function getLetterFromPreviousWord(inputWord: string): Promise<String>{

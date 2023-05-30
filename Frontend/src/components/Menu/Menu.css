@@ -232,8 +232,14 @@ textarea{
 }
 
 .searchDefinition{
-    margin-right: 0% !important;
+    margin: 5% 3% 5% 3% !important;
     display: flex;
     flex-direction: column;
     align-items: flex-start;
+    text-align: left;
+}
+
+.typedWord{
+    text-align: center !important;
+    width: 100%;
 }

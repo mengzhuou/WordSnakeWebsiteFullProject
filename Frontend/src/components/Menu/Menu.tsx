@@ -4,7 +4,8 @@ import React from "react";
 import "./Menu.css";
 import FeedbackModel from "./FeedbackModel";
 import AdminFeedbackModel from "./AdminFeedbackModel";
-import AddWordModel from "./AddWordModel";
+import UserAddWordModel from "./UserAddWordModel";
+
 
 
 
@@ -17,7 +18,7 @@ class Menu extends React.Component<any,any>{
             admin: false,
             showFeedbackModel: false,
             showAdminFeedbackModel: false,
-            showAddWordModel: false,
+            showUserAddWordModel: false,
             feedbackMessage: "",
             rating: 5,
             adminFeedbackMessages: [],
@@ -103,18 +104,18 @@ class Menu extends React.Component<any,any>{
 
 
 
-    handleAddWordModelOpen = () => {
-        this.setState({ showAddWordModel: true })
+    handleUserAddWordModelOpen = () => {
+        this.setState({ showUserAddWordModel: true })
     }
-    handleAddWordModelClose = () => {
-        this.setState({ showAddWordModel: false })
+    handleUserAddWordModelClose = () => {
+        this.setState({ showUserAddWordModel: false })
     }
     render(){
         const {totalUserNum, signupRank, admin, 
             showFeedbackModel, feedbackMessage, 
             rating, showAdminFeedbackModel, 
             searchingWord, searchingDefinition,
-            showAddWordModel
+            showUserAddWordModel
         } = this.state;
         return (
             <div className="App">
@@ -140,10 +141,10 @@ class Menu extends React.Component<any,any>{
                         <button className="menuButton" onClick={this.classicModeNav}>Classic Mode</button>
                     </div>
                     <div className="buttonRow">
-                        <button className="menuButton" onClick={this.handleAddWordModelOpen}>Add Word</button>
-                        {showAddWordModel &&
-                            <AddWordModel
-                                onClose={this.handleAddWordModelClose}
+                        <button className="menuButton" onClick={this.handleUserAddWordModelOpen}>Add Word</button>
+                        {showUserAddWordModel &&
+                            <UserAddWordModel
+                                onClose={this.handleUserAddWordModelClose}
                             />
                         }
                     </div>

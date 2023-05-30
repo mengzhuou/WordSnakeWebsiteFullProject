@@ -1,24 +1,30 @@
 import React, { ChangeEvent } from "react";
 import Draggable from 'react-draggable';
-import { getChatGPTSearchingDefinition } from '../../helpers/connector';
+import { getChatGPTSearchingDefinition, isWordExist } from '../../helpers/connector';
 import { TextField } from "@mui/material";
 import "./Menu.css";
 
-interface FeedbackModelProps {
+interface AddWordModelProps {
   onClose: () => void
 }
 
-interface FeedbackModelState {
+interface AddWordModelState {
   searchingWord: string,
-  searchingDefinition: string[]
+  typedWord: string,
+  searchingDefinition: string[],
+  wordExist: boolean,
+  isWordTyped: boolean
 }
 
-class AddWordModel extends React.Component<FeedbackModelProps, FeedbackModelState> {
-  constructor(props: FeedbackModelProps) {
+class AddWordModel extends React.Component<AddWordModelProps, AddWordModelState> {
+  constructor(props: AddWordModelProps) {
     super(props);
     this.state = {
       searchingWord: "",
-      searchingDefinition: []
+      typedWord: "",
+      searchingDefinition: [],
+      wordExist: false,
+      isWordTyped: false
     };
   }
 
@@ -33,25 +39,30 @@ class AddWordModel extends React.Component<FeedbackModelProps, FeedbackModelStat
 
   handleSearchValueChange = (event: ChangeEvent<HTMLInputElement>) => {
     const inputString = event.target.value;
-    console.log("value changing", inputString)
+    console.log("word typeing, ", this.state.isWordTyped)
 
     this.setState({
       searchingWord: inputString,
+      isWordTyped: false
     });
   }
 
   handleEnterKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === "Enter") {
-      console.log("Key down")
+
       this.storeSearchValue(this.state.searchingWord).then(() => {
-        this.setState({ searchingWord: "" });
+        this.setState({ searchingWord: ""});
       });
     }
   }
 
   storeSearchValue = async (inputValue: string) => {
+    const exist = await isWordExist(inputValue);
+    console.log("word typeing after stored", this.state.isWordTyped)
+
+
     this.handleChatGPTSearch(inputValue);
-    this.setState({ searchingWord: inputValue })
+    this.setState({ searchingWord: inputValue, typedWord: inputValue, wordExist: exist, isWordTyped: true })
   }
 
 //   handleAddWordModelSubmit = () => {
@@ -60,7 +71,7 @@ class AddWordModel extends React.Component<FeedbackModelProps, FeedbackModelStat
 
   render() {
     const { onClose } = this.props;
-    const { searchingWord, searchingDefinition } = this.state;
+    const { searchingWord, searchingDefinition, typedWord, wordExist, isWordTyped } = this.state;
 
     return (
     //   <Draggable>
@@ -79,6 +90,14 @@ class AddWordModel extends React.Component<FeedbackModelProps, FeedbackModelStat
             <div className="searchDefinition">
               {Array.isArray(searchingDefinition) && searchingDefinition.map((definition: string, index: number) => (
                 <React.Fragment key={index}>
+                    <div className="typedWord">
+                        {typedWord.toUpperCase()}
+                    </div>
+                    {isWordTyped && (
+                      <div className="typedWord">
+                        {wordExist ? "The word already exists in our database" : "The word does not exist in our database"}
+                      </div>
+                    )}
                     {definition.split("•").map((line: string, lineIndex: number) => (
                         <p key={lineIndex}>
                             {line}
