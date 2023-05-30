@@ -5,8 +5,7 @@ import "./Menu.css";
 import FeedbackModel from "./FeedbackModel";
 import AdminFeedbackModel from "./AdminFeedbackModel";
 import UserAddWordModel from "./UserAddWordModel";
-
-
+import HelpModel from "./HelpModel";
 
 
 class Menu extends React.Component<any,any>{
@@ -19,6 +18,7 @@ class Menu extends React.Component<any,any>{
             showFeedbackModel: false,
             showAdminFeedbackModel: false,
             showUserAddWordModel: false,
+            showHelpModel: false,
             feedbackMessage: "",
             rating: 5,
             adminFeedbackMessages: [],
@@ -113,11 +113,18 @@ class Menu extends React.Component<any,any>{
     handleUserAddWordModelClose = () => {
         this.setState({ showUserAddWordModel: false })
     }
+
+    handleHelpModelOpen = () => {
+        this.setState({ showHelpModel: true })
+    }
+    handleHelpModelClose = () => {
+        this.setState({ showHelpModel: false })
+    }
     render(){
         const {totalUserNum, signupRank, admin, 
             showFeedbackModel, feedbackMessage, 
             rating, showAdminFeedbackModel, 
-            showUserAddWordModel
+            showUserAddWordModel, showHelpModel
         } = this.state;
         return (
             <div className="App">
@@ -185,6 +192,14 @@ class Menu extends React.Component<any,any>{
                     </div>
                     <div className="buttonRow">
                         <button className="menuButton" onClick={this.pagelogout}>Logout</button>
+                    </div>
+                    <div className="buttonRow">
+                        <button className="menuButton" onClick={this.handleHelpModelOpen}>Help</button>
+                        {showHelpModel &&
+                            <HelpModel
+                                onClose={this.handleHelpModelClose}
+                            />
+                        }
                     </div>
                 </div>
 
