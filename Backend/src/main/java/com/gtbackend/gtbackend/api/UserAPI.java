@@ -1,11 +1,13 @@
 package com.gtbackend.gtbackend.api;
 
 import com.gtbackend.gtbackend.dao.UserRepository;
+import com.gtbackend.gtbackend.dao.WordAdditionRepository;
 import com.gtbackend.gtbackend.model.Role;
 import com.gtbackend.gtbackend.model.User;
 import com.gtbackend.gtbackend.security.JwtService;
 import com.gtbackend.gtbackend.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -36,10 +38,18 @@ public class UserAPI {
     private UserRepository userRepository;
 
     @Autowired
-    public UserAPI(UserService userService, PasswordEncoder passwordEncoder, JwtService jwtService) {
+    private WordAdditionRepository wordAdditionRepository;
+
+    @Autowired
+    public UserAPI(
+            UserService userService,
+            PasswordEncoder passwordEncoder,
+            JwtService jwtService,
+            WordAdditionRepository wordAdditionRepository) {
         this.userService = userService;
         this.passwordEncoder = passwordEncoder;
         this.jwtService = jwtService;
+        this.wordAdditionRepository = wordAdditionRepository;
     }
 
     @PostMapping("/logout")
@@ -60,8 +70,12 @@ public class UserAPI {
         if (passwordEncoder.matches(password, usr.getPassword())) {
             SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(usr.getUsername(),
             usr.getPassword()));
-            token = jwtService.generateToken(usr);
-            return ResponseEntity.ok(token);
+            try{
+                token = jwtService.generateToken(usr);
+                return ResponseEntity.ok(token);
+            } catch (Exception e){
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to generate JWT token.");
+            }
         } else {
             throw new BadCredentialsException("Email or Password does not match our records.");
         }
@@ -212,5 +226,17 @@ public class UserAPI {
             return false;
         }
         return false;
+    }
+
+    @PostMapping("/requestForWordAddition")
+    public boolean requestForWordAddition(@RequestParam String word){
+        ResponseEntity<String> userEmailResponse = getUserEmail();
+        if (userEmailResponse.getStatusCode().is2xxSuccessful()) {
+            String userEmail = userEmailResponse.getBody();
+            userService.requestForWordAddition(userEmail, word);
+            return true;
+        } else {
+            return false;
+        }
     }
 }

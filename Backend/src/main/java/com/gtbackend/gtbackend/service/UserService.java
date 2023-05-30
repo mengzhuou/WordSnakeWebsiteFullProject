@@ -1,7 +1,9 @@
 package com.gtbackend.gtbackend.service;
 
 import com.gtbackend.gtbackend.dao.UserRepository;
+import com.gtbackend.gtbackend.dao.WordAdditionRepository;
 import com.gtbackend.gtbackend.model.User;
+import com.gtbackend.gtbackend.model.WordAddition;
 import com.gtbackend.gtbackend.security.JwtService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
@@ -9,6 +11,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -19,10 +22,16 @@ public class UserService implements UserDetailsService {
     private UserRepository userRepository;
     private JwtService jwtService;
 
+    private WordAdditionRepository wordAdditionRepository;
+
     @Autowired
-    public UserService(UserRepository userRepository, JwtService jwtService) {
+    public UserService(
+            UserRepository userRepository,
+            JwtService jwtService,
+            WordAdditionRepository wordAdditionRepository) {
         this.userRepository = userRepository;
         this.jwtService = jwtService;
+        this.wordAdditionRepository = wordAdditionRepository;
     }
 
     public Optional<User> getUser(String email){
@@ -49,5 +58,13 @@ public class UserService implements UserDetailsService {
             throw new UsernameNotFoundException("User not present");
         }
         return usr.get();
+    }
+
+    @Transactional
+    public void requestForWordAddition(String email, String word) {
+        User user = userRepository.findById(email)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + email));
+        WordAddition wordAddition = new WordAddition(user, word);
+        wordAdditionRepository.save(wordAddition);
     }
 }

@@ -3,6 +3,8 @@ package com.gtbackend.gtbackend.security;
 import com.gtbackend.gtbackend.model.User;
 import com.gtbackend.gtbackend.service.UserService;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -51,11 +53,16 @@ public class JwtFilter extends OncePerRequestFilter {
                     if (user.isPresent() && jwtService.validateToken(jwtToken, user.get())) {
                         UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(user.get(), null, authorities);
                         SecurityContextHolder.getContext().setAuthentication(auth);
-                        String newToken = jwtService.generateToken(user.get());
-                        response.setHeader(HttpHeaders.AUTHORIZATION, "Bearer " + newToken);
+                        String newToken;
+
+                        try {
+                            newToken = jwtService.generateToken(user.get());
+                            response.setHeader(HttpHeaders.AUTHORIZATION, "Bearer " + newToken);
+                        } catch (Exception e) {
+                            logger.error("Failed to generate JWT token.", e);
+                        }
                     }
                 }
-
             } catch (Exception e) {
                 logger.error("Cannot set user authentication: {}", e);
             }
