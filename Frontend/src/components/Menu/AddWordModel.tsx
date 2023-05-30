@@ -1,5 +1,4 @@
 import React, { ChangeEvent } from "react";
-import Draggable from 'react-draggable';
 import { getChatGPTSearchingDefinition, isWordExist } from '../../helpers/connector';
 import { TextField } from "@mui/material";
 import "./Menu.css";
@@ -74,7 +73,6 @@ class AddWordModel extends React.Component<AddWordModelProps, AddWordModelState>
     const { searchingWord, searchingDefinition, typedWord, wordExist, isWordTyped } = this.state;
 
     return (
-    //   <Draggable>
         <div className="addWordModelPopup">
             <button className="fbClose-btn" onClick={onClose}>
                 X
@@ -111,7 +109,6 @@ class AddWordModel extends React.Component<AddWordModelProps, AddWordModelState>
             </div>      
             {/* <button type="submit" className="fbSubmitButton">Submit</button> */}
         </div>
-    //   </Draggable>
     );
   }
 }

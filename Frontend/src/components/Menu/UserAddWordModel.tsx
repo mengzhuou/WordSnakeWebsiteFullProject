@@ -4,29 +4,28 @@ import { TextField } from "@mui/material";
 import "./Menu.css";
 
 interface UserAddWordModelProps {
-  onClose: () => void
+    onClose: () => void,
+    onSubmit: (word: string) => void,
 }
 
 interface UserAddWordModelState {
-  searchingWord: string,
-  typedWord: string,
-  wordExist: boolean,
+    wordExist: boolean,
+    word: string
 }
 
 class UserAddWordModel extends React.Component<UserAddWordModelProps, UserAddWordModelState> {
   constructor(props: UserAddWordModelProps) {
     super(props);
     this.state = {
-      searchingWord: "",
-      typedWord: "",
-      wordExist: false
+      wordExist: false,
+      word: "",
     };
   }
 
   handleSearchValueChange = async (event: ChangeEvent<HTMLInputElement>) => {
     const inputString = event.target.value;
     this.setState({
-      searchingWord: inputString,
+      word: inputString,
     });
     await this.checkWordExistence(inputString);
   }
@@ -39,30 +38,31 @@ class UserAddWordModel extends React.Component<UserAddWordModelProps, UserAddWor
   }
 
   render() {
-    const { onClose } = this.props;
-    const { searchingWord, typedWord, wordExist } = this.state;
+    const { onClose, onSubmit } = this.props;
+    const { wordExist, word } = this.state;
 
     return (
       <div className="addWordModelPopup">
         <button className="fbClose-btn" onClick={onClose}>
           X
         </button>
-        <div className="searchWord">
-          <TextField
-            label={`Search word online: `}
-            value={searchingWord}
-            onChange={this.handleSearchValueChange}
-          />
-        </div>
-        <div className="typedWord">
-          {typedWord.toUpperCase()}
-        </div>
-        {searchingWord && (
-          <div className="typedWord">
-            {wordExist ? "The word already exists in our database" : "The word does not exist in our database"}
-          </div>
-        )}
-        {/* <button type="submit" className="fbSubmitButton">Submit</button> */}
+
+        <form onSubmit={(event) => {event.preventDefault(); onSubmit(word);}}>
+            <div className="searchWord">
+            <TextField
+                label={`Search word online: `}
+                value={word}
+                onChange={this.handleSearchValueChange}
+            />
+            </div>
+            {word && (
+            <div className="typedWord">
+                {wordExist ? "The word already exists in our database" : "The word does not exist in our database"}
+            </div>
+            )}
+
+            <button type="submit" className="userAddWordModelSubmit">Submit</button>
+        </form>
       </div>
     );
   }

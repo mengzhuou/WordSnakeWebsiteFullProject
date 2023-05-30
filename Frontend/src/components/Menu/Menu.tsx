@@ -1,5 +1,5 @@
 import { withFuncProps } from "../withFuncProps";
-import {logout, getNumOfUsers, getSignupRank, isAdmin, addFeedback, getChatGPTSearchingDefinition} from '../../helpers/connector';
+import {logout, getNumOfUsers, getSignupRank, isAdmin, addFeedback, requestForWordAddition} from '../../helpers/connector';
 import React from "react";
 import "./Menu.css";
 import FeedbackModel from "./FeedbackModel";
@@ -22,8 +22,6 @@ class Menu extends React.Component<any,any>{
             feedbackMessage: "",
             rating: 5,
             adminFeedbackMessages: [],
-            searchingWord: "",
-            searchingDefinition: []
         }
         this.defModeNav = this.defModeNav.bind(this);
         this.classicModeNav = this.classicModeNav.bind(this);
@@ -102,7 +100,12 @@ class Menu extends React.Component<any,any>{
     }
 
 
-
+    handleRequestForWordAddition = async (word: string) => {
+        requestForWordAddition(word).then(()=>{
+            alert("Request for adding the corresponding new word is sent")
+            this.handleUserAddWordModelClose();
+        });
+      }
 
     handleUserAddWordModelOpen = () => {
         this.setState({ showUserAddWordModel: true })
@@ -114,7 +117,6 @@ class Menu extends React.Component<any,any>{
         const {totalUserNum, signupRank, admin, 
             showFeedbackModel, feedbackMessage, 
             rating, showAdminFeedbackModel, 
-            searchingWord, searchingDefinition,
             showUserAddWordModel
         } = this.state;
         return (
@@ -145,6 +147,7 @@ class Menu extends React.Component<any,any>{
                         {showUserAddWordModel &&
                             <UserAddWordModel
                                 onClose={this.handleUserAddWordModelClose}
+                                onSubmit={this.handleRequestForWordAddition}
                             />
                         }
                     </div>

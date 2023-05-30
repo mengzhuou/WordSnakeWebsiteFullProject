@@ -223,3 +223,14 @@ export async function getChatGPTSearchingDefinition(word: string){
     });
     return content.data;
 }
+
+export async function requestForWordAddition(word: string){
+    let content = await client({
+        method: 'post',
+        url: url+"requestForWordAddition",
+        params:{
+            word: word
+        }
+    });
+    return content.data;
+}
