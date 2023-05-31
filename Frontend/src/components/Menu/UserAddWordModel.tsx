@@ -27,13 +27,29 @@ class UserAddWordModel extends React.Component<UserAddWordModelProps, UserAddWor
   handleSearchValueChange = async (event: ChangeEvent<HTMLInputElement>) => {
     const inputString = event.target.value;
     const isValid = /^[a-zA-Z'-]*$/.test(inputString);
-
-    if (isValid) {
+    if (
+      inputString.startsWith('-') || 
+      inputString.startsWith('\''))
+    {
+        this.setState({ 
+            errMessage: 'Apostrophes and/or hyphens cannot be used in the beginning of a word.' 
+        });
+    } 
+    else if (
+      inputString.endsWith('\'') || 
+      inputString.endsWith('-'))
+      {
+        this.setState({ 
+          errMessage: 'Apostrophes and/or hyphens cannot be used in the ending of a word.' 
+        });
+      }
+    else if (isValid) {
         this.setState({
             word: inputString,
             errMessage: ""
         });
-    } else {
+    } 
+    else {
       this.setState({ errMessage: 'Special character(s) or number(s) are not accepted (except apostrophes, hyphens).' })
     }
     await this.checkWordExistence(inputString);
