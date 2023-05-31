@@ -10,7 +10,8 @@ interface UserAddWordModelProps {
 
 interface UserAddWordModelState {
     wordExist: boolean,
-    word: string
+    word: string,
+    errMessage: string
 }
 
 class UserAddWordModel extends React.Component<UserAddWordModelProps, UserAddWordModelState> {
@@ -19,14 +20,22 @@ class UserAddWordModel extends React.Component<UserAddWordModelProps, UserAddWor
     this.state = {
       wordExist: false,
       word: "",
+      errMessage: "",
     };
   }
 
   handleSearchValueChange = async (event: ChangeEvent<HTMLInputElement>) => {
     const inputString = event.target.value;
-    this.setState({
-      word: inputString,
-    });
+    const isValid = /^[a-zA-Z'-]*$/.test(inputString);
+
+    if (isValid) {
+        this.setState({
+            word: inputString,
+            errMessage: ""
+        });
+    } else {
+      this.setState({ errMessage: 'Special character(s) or number(s) are not accepted (except apostrophes, hyphens).' })
+    }
     await this.checkWordExistence(inputString);
   }
 
@@ -39,7 +48,7 @@ class UserAddWordModel extends React.Component<UserAddWordModelProps, UserAddWor
 
   render() {
     const { onClose, onSubmit } = this.props;
-    const { wordExist, word } = this.state;
+    const { wordExist, word, errMessage } = this.state;
 
     return (
       <div className="addWordModelPopup">
@@ -49,16 +58,19 @@ class UserAddWordModel extends React.Component<UserAddWordModelProps, UserAddWor
 
         <form onSubmit={(event) => {event.preventDefault(); onSubmit(word);}}>
             <div className="searchWord">
-            <TextField
-                label={`Search word online: `}
-                value={word}
-                onChange={this.handleSearchValueChange}
-            />
+              <TextField
+                  label={`Search word online: `}
+                  value={word}
+                  onChange={this.handleSearchValueChange}
+              />
+            </div>
+            <div className="typedWord">
+              {errMessage}
             </div>
             {word && (
-            <div className="typedWord">
-                {wordExist ? "The word already exists in our database" : "The word does not exist in our database"}
-            </div>
+              <div className="typedWord">
+                  {wordExist ? "The word already exists in our database" : "The word does not exist in our database"}
+              </div>
             )}
 
             <button type="submit" className="userAddWordModelSubmit">Submit</button>
