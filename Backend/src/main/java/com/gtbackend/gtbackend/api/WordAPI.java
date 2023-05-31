@@ -1,6 +1,7 @@
 package com.gtbackend.gtbackend.api;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.gtbackend.gtbackend.dao.WordAdditionRepository;
 import com.gtbackend.gtbackend.dao.WordRepository;
 import com.gtbackend.gtbackend.model.Word;
 import com.gtbackend.gtbackend.service.WordService;
@@ -17,18 +18,11 @@ import java.util.Random;
 public class WordAPI {
     @Autowired
     private WordRepository wordRepository;
+
+    @Autowired
+    private WordAdditionRepository wordAdditionRepository;
     @Autowired
     private WordService wordService;
-
-    @PostMapping("getChatGPTSearchingDefinition")
-    public List<String> getChatGPTSearchingDefinition(@RequestParam String word){
-        return wordService.getChatGPTSearchingDefinition(word);
-    }
-
-    @GetMapping("/isWordLegitimate")
-    public boolean isWordLegitimate(@RequestParam String word) throws JsonProcessingException {
-        return wordService.isWordLegitimate(word);
-    }
 
     @RequestMapping("/getWords")
     public List<Word> getWords(){
@@ -58,25 +52,9 @@ public class WordAPI {
         }
         throw new IllegalArgumentException("The word does not exist. Please enter a valid word.");
     }
-
-    @RequestMapping("/getWordAndDefTest")
-    public List<String> getWordAndDefTest(){
-        return wordRepository.getWordAndDefTest();
-    }
-
-    @RequestMapping("/getDefTest")
-    public List<String> getDefTest(){
-        return wordRepository.getDefTest();
-    }
-
     @RequestMapping("/isWordExist")
     public boolean isWordExist(@RequestParam String inputWord) throws IllegalArgumentException{
         return wordRepository.isWordExist(inputWord);
-    }
-
-    @RequestMapping("/isWordExistTest")
-    public boolean isWordExistTest(){
-        return wordRepository.isWordExistTest();
     }
 
     @RequestMapping("/getRandomStart")
@@ -91,5 +69,20 @@ public class WordAPI {
             return String.valueOf(inputWord.charAt(inputWord.length() - 1));
         }
         throw new IllegalArgumentException("The word does not exist. Please enter a valid word.");
+    }
+
+    @PostMapping("getChatGPTSearchingDefinition")
+    public List<String> getChatGPTSearchingDefinition(@RequestParam String word){
+        return wordService.getChatGPTSearchingDefinition(word);
+    }
+
+    @GetMapping("/isWordLegitimate")
+    public boolean isWordLegitimate(@RequestParam String word) throws JsonProcessingException {
+        return wordService.isWordLegitimate(word);
+    }
+
+    @GetMapping("/isWordForAdditionExist")
+    public boolean isWordForAdditionExist(@RequestParam String word){
+        return wordAdditionRepository.isWordForAdditionExist(word);
     }
 }

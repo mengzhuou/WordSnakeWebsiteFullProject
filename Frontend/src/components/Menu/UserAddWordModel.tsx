@@ -1,5 +1,5 @@
 import React, { ChangeEvent } from "react";
-import { isWordExist, isWordLegitimate } from '../../helpers/connector';
+import { isWordExist, isWordLegitimate, isWordForAdditionExist } from '../../helpers/connector';
 import { TextField } from "@mui/material";
 import "./Menu.css";
 
@@ -13,6 +13,7 @@ interface UserAddWordModelState {
     word: string,
     errMessage: string,
     isWordLegitimate: boolean,
+    wordSubmitted: boolean,
 }
 
 class UserAddWordModel extends React.Component<UserAddWordModelProps, UserAddWordModelState> {
@@ -23,6 +24,7 @@ class UserAddWordModel extends React.Component<UserAddWordModelProps, UserAddWor
       word: "",
       errMessage: "",
       isWordLegitimate: false,
+      wordSubmitted: false,
     };
   }
 
@@ -56,6 +58,7 @@ class UserAddWordModel extends React.Component<UserAddWordModelProps, UserAddWor
     }
     await this.checkWordExistence(inputString);
     await this.checkWordLegitimate(inputString);
+    await this.checkWordSubmitted(inputString);
   }
 
   checkWordExistence = async (inputWord: string) => {
@@ -70,9 +73,13 @@ class UserAddWordModel extends React.Component<UserAddWordModelProps, UserAddWor
     this.setState({ isWordLegitimate: isWord })
   }
 
+  checkWordSubmitted = async (inputWord: string) => {
+    const isWord = await isWordForAdditionExist(inputWord);
+    this.setState({ wordSubmitted: isWord })
+  }
   render() {
     const { onClose, onSubmit } = this.props;
-    const { wordExist, word, errMessage, isWordLegitimate } = this.state;
+    const { wordExist, word, errMessage, isWordLegitimate, wordSubmitted } = this.state;
 
     return (
       <div className="addWordModelPopup">
@@ -91,6 +98,10 @@ class UserAddWordModel extends React.Component<UserAddWordModelProps, UserAddWor
               alert("The word already exists in our database, cannot submit.");
               return;
             }  
+            if (wordSubmitted){
+              alert("Request for adding this word already submitted by you or others, cannot submit again.")
+              return;
+            }
             else{
               onSubmit(word);
             }

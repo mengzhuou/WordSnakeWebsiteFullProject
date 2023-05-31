@@ -245,3 +245,15 @@ export async function isWordLegitimate(word: string){
     });
     return content.data;
 }
+
+export async function isWordForAdditionExist(word: string){
+    let content = await client({
+        method: 'get',
+        url: url+"isWordForAdditionExist",
+        params:{
+            word: word
+        }
+    });
+    return content.data;
+}
+
