@@ -29,7 +29,7 @@ public class WordService {
 
 
     public boolean isWordLegitimate(String word) throws JsonProcessingException {
-        String prompt = "is '" + word + "' a legitimate word? " +
+        String prompt = "is '" + word + "' a legitimate English word? " +
                 "If answer is yes, answer with \"true\" only and do not say anything " +
                 "more than \"true\", vice versa.";
         int maxTokens = 100;

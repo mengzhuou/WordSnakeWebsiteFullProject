@@ -1,5 +1,5 @@
 import React, { ChangeEvent } from "react";
-import { isWordExist } from '../../helpers/connector';
+import { isWordExist, isWordLegitimate } from '../../helpers/connector';
 import { TextField } from "@mui/material";
 import "./Menu.css";
 
@@ -11,7 +11,8 @@ interface UserAddWordModelProps {
 interface UserAddWordModelState {
     wordExist: boolean,
     word: string,
-    errMessage: string
+    errMessage: string,
+    isWordLegitimate: boolean,
 }
 
 class UserAddWordModel extends React.Component<UserAddWordModelProps, UserAddWordModelState> {
@@ -21,6 +22,7 @@ class UserAddWordModel extends React.Component<UserAddWordModelProps, UserAddWor
       wordExist: false,
       word: "",
       errMessage: "",
+      isWordLegitimate: false,
     };
   }
 
@@ -53,6 +55,7 @@ class UserAddWordModel extends React.Component<UserAddWordModelProps, UserAddWor
       this.setState({ errMessage: 'Special character(s) or number(s) are not accepted (except apostrophes, hyphens).' })
     }
     await this.checkWordExistence(inputString);
+    await this.checkWordLegitimate(inputString);
   }
 
   checkWordExistence = async (inputWord: string) => {
@@ -62,9 +65,14 @@ class UserAddWordModel extends React.Component<UserAddWordModelProps, UserAddWor
     });
   }
 
+  checkWordLegitimate = async (inputWord: string) => {
+    const isWord = await isWordLegitimate(inputWord);
+    this.setState({ isWordLegitimate: isWord })
+  }
+
   render() {
     const { onClose, onSubmit } = this.props;
-    const { wordExist, word, errMessage } = this.state;
+    const { wordExist, word, errMessage, isWordLegitimate } = this.state;
 
     return (
       <div className="addWordModelPopup">
@@ -73,7 +81,21 @@ class UserAddWordModel extends React.Component<UserAddWordModelProps, UserAddWor
         </button>
         <h1 className="helpTitle">Word Addition Request</h1>
 
-        <form onSubmit={(event) => {event.preventDefault(); onSubmit(word);}}>
+        <form onSubmit={
+          (event) => {event.preventDefault(); 
+            if (!isWordLegitimate) {
+              alert("The word is not legitimate, cannot submit.");
+              return;
+            }  
+            if (wordExist) {
+              alert("The word already exists in our database, cannot submit.");
+              return;
+            }  
+            else{
+              onSubmit(word);
+            }
+        }}>
+        
             <div className="searchWord">
               <TextField
                   label={`Search word online: `}
@@ -89,7 +111,6 @@ class UserAddWordModel extends React.Component<UserAddWordModelProps, UserAddWor
                   {wordExist ? "The word already exists in our database" : "The word does not exist in our database"}
               </div>
             )}
-
             <button type="submit" className="userAddWordModelSubmit">Submit</button>
         </form>
       </div>
