@@ -71,6 +71,7 @@ class UserAddWordModel extends React.Component<UserAddWordModelProps, UserAddWor
         <button className="fbClose-btn" onClick={onClose}>
           X
         </button>
+        <h1 className="helpTitle">Word Addition Request</h1>
 
         <form onSubmit={(event) => {event.preventDefault(); onSubmit(word);}}>
             <div className="searchWord">

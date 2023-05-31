@@ -234,3 +234,14 @@ export async function requestForWordAddition(word: string){
     });
     return content.data;
 }
+
+export async function isWordLegitimate(word: string){
+    let content = await client({
+        method: 'get',
+        url: url+"isWordLegitimate",
+        params:{
+            word: word
+        }
+    });
+    return content.data;
+}

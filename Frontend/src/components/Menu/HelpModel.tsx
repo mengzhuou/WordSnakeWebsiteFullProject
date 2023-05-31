@@ -13,7 +13,7 @@ class HelpModel extends React.Component<HelpModelProps> {
   render() {
     const { onClose } = this.props;
     return (
-        <div className="addWordModelPopup">
+        <div className="HelpModelPopup">
             <button className="fbClose-btn" onClick={onClose}>X</button>
             <h1 className="helpTitle">HELP</h1>
             <div className="helpInstruction">

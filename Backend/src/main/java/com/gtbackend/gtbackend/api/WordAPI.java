@@ -1,14 +1,12 @@
 package com.gtbackend.gtbackend.api;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.gtbackend.gtbackend.dao.WordRepository;
 import com.gtbackend.gtbackend.model.Word;
 import com.gtbackend.gtbackend.service.WordService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,6 +23,11 @@ public class WordAPI {
     @PostMapping("getChatGPTSearchingDefinition")
     public List<String> getChatGPTSearchingDefinition(@RequestParam String word){
         return wordService.getChatGPTSearchingDefinition(word);
+    }
+
+    @GetMapping("/isWordLegitimate")
+    public boolean isWordLegitimate(@RequestParam String word) throws JsonProcessingException {
+        return wordService.isWordLegitimate(word);
     }
 
     @RequestMapping("/getWords")
