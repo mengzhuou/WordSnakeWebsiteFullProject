@@ -102,28 +102,37 @@ public class UserAPI {
 
     @RequestMapping("/userInfo")
     public ResponseEntity<User> userInfo(){
-        String userEmail = jwtService.extractUsername(token);
+        if (token != null) {
+            String userEmail = jwtService.extractUsername(token);
 
-        Optional<User> user = userService.getUser(userEmail);
-        if (user.isPresent()){
-            return ResponseEntity.ok(user.get());
-        } else{
-            return ResponseEntity.notFound().build();
+            Optional<User> user = userService.getUser(userEmail);
+            if (user.isPresent()){
+                return ResponseEntity.ok(user.get());
+            } else{
+                return ResponseEntity.notFound().build();
+            }
+        } else {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
     }
 
     @RequestMapping("/getUserEmail")
     public ResponseEntity<String> getUserEmail(){
-        String userEmail = jwtService.extractUsername(token);
+        if (token != null) {
+            String userEmail = jwtService.extractUsername(token);
 
-        Optional<User> user = userService.getUser(userEmail);
-        if (user.isPresent()){
-            User emailOnlyUser = new User();
-            emailOnlyUser.setEmail(user.get().getEmail());
-            return ResponseEntity.ok(emailOnlyUser.getEmail());
-        } else{
-            return ResponseEntity.notFound().build();
+            Optional<User> user = userService.getUser(userEmail);
+            if (user.isPresent()){
+                User emailOnlyUser = new User();
+                emailOnlyUser.setEmail(user.get().getEmail());
+                return ResponseEntity.ok(emailOnlyUser.getEmail());
+            } else{
+                return ResponseEntity.notFound().build();
+            }
+        } else {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
+
     }
 
     @GetMapping("/getBestScore")
@@ -235,17 +244,16 @@ public class UserAPI {
         return false;
     }
 
-    @PostMapping("/getChatGPTSearchingDefinition")
-    public List<String> getChatGPTSearchingDefinition(@RequestParam String word) throws JsonProcessingException {
-        return wordService.getChatGPTSearchingDefinition(word);
+    @PostMapping("/getOnlineDefinition")
+    public String getOnlineDefinition(@RequestParam String word) throws JsonProcessingException {
+        return wordService.getOnlineDefinition(word);
     }
 
     @PostMapping("/requestForWordAddition")
     public boolean requestForWordAddition(@RequestParam String word) throws JsonProcessingException {
         ResponseEntity<String> userEmailResponse = getUserEmail();
         if (userEmailResponse.getStatusCode().is2xxSuccessful()) {
-            List<String> getGptResult = getChatGPTSearchingDefinition(word);
-            String definition = getGptResult.get(0).trim();
+            String definition = getOnlineDefinition(word);
             String userEmail = userEmailResponse.getBody();
             userService.requestForWordAddition(userEmail, word, definition);
             return true;

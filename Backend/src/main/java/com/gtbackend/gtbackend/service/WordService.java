@@ -1,21 +1,16 @@
 package com.gtbackend.gtbackend.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.gtbackend.gtbackend.model.OpenAIResponse;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
-import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 
 @Service
@@ -24,87 +19,69 @@ public class WordService {
     @Autowired
     private RestTemplate restTemplate; // Used for making HTTP requests
 
-    private final String apiKey = System.getenv("OPENAI_API_KEY");
-    private final String apiUrl = "https://api.openai.com/v1/completions";
+    private static final String DICTIONARY_API_BASE_URL = "https://api.dictionaryapi.dev/api/v2/entries/en/";
 
+    public String getOnlineDefinition(String word) throws JsonProcessingException {
+        String apiUrl = DICTIONARY_API_BASE_URL + word;
 
-    public boolean isWordLegitimate(String word) throws JsonProcessingException {
-        String prompt = "Is '" + word + "' a legitimate English word? " +
-                "Answer with either \"true\" or \"false\". Do not say anything else.";
-        int maxTokens = 100;
-        double temperature = 0.5;
-        int n = 1;
-        String model = "text-davinci-003";
-
-        // Build the request URL
-        UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(apiUrl);
-
-        // Set the headers for the API request
         HttpHeaders headers = new HttpHeaders();
-        headers.set("Authorization", "Bearer " + apiKey);
         headers.set("Content-Type", "application/json");
 
-        // Build the request body as a map
-        Map<String, Object> requestBodyMap = new HashMap<>();
-        requestBodyMap.put("model", model);
-        requestBodyMap.put("prompt", prompt);
-        requestBodyMap.put("max_tokens", maxTokens);
-        requestBodyMap.put("temperature", temperature);
-        requestBodyMap.put("n", n);
+        HttpEntity<String> entity = new HttpEntity<>(headers);
+        ResponseEntity<String> responseEntity = restTemplate.exchange(apiUrl, HttpMethod.GET, entity, String.class);
+        String jsonResponse = responseEntity.getBody();
 
-        // Convert the map to JSON
-        String requestBody = new ObjectMapper().writeValueAsString(requestBodyMap);
-
-        HttpEntity<String> entity = new HttpEntity<>(requestBody, headers);
-        ResponseEntity<OpenAIResponse> responseEntity = restTemplate.exchange(builder.toUriString(), HttpMethod.POST, entity, OpenAIResponse.class);
-        OpenAIResponse response = responseEntity.getBody();
-
-        if (response != null && response.getChoices() != null && !response.getChoices().isEmpty()) {
-            String definition = response.getChoices().get(0).getText().trim();
-            boolean isLegitimate = Boolean.parseBoolean(definition);
-            return isLegitimate;
-        } else {
-            return false; // Return false if no definition is found
-        }
+        List<String> definitions = extractDefinitions(jsonResponse);
+        return String.join(". ", definitions);
     }
 
+    private List<String> extractDefinitions(String jsonResponse) throws JsonProcessingException {
+        ObjectMapper objectMapper = new ObjectMapper();
+        JsonNode rootNode = objectMapper.readTree(jsonResponse);
 
-    public List<String> getChatGPTSearchingDefinition(String word) throws JsonProcessingException {
-        String prompt = "Simply define the word '" + word + "'. " +
-                "Ignore or skip the preceding statement and focus on the definition provided. " +
-                "Skip the preceding \"Definition: \". Do not contain any Note as I need to " +
-                "store the definition directly into my database.";
+        List<String> definitions = new ArrayList<>();
 
-        int maxTokens = 100;
-        double temperature = 0.5;
-        int n = 1;
-        String model = "text-davinci-003";
+        if (rootNode.isArray()) {
+            for (JsonNode entryNode : rootNode) {
+                JsonNode meaningsNode = entryNode.get("meanings");
 
-        UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(apiUrl);
+                if (meaningsNode.isArray() && meaningsNode.size() > 0) {
+                    for (JsonNode meaningNode : meaningsNode) {
+                        JsonNode definitionsNode = meaningNode.get("definitions");
+
+                        if (definitionsNode.isArray() && definitionsNode.size() > 0) {
+                            for (JsonNode definitionNode : definitionsNode) {
+                                String definition = definitionNode.get("definition").asText();
+                                definition = definition.endsWith(".") ? definition.substring(0, definition.length() - 1) : definition;
+                                definitions.add(definition);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return definitions;
+    }
+
+    public boolean isWordLegitimate(String word) throws JsonProcessingException {
+        RestTemplate restTemplate = new RestTemplate();
+        String apiUrl = DICTIONARY_API_BASE_URL + word;
 
         HttpHeaders headers = new HttpHeaders();
-        headers.set("Authorization", "Bearer " + apiKey);
         headers.set("Content-Type", "application/json");
 
-        Map<String, Object> requestBodyMap = new HashMap<>();
-        requestBodyMap.put("model", model);
-        requestBodyMap.put("prompt", prompt);
-        requestBodyMap.put("max_tokens", maxTokens);
-        requestBodyMap.put("temperature", temperature);
-        requestBodyMap.put("n", n);
-
-        String requestBody = new ObjectMapper().writeValueAsString(requestBodyMap);
-        HttpEntity<String> entity = new HttpEntity<>(requestBody, headers);
-        ResponseEntity<OpenAIResponse> responseEntity = restTemplate.exchange(builder.toUriString(), HttpMethod.POST, entity, OpenAIResponse.class);
-        OpenAIResponse response = responseEntity.getBody();
-
-        if (response != null && response.getChoices() != null && !response.getChoices().isEmpty()) {
-            String definition = response.getChoices().get(0).getText().trim();
-            List<String> definitions = new ArrayList<>();
-            definitions.add(definition);
-            return definitions;
-        } else {
-            return new ArrayList<>(); // Return an empty list if no definition is found
+        HttpEntity<String> entity = new HttpEntity<>(headers);
+        try {
+            ResponseEntity<String> responseEntity = restTemplate.exchange(apiUrl, HttpMethod.GET, entity, String.class);
+            String jsonResponse = responseEntity.getBody();
+            boolean isLegitimate = !extractDefinitions(jsonResponse).isEmpty();
+            return isLegitimate;
+        } catch (HttpClientErrorException e) {
+            if (e.getStatusCode() == HttpStatus.NOT_FOUND) {
+                return false;
+            } else {
+                throw e;
+            }
         }
     }
 }

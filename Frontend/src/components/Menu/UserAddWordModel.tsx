@@ -90,6 +90,7 @@ class UserAddWordModel extends React.Component<UserAddWordModelProps, UserAddWor
 
         <form onSubmit={
           (event) => {event.preventDefault(); 
+            console.log("isWordLegitimate", isWordLegitimate)
             if (!isWordLegitimate) {
               alert("The word is not legitimate, cannot submit.");
               return;

@@ -1,5 +1,5 @@
 import React, { ChangeEvent } from "react";
-import { getChatGPTSearchingDefinition, isWordExist, getFromWordAddition } from '../../helpers/connector';
+import { getOnlineDefinition, isWordExist, getFromWordAddition } from '../../helpers/connector';
 import { TextField } from "@mui/material";
 import "./Menu.css";
 
@@ -28,11 +28,11 @@ class AdminAddWordModel extends React.Component<AddWordModelProps, AddWordModelS
   }
 
   handleChatGPTSearch = async (searchingWord: string) => {
-    const res = await getChatGPTSearchingDefinition(searchingWord);
+    const res = await getOnlineDefinition(searchingWord);
     if (Array.isArray(res)) {
       this.setState({ searchingDefinition: res });
     } else {
-      console.error('Expected an array from getChatGPTSearchingDefinition, got:', res);
+      console.error('Expected an array from getOnlineDefinition, got:', res);
     }
   }
 

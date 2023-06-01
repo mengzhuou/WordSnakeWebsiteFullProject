@@ -213,10 +213,10 @@ export async function updateFeedbackStatus(id: number, status: string){
     return content.data;
 }
 
-export async function getChatGPTSearchingDefinition(word: string){
+export async function getOnlineDefinition(word: string){
     let content = await client({
         method: 'post',
-        url: url+"getChatGPTSearchingDefinition",
+        url: url+"getOnlineDefinition",
         params:{
             word: word
         }
