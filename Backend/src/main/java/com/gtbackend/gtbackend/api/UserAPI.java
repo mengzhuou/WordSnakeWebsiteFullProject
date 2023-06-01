@@ -1,6 +1,5 @@
 package com.gtbackend.gtbackend.api;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.gtbackend.gtbackend.dao.UserRepository;
 import com.gtbackend.gtbackend.dao.WordAdditionRepository;
 import com.gtbackend.gtbackend.model.Role;
@@ -242,23 +241,5 @@ public class UserAPI {
             return false;
         }
         return false;
-    }
-
-    @PostMapping("/getOnlineDefinition")
-    public String getOnlineDefinition(@RequestParam String word) throws JsonProcessingException {
-        return wordService.getOnlineDefinition(word);
-    }
-
-    @PostMapping("/requestForWordAddition")
-    public boolean requestForWordAddition(@RequestParam String word) throws JsonProcessingException {
-        ResponseEntity<String> userEmailResponse = getUserEmail();
-        if (userEmailResponse.getStatusCode().is2xxSuccessful()) {
-            String definition = getOnlineDefinition(word);
-            String userEmail = userEmailResponse.getBody();
-            userService.requestForWordAddition(userEmail, word, definition);
-            return true;
-        } else {
-            return false;
-        }
     }
 }

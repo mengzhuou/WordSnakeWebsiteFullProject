@@ -1,13 +1,11 @@
 package com.gtbackend.gtbackend.api;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.gtbackend.gtbackend.dao.WordAdditionRepository;
 import com.gtbackend.gtbackend.dao.WordRepository;
 import com.gtbackend.gtbackend.model.Word;
 import com.gtbackend.gtbackend.service.WordService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -72,20 +70,5 @@ public class WordAPI {
             return String.valueOf(inputWord.charAt(inputWord.length() - 1));
         }
         throw new IllegalArgumentException("The word does not exist. Please enter a valid word.");
-    }
-
-    @GetMapping("/isWordLegitimate")
-    public boolean isWordLegitimate(@RequestParam String word) throws JsonProcessingException {
-        return wordService.isWordLegitimate(word);
-    }
-
-    @GetMapping("/isWordForAdditionExist")
-    public boolean isWordForAdditionExist(@RequestParam String word){
-        return wordAdditionRepository.isWordForAdditionExist(word);
-    }
-
-    @GetMapping("/getFromWordAddition")
-    public List<String> getFromWordAddition(){
-        return wordAdditionRepository.getFromWordAddition();
     }
 }
