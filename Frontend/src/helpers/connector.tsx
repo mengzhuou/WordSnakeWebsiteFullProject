@@ -257,3 +257,12 @@ export async function isWordForAdditionExist(word: string){
     return content.data;
 }
 
+export async function getFromWordAddition(){
+    let content = await client({
+        method: 'get',
+        url: url+"getFromWordAddition"
+    });
+    return content.data;
+}
+
+

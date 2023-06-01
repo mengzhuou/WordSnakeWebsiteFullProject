@@ -71,7 +71,7 @@ public class WordAPI {
         throw new IllegalArgumentException("The word does not exist. Please enter a valid word.");
     }
 
-    @PostMapping("getChatGPTSearchingDefinition")
+    @PostMapping("/getChatGPTSearchingDefinition")
     public List<String> getChatGPTSearchingDefinition(@RequestParam String word){
         return wordService.getChatGPTSearchingDefinition(word);
     }
@@ -84,5 +84,10 @@ public class WordAPI {
     @GetMapping("/isWordForAdditionExist")
     public boolean isWordForAdditionExist(@RequestParam String word){
         return wordAdditionRepository.isWordForAdditionExist(word);
+    }
+
+    @GetMapping("/getFromWordAddition")
+    public List<String> getFromWordAddition(){
+        return wordAdditionRepository.getFromWordAddition();
     }
 }
