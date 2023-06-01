@@ -143,7 +143,6 @@ class AdminFeedbackModel extends React.Component<AdminFeedbackModelProps, AdminF
                                     <th>
                                         <button className="sortHeader" onClick={this.handleIdHeaderClick}>
                                             ID {this.state.idSort ? '▲' : '▼'}
-
                                         </button>
 
                                     </th>

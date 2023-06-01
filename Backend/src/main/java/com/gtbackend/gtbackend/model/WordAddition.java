@@ -21,12 +21,16 @@ public class WordAddition {
     @Column(name = "word")
     private String word;
 
+    @Column(name = "definition", columnDefinition="TEXT")
+    private String definition;
+
     public WordAddition() {
     }
 
-    public WordAddition(User user, String word) {
+    public WordAddition(User user, String word, String definition) {
         this.user = user;
         this.word = word;
+        this.definition = definition;
     }
 
     public Long getId() {
@@ -57,5 +61,13 @@ public class WordAddition {
 
     public void setWord(String word) {
         this.word = word;
+    }
+
+    public String getDefinition() {
+        return definition;
+    }
+
+    public void setDefinition(String definition) {
+        this.definition = definition;
     }
 }

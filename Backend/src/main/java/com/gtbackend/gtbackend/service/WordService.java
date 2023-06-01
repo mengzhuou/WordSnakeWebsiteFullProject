@@ -69,32 +69,31 @@ public class WordService {
     }
 
 
-    public List<String> getChatGPTSearchingDefinition(String word) {
-        String wordTypesPrompt = "Define the word types for '" + word + "'.";
-        String definitionsPrompt = "Define the word '" + word + "' using minimum of 1 bullet points, " +
-                "and maximum of 8 bullet points if the word has many different meanings. " +
-                "Include the definition for different word types, " +
-                "such as verbs, adjectives, and any other relevant types.";
+    public List<String> getChatGPTSearchingDefinition(String word) throws JsonProcessingException {
+        String prompt = "Simply define the word '" + word + "'. " +
+                "Ignore or skip the preceding statement and focus on the definition provided. " +
+                "Skip the preceding \"Definition: \". Do not contain any Note as I need to " +
+                "store the definition directly into my database.";
+
         int maxTokens = 100;
         double temperature = 0.5;
         int n = 1;
         String model = "text-davinci-003";
 
-        // Build the request URL
         UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(apiUrl);
 
-        // Set the headers for the API request
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "Bearer " + apiKey);
         headers.set("Content-Type", "application/json");
 
-        List<String> promptString = new ArrayList<>();
-        promptString.add(wordTypesPrompt);
-        promptString.add(definitionsPrompt);
+        Map<String, Object> requestBodyMap = new HashMap<>();
+        requestBodyMap.put("model", model);
+        requestBodyMap.put("prompt", prompt);
+        requestBodyMap.put("max_tokens", maxTokens);
+        requestBodyMap.put("temperature", temperature);
+        requestBodyMap.put("n", n);
 
-        String prompt = "[" + String.join(",", promptString) + "]";
-
-        String requestBody = "{\"model\": \"" + model + "\", \"prompt\": \"" + prompt + "\", \"max_tokens\": " + maxTokens + ", \"temperature\": " + temperature + ", \"n\": " + n + "}";
+        String requestBody = new ObjectMapper().writeValueAsString(requestBodyMap);
         HttpEntity<String> entity = new HttpEntity<>(requestBody, headers);
         ResponseEntity<OpenAIResponse> responseEntity = restTemplate.exchange(builder.toUriString(), HttpMethod.POST, entity, OpenAIResponse.class);
         OpenAIResponse response = responseEntity.getBody();

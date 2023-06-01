@@ -71,11 +71,6 @@ public class WordAPI {
         throw new IllegalArgumentException("The word does not exist. Please enter a valid word.");
     }
 
-    @PostMapping("/getChatGPTSearchingDefinition")
-    public List<String> getChatGPTSearchingDefinition(@RequestParam String word){
-        return wordService.getChatGPTSearchingDefinition(word);
-    }
-
     @GetMapping("/isWordLegitimate")
     public boolean isWordLegitimate(@RequestParam String word) throws JsonProcessingException {
         return wordService.isWordLegitimate(word);

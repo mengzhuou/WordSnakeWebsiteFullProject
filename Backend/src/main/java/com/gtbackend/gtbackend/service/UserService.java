@@ -61,10 +61,10 @@ public class UserService implements UserDetailsService {
     }
 
     @Transactional
-    public void requestForWordAddition(String email, String word) {
+    public void requestForWordAddition(String email, String word, String definition) {
         User user = userRepository.findById(email)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + email));
-        WordAddition wordAddition = new WordAddition(user, word);
+        WordAddition wordAddition = new WordAddition(user, word, definition);
         wordAdditionRepository.save(wordAddition);
     }
 }

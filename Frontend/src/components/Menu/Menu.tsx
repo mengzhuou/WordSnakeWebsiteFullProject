@@ -5,7 +5,7 @@ import "./Menu.css";
 import FeedbackModel from "./FeedbackModel";
 import AdminFeedbackModel from "./AdminFeedbackModel";
 import UserAddWordModel from "./UserAddWordModel";
-import AddWordModel from "./AddWordModel";
+import AdminAddWordModel from "./AdminAddWordModel";
 import HelpModel from "./HelpModel";
 
 
@@ -167,7 +167,7 @@ class Menu extends React.Component<any,any>{
                                         className="menuButton" onClick={this.handleshowAdminAddWordModelOpen}> Add Word
                                     </button>
                                     {showAdminAddWordModel && (
-                                        <AddWordModel
+                                        <AdminAddWordModel
                                             onClose={this.handleshowAdminAddWordModelClose}
                                         />
                                     )}

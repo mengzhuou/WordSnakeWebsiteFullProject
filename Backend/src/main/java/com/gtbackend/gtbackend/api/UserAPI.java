@@ -1,11 +1,13 @@
 package com.gtbackend.gtbackend.api;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.gtbackend.gtbackend.dao.UserRepository;
 import com.gtbackend.gtbackend.dao.WordAdditionRepository;
 import com.gtbackend.gtbackend.model.Role;
 import com.gtbackend.gtbackend.model.User;
 import com.gtbackend.gtbackend.security.JwtService;
 import com.gtbackend.gtbackend.service.UserService;
+import com.gtbackend.gtbackend.service.WordService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -31,6 +33,8 @@ public class UserAPI {
     @Autowired
     private UserService userService;
     private PasswordEncoder passwordEncoder;
+    @Autowired
+    private WordService wordService;
     String token = "";
     @Autowired
     private JwtService jwtService;
@@ -45,11 +49,14 @@ public class UserAPI {
             UserService userService,
             PasswordEncoder passwordEncoder,
             JwtService jwtService,
-            WordAdditionRepository wordAdditionRepository) {
+            WordAdditionRepository wordAdditionRepository,
+            WordService wordService
+            ) {
         this.userService = userService;
         this.passwordEncoder = passwordEncoder;
         this.jwtService = jwtService;
         this.wordAdditionRepository = wordAdditionRepository;
+        this.wordService = wordService;
     }
 
     @PostMapping("/logout")
@@ -228,12 +235,19 @@ public class UserAPI {
         return false;
     }
 
+    @PostMapping("/getChatGPTSearchingDefinition")
+    public List<String> getChatGPTSearchingDefinition(@RequestParam String word) throws JsonProcessingException {
+        return wordService.getChatGPTSearchingDefinition(word);
+    }
+
     @PostMapping("/requestForWordAddition")
-    public boolean requestForWordAddition(@RequestParam String word){
+    public boolean requestForWordAddition(@RequestParam String word) throws JsonProcessingException {
         ResponseEntity<String> userEmailResponse = getUserEmail();
         if (userEmailResponse.getStatusCode().is2xxSuccessful()) {
+            List<String> getGptResult = getChatGPTSearchingDefinition(word);
+            String definition = getGptResult.get(0).trim();
             String userEmail = userEmailResponse.getBody();
-            userService.requestForWordAddition(userEmail, word);
+            userService.requestForWordAddition(userEmail, word, definition);
             return true;
         } else {
             return false;

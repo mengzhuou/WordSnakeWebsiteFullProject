@@ -1,5 +1,5 @@
 import React, { ChangeEvent } from "react";
-import { getChatGPTSearchingDefinition, isWordExist } from '../../helpers/connector';
+import { getChatGPTSearchingDefinition, isWordExist, getFromWordAddition } from '../../helpers/connector';
 import { TextField } from "@mui/material";
 import "./Menu.css";
 
@@ -15,7 +15,7 @@ interface AddWordModelState {
   isWordTyped: boolean
 }
 
-class AddWordModel extends React.Component<AddWordModelProps, AddWordModelState> {
+class AdminAddWordModel extends React.Component<AddWordModelProps, AddWordModelState> {
   constructor(props: AddWordModelProps) {
     super(props);
     this.state = {
@@ -64,10 +64,6 @@ class AddWordModel extends React.Component<AddWordModelProps, AddWordModelState>
     this.setState({ searchingWord: inputValue, typedWord: inputValue, wordExist: exist, isWordTyped: true })
   }
 
-//   handleAddWordModelSubmit = () => {
-//     onSubmit();
-//   }
-
   render() {
     const { onClose } = this.props;
     const { searchingWord, searchingDefinition, typedWord, wordExist, isWordTyped } = this.state;
@@ -77,15 +73,8 @@ class AddWordModel extends React.Component<AddWordModelProps, AddWordModelState>
             <button className="fbClose-btn" onClick={onClose}>
                 X
             </button>
-            <div className="searchWord">
-              <TextField
-                label={`Search word online: `}
-                value={searchingWord}
-                onChange={this.handleSearchValueChange}
-                onKeyDown={this.handleEnterKeyDown}
-              />
-            </div>
-            <div className="searchDefinition">
+            
+            {/* <div className="searchDefinition">
               {Array.isArray(searchingDefinition) && searchingDefinition.map((definition: string, index: number) => (
                 <React.Fragment key={index}>
                     <div className="typedWord">
@@ -105,12 +94,10 @@ class AddWordModel extends React.Component<AddWordModelProps, AddWordModelState>
 
                 </React.Fragment>
               ))}
-
-            </div>      
-            {/* <button type="submit" className="fbSubmitButton">Submit</button> */}
+            </div>       */}
         </div>
     );
   }
 }
 
-export default AddWordModel;
+export default AdminAddWordModel;
