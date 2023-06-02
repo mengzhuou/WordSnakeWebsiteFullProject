@@ -265,4 +265,24 @@ export async function getFromWordAddition(){
     return content.data;
 }
 
+export async function storeWordDefinition(wordAdditionId: number){
+    let content = await client({
+        method: 'post',
+        url: url+"storeWordDefinition",
+        params:{
+            wordAdditionId: wordAdditionId
+        }
+    });
+    return content.data;
+}
 
+export async function deleteWordAdditionDefinition(wordAdditionId: number){
+    let content = await client({
+        method: 'post',
+        url: url+"deleteWordAdditionDefinition",
+        params:{
+            wordAdditionId: wordAdditionId
+        }
+    });
+    return content.data;
+}

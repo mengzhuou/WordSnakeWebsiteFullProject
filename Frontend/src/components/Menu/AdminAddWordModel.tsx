@@ -1,6 +1,5 @@
 import React, { ChangeEvent } from "react";
-import { getOnlineDefinition, isWordExist, getFromWordAddition } from '../../helpers/connector';
-import { TextField } from "@mui/material";
+import { getOnlineDefinition, isWordExist, getFromWordAddition, storeWordDefinition, deleteWordAdditionDefinition } from '../../helpers/connector';
 import "./Menu.css";
 
 interface AddWordModelProps {
@@ -29,7 +28,7 @@ class AdminAddWordModel extends React.Component<AddWordModelProps, AddWordModelS
       isWordTyped: false,
       getFromData: [],
       idSort: false,
-      sortedData: []
+      sortedData: [],
     };
   }
 
@@ -53,6 +52,25 @@ class AdminAddWordModel extends React.Component<AddWordModelProps, AddWordModelS
     }
   }
 
+  handleRequestDelete = async(wordId: number) => {
+    const isTrue = await deleteWordAdditionDefinition(wordId);
+    if (isTrue) {
+      window.alert('Successfully deleted!');
+      this.handleGetFromWordAddition();
+    } else{
+      window.alert('Deletion failed.');
+    }
+  }
+
+  handleRequestSubmit = async (wordId: number) => {
+    const isTrue = await storeWordDefinition(wordId);
+    if (isTrue) {
+      window.alert('Successfully submitted!');
+      this.handleGetFromWordAddition();
+    } else{
+      window.alert('Submission failed.');
+    }
+  }
 
   handleGetFromWordAddition = async() => {
     const temp = await getFromWordAddition();
@@ -142,6 +160,16 @@ class AdminAddWordModel extends React.Component<AddWordModelProps, AddWordModelS
                       <td>{email}</td> 
                       <td>{word}</td>
                       <td>{definition}</td>  
+                      <td>
+                        <button onClick={() => this.handleRequestSubmit(parseInt(id))}>
+                          Submit
+                        </button>
+                      </td>
+                      <td>
+                        <button onClick={() => this.handleRequestDelete(parseInt(id))}>
+                          Delete
+                        </button>
+                      </td>
                     </tr>
                   )
                 })}

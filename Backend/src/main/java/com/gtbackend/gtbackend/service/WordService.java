@@ -3,6 +3,10 @@ package com.gtbackend.gtbackend.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.gtbackend.gtbackend.dao.WordAdditionRepository;
+import com.gtbackend.gtbackend.dao.WordRepository;
+import com.gtbackend.gtbackend.model.Word;
+import com.gtbackend.gtbackend.model.WordAddition;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
@@ -15,6 +19,12 @@ import java.util.List;
 
 @Service
 public class WordService {
+
+    @Autowired
+    private WordAdditionRepository wordAdditionRepository;
+
+    @Autowired
+    private WordRepository wordRepository;
 
     @Autowired
     private RestTemplate restTemplate; // Used for making HTTP requests
@@ -83,5 +93,24 @@ public class WordService {
                 throw e;
             }
         }
+    }
+
+    public void storeWordDefinition(Integer wordAdditionId) {
+        // Retrieve the WordAddition object from the database
+        WordAddition wordAddition = wordAdditionRepository.findById(wordAdditionId)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid wordAdditionId"));
+
+        String word = wordAddition.getWord();
+        String definition = wordAddition.getDefinition();
+
+        // Create a new Word object and set the word and definition values
+        Word wordObject = new Word();
+        wordObject.setWord(word);
+        wordObject.setDefinition(definition);
+        wordRepository.save(wordObject);
+    }
+
+    public void deleteWordAdditionDefinition(Integer wordAdditionId) {
+        wordAdditionRepository.deleteById(wordAdditionId);
     }
 }

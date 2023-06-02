@@ -7,11 +7,10 @@ import javax.persistence.*;
 @Component
 @Entity(name = "words")
 public class Word {
-
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-        Integer id;
+    Integer id;
 
     @Column(name = "word")
     String word;

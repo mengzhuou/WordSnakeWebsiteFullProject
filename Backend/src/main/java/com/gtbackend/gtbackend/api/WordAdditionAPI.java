@@ -68,4 +68,13 @@ public class WordAdditionAPI {
         return wordAdditionRepository.getFromWordAddition();
     }
 
+    @PostMapping("/deleteWordAdditionDefinition")
+    public boolean deleteWordAdditionDefinition(@RequestParam Integer wordAdditionId) {
+        try {
+            wordService.deleteWordAdditionDefinition(wordAdditionId);
+            return true;
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException("Failed to delete this word definition row.");
+        }
+    }
 }
