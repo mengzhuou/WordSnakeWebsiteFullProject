@@ -91,9 +91,7 @@ class AdminFeedbackModel extends React.Component<AdminFeedbackModelProps, AdminF
             });
             this.setState({ sortedMessage: sorted });
         }
-
     }
-    
     
     handleStatusHeaderClick = () => {
         this.setState((prevState) => ({ statusSort: !prevState.statusSort }));
@@ -144,7 +142,6 @@ class AdminFeedbackModel extends React.Component<AdminFeedbackModelProps, AdminF
                                         <button className="sortHeader" onClick={this.handleIdHeaderClick}>
                                             ID {this.state.idSort ? '▲' : '▼'}
                                         </button>
-
                                     </th>
                                     <th>Email</th>
                                     <th>Feedback</th>
@@ -171,7 +168,7 @@ class AdminFeedbackModel extends React.Component<AdminFeedbackModelProps, AdminF
                                     const [id, email, feedback, rating, status, timestamp] = message.split(',');
 
                                     return (
-                                        <tr key={id} className="feedbackItem">
+                                        <tr key={id}>
                                             <td>{id}</td>
                                             <td>{email}</td>
                                             <td>{feedback}</td>

@@ -12,7 +12,10 @@ interface AddWordModelState {
   typedWord: string,
   searchingDefinition: string[],
   wordExist: boolean,
-  isWordTyped: boolean
+  isWordTyped: boolean,
+  getFromData: string[],
+  idSort: boolean,
+  sortedData: string[],
 }
 
 class AdminAddWordModel extends React.Component<AddWordModelProps, AddWordModelState> {
@@ -23,11 +26,40 @@ class AdminAddWordModel extends React.Component<AddWordModelProps, AddWordModelS
       typedWord: "",
       searchingDefinition: [],
       wordExist: false,
-      isWordTyped: false
+      isWordTyped: false,
+      getFromData: [],
+      idSort: false,
+      sortedData: []
     };
   }
 
-  handleChatGPTSearch = async (searchingWord: string) => {
+  componentDidMount(): void {
+    this.handleGetFromWordAddition();
+  }
+
+  componentDidUpdate(prevProps: AddWordModelProps, prevState: AddWordModelState){
+    let sorted = [...this.state.getFromData];
+    if (
+      this.state.getFromData !== prevState.getFromData ||
+      this.state.idSort !== prevState.idSort
+    )
+    {
+      sorted.sort((a,b) => {
+        const aId = parseInt(a.split(',')[0]);
+        const bId = parseInt(b.split(',')[0]);
+        return this.state.idSort ? bId - aId : aId - bId;
+      });
+      this.setState({ sortedData: sorted });
+    }
+  }
+
+
+  handleGetFromWordAddition = async() => {
+    const temp = await getFromWordAddition();
+    this.setState({ getFromData: temp })
+  }
+
+  handleOnlineSearch = async (searchingWord: string) => {
     const res = await getOnlineDefinition(searchingWord);
     if (Array.isArray(res)) {
       this.setState({ searchingDefinition: res });
@@ -60,42 +92,64 @@ class AdminAddWordModel extends React.Component<AddWordModelProps, AddWordModelS
     console.log("word typeing after stored", this.state.isWordTyped)
 
 
-    this.handleChatGPTSearch(inputValue);
+    this.handleOnlineSearch(inputValue);
     this.setState({ searchingWord: inputValue, typedWord: inputValue, wordExist: exist, isWordTyped: true })
   }
 
+  handleIdHeaderClick = () => {
+    this.setState((prevState) => ({ idSort: !prevState.idSort }));
+  }
+
+
   render() {
     const { onClose } = this.props;
-    const { searchingWord, searchingDefinition, typedWord, wordExist, isWordTyped } = this.state;
+    const { getFromData } = this.state;
+    console.log("getFromData", getFromData)
 
     return (
-        <div className="addWordModelPopup">
-            <button className="fbClose-btn" onClick={onClose}>
-                X
-            </button>
-            
-            {/* <div className="searchDefinition">
-              {Array.isArray(searchingDefinition) && searchingDefinition.map((definition: string, index: number) => (
-                <React.Fragment key={index}>
-                    <div className="typedWord">
-                        {typedWord.toUpperCase()}
-                    </div>
-                    {isWordTyped && (
-                      <div className="typedWord">
-                        {wordExist ? "The word already exists in our database" : "The word does not exist in our database"}
-                      </div>
-                    )}
-                    {definition.split("•").map((line: string, lineIndex: number) => (
-                        <p key={lineIndex}>
-                            {line}
-                        </p>
-                        
-                    ))}
+        <div className="adminAddWordModelPopup">
+          <button className="fbClose-btn" onClick={onClose}>
+            X
+          </button>
 
-                </React.Fragment>
-              ))}
-            </div>       */}
-        </div>
+          <div className="adminWordAddition">
+            <table>
+              <thead>
+                <tr>
+                  <th>
+                    <button className="sortHeader" onClick={this.handleIdHeaderClick}>
+                      ID {this.state.idSort ? '▲' : '▼'}
+                    </button>
+                  </th>
+                  <th>Email</th>
+                  <th>Word</th>
+                  <th>Definition</th>
+                </tr>
+              </thead>
+              <tbody>
+                {this.state.sortedData.map((data, index) => {
+                  const match = data.match(/(^[^,]*),(.+),([^,]*),([^,]*$)/);
+                  if (!match) {
+                    console.error('Could not parse data:', data);
+                    return null;
+                  }
+      
+                  const [, id, definition, word, email] = match;
+      
+                  return (
+                    <tr key={id} className="wordAdditionItem">
+                      <td>{id}</td>
+                      <td>{email}</td> 
+                      <td>{word}</td>
+                      <td>{definition}</td>  
+                    </tr>
+                  )
+                })}
+              </tbody>
+
+            </table>
+          </div>
+      </div>
     );
   }
 }
