@@ -135,13 +135,14 @@ class AdminAddWordModel extends React.Component<AddWordModelProps, AddWordModelS
               <thead>
                 <tr>
                   <th>
-                    <button className="sortHeader" onClick={this.handleIdHeaderClick}>
+                    <button className="sortHeaderAW" onClick={this.handleIdHeaderClick}>
                       ID {this.state.idSort ? '▲' : '▼'}
                     </button>
                   </th>
                   <th>Email</th>
                   <th>Word</th>
                   <th>Definition</th>
+                  <th colSpan={2}>Actions</th>
                 </tr>
               </thead>
               <tbody>
@@ -160,13 +161,11 @@ class AdminAddWordModel extends React.Component<AddWordModelProps, AddWordModelS
                       <td>{email}</td> 
                       <td>{word}</td>
                       <td>{definition}</td>  
-                      <td>
-                        <button onClick={() => this.handleRequestSubmit(parseInt(id))}>
+                      <td className="buttonColumn">
+                        <button className="submitButtonAW" onClick={() => this.handleRequestSubmit(parseInt(id))}>
                           Submit
                         </button>
-                      </td>
-                      <td>
-                        <button onClick={() => this.handleRequestDelete(parseInt(id))}>
+                        <button className="deleteButtonAW" onClick={() => this.handleRequestDelete(parseInt(id))}>
                           Delete
                         </button>
                       </td>
