@@ -125,20 +125,34 @@
 .snakeContainer {
   display: flex;
   position: fixed;
-  top: 43.5px;
-  left: 120px;
   z-index: 2;
 }
 .snakeHead {
-  /* width: 30px; */
-  width: 88px;
+  width: 100px;
+}
+
+.snakeWholeRight {
+  transform: rotate(0deg);
+}
+.snakeWholeDown {
+  transform: rotate(90deg);
+}
+.snakeWholeLeft {
+  transform: rotate(180deg);
+}
+.snakeWholeUp {
+  transform: rotate(-90deg);
 }
 
 .snakeBody {
-  width: 88px;
+  width: 100px;
   animation: growSnakeBody 0.3s forwards;
 }
 
 .snakeTail {
-  width: 88px;
+  width: 100px;
+}
+
+.snakeWhole {
+  width: 300px;
 }

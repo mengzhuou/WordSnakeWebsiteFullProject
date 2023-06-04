@@ -4,9 +4,7 @@ import { withFuncProps } from "../withFuncProps";
 import { logout, getLetterFromPreviousWord, getRandomStart, getHintWordAndDef } from '../../helpers/connector';
 import { TextField, FormHelperText } from "@mui/material";
 
-import snake_head from "../../images/snake_head.png";
-import snake_body from "../../images/snake_body.png";
-import snake_tail from "../../images/snake_tail.png";
+import snake_whole from "../../images/snake_whole.png";
 
 import React from "react";
 import CountdownTimer from "./CountdownTimer";
@@ -25,9 +23,81 @@ class ClassicMode extends React.Component<any, any>{
             storedInputValue: '', inputValidString: '',
             errMessage: '', 
             timeLeft: 60, wordList: [], history: [],
-            snakeGrowthLevel: 1
+            snakeGrowthLevel: 1,
+            snakeSize: 300, //width of snake to track the position
+            sideNavWidth: 120,
+            topNavHeight:43,
+            snakeDirection: 'right',
+            snakePosition: {x:0, y:0},
+            containerSize: {width:window.innerWidth, height: window.innerHeight}
         };
         this.menuNav = this.menuNav.bind(this);
+        this.moveSnake = this.moveSnake.bind(this);
+    }
+
+    moveSnake() {
+        let {snakeDirection, snakePosition, snakeSize, containerSize, sideNavWidth, topNavHeight} = this.state;
+        let newSnakePosition = {...snakePosition};
+        let dir = ""
+
+        switch(snakeDirection) {
+            case 'right':
+                newSnakePosition.x += snakeSize;
+
+                console.log("inside right")
+                if (newSnakePosition.x >= containerSize.width - sideNavWidth) {
+                    dir = 'down';
+                    this.setState({ snakeDirection: dir })
+                }
+                break;
+            case 'down':
+                newSnakePosition.y += snakeSize;
+                if (newSnakePosition.y >= containerSize.height - topNavHeight) {
+                    dir = 'left';
+                    this.setState({ snakeDirection: dir })
+                }
+                break;
+            case 'left':
+                newSnakePosition.x -= snakeSize; 
+                if (newSnakePosition.x <= 0) {
+                    dir = 'up';
+                    this.setState({ snakeDirection: dir })
+                }
+                break;
+            case 'up':
+                newSnakePosition.y -= snakeSize;
+                if (newSnakePosition.y <= 0) {
+                    dir = 'right';
+                    this.setState({ snakeDirection: dir })
+                }
+                break;
+            default:
+                break;
+        }
+        console.log("containerSize.width - sideNavWidth", containerSize.width - sideNavWidth)
+        console.log("containerSize.width", containerSize.width)
+
+        console.log("newSnakePosition.x:",newSnakePosition.x)
+        console.log("newSnakePosition.y:",newSnakePosition.y)
+
+        
+        this.setState({snakePosition: newSnakePosition});
+    }
+
+    getSnakeWholeClass() {
+        const { snakeDirection } = this.state;
+        switch(snakeDirection) {
+            case 'right':
+                return "snakeWholeRight";
+            case 'down':
+                return "snakeWholeDown";
+            case 'left':
+                return "snakeWholeLeft";
+            case 'up':
+                return "snakeWholeUp";
+            default:
+                return "";
+        }
     }
 
     forceup = async (inputValue: string) => {
@@ -41,17 +111,20 @@ class ClassicMode extends React.Component<any, any>{
                     const words = await getLetterFromPreviousWord(inputValue);
                     let wordList = this.state.wordList.concat(inputValue);
 
-                    const snakeCount = this.state.snakeGrowthLevel + 1;
-                    this.handleCloseHint();
+                    if (this.state.showHints){
+                        this.handleCloseHint();
+                    }
                     
+                    this.moveSnake();
+
                     this.setState({
                         lastWord: lastWord,
                         errMessage: '',
                         firstWord: words,
                         ForceUpdateNow: false,
                         wordList: wordList,
-                        snakeGrowthLevel: snakeCount
                     });
+                    
                     let hisArr = this.state.history.concat(inputValue);
                     const lastWordForHint = hisArr[hisArr.length - 1]
                     const lastLetter = lastWordForHint[lastWordForHint.length - 1]
@@ -186,22 +259,16 @@ class ClassicMode extends React.Component<any, any>{
     handleCloseHint = () => {
         this.setState({ showHints: false, printHints: []})
     }
+
     render() {
         const { firstWord, inputValue, wordList, errMessage, 
-            isGameStarted, showWords, printHints, showHints,
-            snakeGrowthLevel
+            isGameStarted, showWords, printHints, showHints, 
+            snakePosition
         } = this.state;
         const wordListWithoutFirst = wordList.slice(1);
         const sortedWords = [...wordListWithoutFirst].sort();
 
-        const snakeBodies = Array.from({ length: snakeGrowthLevel }, (_, index) => (
-            <img
-              key={index}
-              className="snakeBody"
-              src={snake_body}
-              alt="Snake Body"
-            />
-          ));
+          console.log("snakePosition: ",snakePosition);
 
         return (
             <div className="App">
@@ -219,18 +286,15 @@ class ClassicMode extends React.Component<any, any>{
                 ) : null}
 
                 {isGameStarted? (
-                    <div className="snakeContainer">
-                        <img className="snakeTail" src={snake_tail} alt="Snake Tail" />
-                        {snakeBodies}
-                        <img className="snakeHead" src={snake_head} alt="Snake Head" />
-
+                    <div className="snakeContainer" style={{ left: snakePosition.x, top: snakePosition.y }}>
+                        <img className={`snakeWhole ${this.getSnakeWholeClass()}`} src={snake_whole} alt="Snake Whole" />
                     </div>
                     
                 ) : null}
             
                 <h1 className="wsTitle">Word Snake</h1>
                 {isGameStarted ? (
-                    <CountdownTimer duration={30} onTimeUp={this.handleTimeUp}/>
+                    <CountdownTimer duration={300} onTimeUp={this.handleTimeUp}/>
                 ) : (
                     <button className="topnavButton" onClick={() => this.updateGameState(true, false)} hidden={isGameStarted ? true : false}>Start Game</button>
                 )}
