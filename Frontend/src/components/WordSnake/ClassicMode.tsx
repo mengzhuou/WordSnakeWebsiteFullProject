@@ -3,6 +3,11 @@ import "./ClassicMode.css";
 import { withFuncProps } from "../withFuncProps";
 import { logout, getLetterFromPreviousWord, getRandomStart, getHintWordAndDef } from '../../helpers/connector';
 import { TextField, FormHelperText } from "@mui/material";
+
+import snake_head from "../../images/snake_head.png";
+import snake_body from "../../images/snake_body.png";
+import snake_tail from "../../images/snake_tail.png";
+
 import React from "react";
 import CountdownTimer from "./CountdownTimer";
 import HintPopup from "./HintPopupProps";
@@ -19,7 +24,8 @@ class ClassicMode extends React.Component<any, any>{
             inputValue: '',
             storedInputValue: '', inputValidString: '',
             errMessage: '', 
-            timeLeft: 60, wordList: [], history: []
+            timeLeft: 60, wordList: [], history: [],
+            snakeGrowthLevel: 1
         };
         this.menuNav = this.menuNav.bind(this);
     }
@@ -34,6 +40,8 @@ class ClassicMode extends React.Component<any, any>{
                 if (inputValue[0] === lastLetter) {
                     const words = await getLetterFromPreviousWord(inputValue);
                     let wordList = this.state.wordList.concat(inputValue);
+
+                    const snakeCount = this.state.snakeGrowthLevel + 1;
                     this.handleCloseHint();
                     
                     this.setState({
@@ -42,6 +50,7 @@ class ClassicMode extends React.Component<any, any>{
                         firstWord: words,
                         ForceUpdateNow: false,
                         wordList: wordList,
+                        snakeGrowthLevel: snakeCount
                     });
                     let hisArr = this.state.history.concat(inputValue);
                     const lastWordForHint = hisArr[hisArr.length - 1]
@@ -180,10 +189,20 @@ class ClassicMode extends React.Component<any, any>{
     render() {
         const { firstWord, inputValue, wordList, errMessage, 
             isGameStarted, showWords, printHints, showHints,
-            timeLeft
+            snakeGrowthLevel
         } = this.state;
         const wordListWithoutFirst = wordList.slice(1);
         const sortedWords = [...wordListWithoutFirst].sort();
+
+        const snakeBodies = Array.from({ length: snakeGrowthLevel }, (_, index) => (
+            <img
+              key={index}
+              className="snakeBody"
+              src={snake_body}
+              alt="Snake Body"
+            />
+          ));
+
         return (
             <div className="App">
                 <div className="topnav">
@@ -191,12 +210,22 @@ class ClassicMode extends React.Component<any, any>{
                     <button className="topnavButton" onClick={this.menuNav}>Menu</button>
                     <button className="topnavButton" onClick={this.pagelogout}>Logout</button>
                 </div>
-                {this.state.isGameStarted ? (
+                {isGameStarted ? (
                     <div className="sidenav">
                     <button className="sidenavButton" onClick={this.handleShowWords}>{showWords ? 'Hide Words' : 'Show Words'}</button>
                     <button className="sidenavButton" onClick={this.handleGiveHints}>Hint</button>
                     {showHints && <HintPopup hint={printHints} onClose={this.handleCloseHint} />}
                 </div>
+                ) : null}
+
+                {isGameStarted? (
+                    <div className="snakeContainer">
+                        <img className="snakeTail" src={snake_tail} alt="Snake Tail" />
+                        {snakeBodies}
+                        <img className="snakeHead" src={snake_head} alt="Snake Head" />
+
+                    </div>
+                    
                 ) : null}
             
                 <h1 className="wsTitle">Word Snake</h1>
