@@ -127,12 +127,10 @@
   position: fixed;
   z-index: 2;
 }
-.snakeHead {
-  width: 100px;
-}
 
 .snakeWholeRight {
   transform: rotate(0deg);
+  margin-left: 50px;
 }
 .snakeWholeDown {
   transform: rotate(90deg);
@@ -143,16 +141,6 @@
 .snakeWholeUp {
   transform: rotate(-90deg);
 }
-
-.snakeBody {
-  width: 100px;
-  animation: growSnakeBody 0.3s forwards;
-}
-
-.snakeTail {
-  width: 100px;
-}
-
 .snakeWhole {
-  width: 300px;
+  width: 200px;
 }

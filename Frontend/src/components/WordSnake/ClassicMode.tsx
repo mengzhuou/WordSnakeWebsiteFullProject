@@ -24,16 +24,35 @@ class ClassicMode extends React.Component<any, any>{
             errMessage: '', 
             timeLeft: 60, wordList: [], history: [],
             snakeGrowthLevel: 1,
-            snakeSize: 300, //width of snake to track the position
+            snakeSize: 200, //width of snake to track the position
             sideNavWidth: 120,
             topNavHeight:43,
             snakeDirection: 'right',
-            snakePosition: {x:0, y:0},
-            containerSize: {width:window.innerWidth, height: window.innerHeight}
+            snakePosition: {x:123, y:30},
+            containerSize: {width:window.innerWidth, height: window.innerHeight} //window minus snakeSize
         };
         this.menuNav = this.menuNav.bind(this);
         this.moveSnake = this.moveSnake.bind(this);
     }
+
+    componentDidMount() {
+        window.addEventListener("resize", this.updateDimensions);
+    }
+    
+    componentWillUnmount() {
+        window.removeEventListener("resize", this.updateDimensions);
+    }
+    
+    updateDimensions = () => {
+        const { snakeSize } = this.state;
+        const containerWidth = window.innerWidth - snakeSize;
+        console.log("containerWidth",containerWidth)
+
+        this.setState({
+          containerSize: { width: containerWidth, height: window.innerHeight }
+        });
+      };
+      
 
     moveSnake() {
         let {snakeDirection, snakePosition, snakeSize, containerSize, sideNavWidth, topNavHeight} = this.state;
@@ -45,14 +64,16 @@ class ClassicMode extends React.Component<any, any>{
                 newSnakePosition.x += snakeSize;
 
                 console.log("inside right")
-                if (newSnakePosition.x >= containerSize.width - sideNavWidth) {
+                console.log("newSnakePosition.x",newSnakePosition.x)
+                console.log("newSnakePosition.y",newSnakePosition.y)
+                if (newSnakePosition.x >= containerSize.width-200) {
                     dir = 'down';
                     this.setState({ snakeDirection: dir })
                 }
                 break;
             case 'down':
                 newSnakePosition.y += snakeSize;
-                if (newSnakePosition.y >= containerSize.height - topNavHeight) {
+                if (newSnakePosition.y >= containerSize.height-200) {
                     dir = 'left';
                     this.setState({ snakeDirection: dir })
                 }
@@ -66,7 +87,7 @@ class ClassicMode extends React.Component<any, any>{
                 break;
             case 'up':
                 newSnakePosition.y -= snakeSize;
-                if (newSnakePosition.y <= 0) {
+                if (newSnakePosition.y <= 100) {
                     dir = 'right';
                     this.setState({ snakeDirection: dir })
                 }
