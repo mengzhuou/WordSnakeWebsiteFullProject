@@ -120,27 +120,3 @@
   }
   
 }
-
-
-.snakeContainer {
-  display: flex;
-  position: fixed;
-  z-index: 2;
-}
-
-.snakeWholeRight {
-  transform: rotate(0deg);
-  margin-left: 50px;
-}
-.snakeWholeDown {
-  transform: rotate(90deg);
-}
-.snakeWholeLeft {
-  transform: rotate(180deg);
-}
-.snakeWholeUp {
-  transform: rotate(-90deg);
-}
-.snakeWhole {
-  width: 200px;
-}
