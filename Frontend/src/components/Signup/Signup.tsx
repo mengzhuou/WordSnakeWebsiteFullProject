@@ -47,8 +47,16 @@ function SignUpPage() {
   })
 
   const [date, setDate] = useState<Date | null>(null);
-  const dateResult = JSON.stringify(date).substring(1,11);
+  // const dateResult = JSON.stringify(date).substring(1,11);
   
+
+  const currentYear = new Date().getFullYear();
+  const currentMonth = new Date().getMonth();
+  const currentDay = new Date().getDate();
+  const minDate = new Date(1920, 0, 1);
+  const maxDate = new Date(currentYear, currentMonth, currentDay);
+  const dateResult = date ? date.toISOString().substring(0, 10) : '';
+
   return (
     <div className="App">
       <Link to="/" className="welcomeLink">Welcome Page</Link>
@@ -79,6 +87,13 @@ function SignUpPage() {
               selected = {date}
               onChange = {setDate}
               placeholderText = "YYYY/MM/DD"
+              showYearDropdown
+              showMonthDropdown
+              scrollableMonthYearDropdown
+              // className='custom-datepicker'
+              yearDropdownItemNumber={currentYear - 1920 + 1}
+              minDate={minDate}
+              maxDate={maxDate}
             />
           </div>
         </div>
