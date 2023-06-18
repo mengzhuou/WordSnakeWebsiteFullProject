@@ -51,11 +51,16 @@ public class JwtFilter extends OncePerRequestFilter {
                     if (user.isPresent() && jwtService.validateToken(jwtToken, user.get())) {
                         UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(user.get(), null, authorities);
                         SecurityContextHolder.getContext().setAuthentication(auth);
-                        String newToken = jwtService.generateToken(user.get());
-                        response.setHeader(HttpHeaders.AUTHORIZATION, "Bearer " + newToken);
+                        String newToken;
+
+                        try {
+                            newToken = jwtService.generateToken(user.get());
+                            response.setHeader(HttpHeaders.AUTHORIZATION, "Bearer " + newToken);
+                        } catch (Exception e) {
+                            logger.error("Failed to generate JWT token.", e);
+                        }
                     }
                 }
-
             } catch (Exception e) {
                 logger.error("Cannot set user authentication: {}", e);
             }

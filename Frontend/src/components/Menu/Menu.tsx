@@ -1,10 +1,12 @@
 import { withFuncProps } from "../withFuncProps";
-import {logout, getNumOfUsers, getSignupRank, isAdmin, addFeedback} from '../../helpers/connector';
+import {logout, getNumOfUsers, getSignupRank, isAdmin, addFeedback, requestForWordAddition} from '../../helpers/connector';
 import React from "react";
 import "./Menu.css";
 import FeedbackModel from "./FeedbackModel";
 import AdminFeedbackModel from "./AdminFeedbackModel";
-
+import UserAddWordModel from "./UserAddWordModel";
+import AdminAddWordModel from "./AdminAddWordModel";
+import HelpModel from "./HelpModel";
 
 
 class Menu extends React.Component<any,any>{
@@ -16,6 +18,9 @@ class Menu extends React.Component<any,any>{
             admin: false,
             showFeedbackModel: false,
             showAdminFeedbackModel: false,
+            showUserAddWordModel: false,
+            showAdminAddWordModel: false,
+            showHelpModel: false,
             feedbackMessage: "",
             rating: 5,
             adminFeedbackMessages: [],
@@ -54,16 +59,16 @@ class Menu extends React.Component<any,any>{
         const num = await getSignupRank();
         this.setState({ signupRank: num })
     }
-
+    
     displayAdmin = async () => {
         const isAdminTrue = await isAdmin();
         this.setState({ admin: isAdminTrue })
     }
-
+    
     handleFeedbackModelOpen = () => {
         this.setState({ showFeedbackModel: true })
     }
-
+    
     handleFeedbackModelClose = () => {
         this.setState({ showFeedbackModel: false })
     }
@@ -71,11 +76,11 @@ class Menu extends React.Component<any,any>{
     handleFeedbackMessageChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
         this.setState({ feedbackMessage: event.target.value });
     }
-
+    
     handleRatingChange = (rating: number) => {
         this.setState({ rating: rating });
     }
-
+    
     handleAdminFeedbackOpen = () => {
         this.setState({ showAdminFeedbackModel: true })
     }
@@ -83,10 +88,10 @@ class Menu extends React.Component<any,any>{
     handleAdminFeedbackClose = () => {
         this.setState({ showAdminFeedbackModel: false })
     }
-
+    
     handleFeedbackSubmit = () => {
         const { feedbackMessage, rating } = this.state;
-
+        
         addFeedback(feedbackMessage, rating).then(() => {
             this.setState({ feedbackMessage: "", rating: 5 })
             alert("Feedback is sent")
@@ -95,8 +100,42 @@ class Menu extends React.Component<any,any>{
             console.error("Error submitting feedback: ", error);
         })
     }
+
+
+    handleRequestForWordAddition = async (word: string) => {
+        requestForWordAddition(word).then(()=>{
+            alert("Request for adding the corresponding new word is sent")
+            this.handleUserAddWordModelClose();
+        });
+      }
+
+    handleUserAddWordModelOpen = () => {
+        this.setState({ showUserAddWordModel: true })
+    }
+    handleUserAddWordModelClose = () => {
+        this.setState({ showUserAddWordModel: false })
+    }
+
+    handleshowAdminAddWordModelOpen = () => {
+        this.setState({ showAdminAddWordModel: true })
+    }
+    handleshowAdminAddWordModelClose = () => {
+        this.setState({ showAdminAddWordModel: false })
+    }
+
+    handleHelpModelOpen = () => {
+        this.setState({ showHelpModel: true })
+    }
+    handleHelpModelClose = () => {
+        this.setState({ showHelpModel: false })
+    }
     render(){
-        const {totalUserNum, signupRank, admin, showFeedbackModel, feedbackMessage, rating, adminFeedbackMessages, showAdminFeedbackModel} = this.state;
+        const {totalUserNum, signupRank, admin, 
+            showFeedbackModel, feedbackMessage, 
+            rating, showAdminFeedbackModel, 
+            showUserAddWordModel, showHelpModel,
+            showAdminAddWordModel
+        } = this.state;
         return (
             <div className="App">
                 <div className="labelContainer">
@@ -119,6 +158,36 @@ class Menu extends React.Component<any,any>{
                     </div>
                     <div className="buttonRow">
                         <button className="menuButton" onClick={this.classicModeNav}>Classic Mode</button>
+                    </div>
+                    <div className="buttonRow">
+                        {admin?
+                            (
+                                <>
+                                    <button 
+                                        className="menuButton" onClick={this.handleshowAdminAddWordModelOpen}> Add Word
+                                    </button>
+                                    {showAdminAddWordModel && (
+                                        <AdminAddWordModel
+                                            onClose={this.handleshowAdminAddWordModelClose}
+                                        />
+                                    )}
+                                </>
+                            )
+                            :
+                            (
+                                <>
+                                    <button 
+                                        className="menuButton" onClick={this.handleUserAddWordModelOpen}>Add Word
+                                    </button>
+                                    {showUserAddWordModel &&
+                                        <UserAddWordModel
+                                            onClose={this.handleUserAddWordModelClose}
+                                            onSubmit={this.handleRequestForWordAddition}
+                                        />
+                                    }
+                                </>
+                            )
+                        }
                     </div>
                     <div className="buttonRow">
                         {admin? 
@@ -154,6 +223,14 @@ class Menu extends React.Component<any,any>{
                     </div>
                     <div className="buttonRow">
                         <button className="menuButton" onClick={this.pagelogout}>Logout</button>
+                    </div>
+                    <div className="buttonRow">
+                        <button className="menuButton" onClick={this.handleHelpModelOpen}>Help</button>
+                        {showHelpModel &&
+                            <HelpModel
+                                onClose={this.handleHelpModelClose}
+                            />
+                        }
                     </div>
                 </div>
 

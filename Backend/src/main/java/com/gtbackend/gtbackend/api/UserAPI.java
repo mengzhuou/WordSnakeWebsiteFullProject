@@ -1,11 +1,14 @@
 package com.gtbackend.gtbackend.api;
 
 import com.gtbackend.gtbackend.dao.UserRepository;
+import com.gtbackend.gtbackend.dao.WordAdditionRepository;
 import com.gtbackend.gtbackend.model.Role;
 import com.gtbackend.gtbackend.model.User;
 import com.gtbackend.gtbackend.security.JwtService;
 import com.gtbackend.gtbackend.service.UserService;
+import com.gtbackend.gtbackend.service.WordService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -29,6 +32,8 @@ public class UserAPI {
     @Autowired
     private UserService userService;
     private PasswordEncoder passwordEncoder;
+    @Autowired
+    private WordService wordService;
     String token = "";
     @Autowired
     private JwtService jwtService;
@@ -36,10 +41,21 @@ public class UserAPI {
     private UserRepository userRepository;
 
     @Autowired
-    public UserAPI(UserService userService, PasswordEncoder passwordEncoder, JwtService jwtService) {
+    private WordAdditionRepository wordAdditionRepository;
+
+    @Autowired
+    public UserAPI(
+            UserService userService,
+            PasswordEncoder passwordEncoder,
+            JwtService jwtService,
+            WordAdditionRepository wordAdditionRepository,
+            WordService wordService
+            ) {
         this.userService = userService;
         this.passwordEncoder = passwordEncoder;
         this.jwtService = jwtService;
+        this.wordAdditionRepository = wordAdditionRepository;
+        this.wordService = wordService;
     }
 
     @PostMapping("/logout")
@@ -60,8 +76,12 @@ public class UserAPI {
         if (passwordEncoder.matches(password, usr.getPassword())) {
             SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(usr.getUsername(),
             usr.getPassword()));
-            token = jwtService.generateToken(usr);
-            return ResponseEntity.ok(token);
+            try{
+                token = jwtService.generateToken(usr);
+                return ResponseEntity.ok(token);
+            } catch (Exception e){
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to generate JWT token.");
+            }
         } else {
             throw new BadCredentialsException("Email or Password does not match our records.");
         }
@@ -81,28 +101,37 @@ public class UserAPI {
 
     @RequestMapping("/userInfo")
     public ResponseEntity<User> userInfo(){
-        String userEmail = jwtService.extractUsername(token);
+        if (token != null) {
+            String userEmail = jwtService.extractUsername(token);
 
-        Optional<User> user = userService.getUser(userEmail);
-        if (user.isPresent()){
-            return ResponseEntity.ok(user.get());
-        } else{
-            return ResponseEntity.notFound().build();
+            Optional<User> user = userService.getUser(userEmail);
+            if (user.isPresent()){
+                return ResponseEntity.ok(user.get());
+            } else{
+                return ResponseEntity.notFound().build();
+            }
+        } else {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
     }
 
     @RequestMapping("/getUserEmail")
     public ResponseEntity<String> getUserEmail(){
-        String userEmail = jwtService.extractUsername(token);
+        if (token != null) {
+            String userEmail = jwtService.extractUsername(token);
 
-        Optional<User> user = userService.getUser(userEmail);
-        if (user.isPresent()){
-            User emailOnlyUser = new User();
-            emailOnlyUser.setEmail(user.get().getEmail());
-            return ResponseEntity.ok(emailOnlyUser.getEmail());
-        } else{
-            return ResponseEntity.notFound().build();
+            Optional<User> user = userService.getUser(userEmail);
+            if (user.isPresent()){
+                User emailOnlyUser = new User();
+                emailOnlyUser.setEmail(user.get().getEmail());
+                return ResponseEntity.ok(emailOnlyUser.getEmail());
+            } else{
+                return ResponseEntity.notFound().build();
+            }
+        } else {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
+
     }
 
     @GetMapping("/getBestScore")

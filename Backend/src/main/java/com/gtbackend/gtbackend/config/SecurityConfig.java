@@ -9,13 +9,13 @@ import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.client.RestTemplate;
 
 @Configuration
 @EnableWebSecurity
@@ -23,6 +23,10 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @ConfigurationProperties(prefix = "spring.user.datasource")
 public class SecurityConfig {
 
+    @Bean
+    public RestTemplate restTemplate() {
+        return new RestTemplate();
+    }
     @Bean
     public PasswordEncoder passwordEncoder(){
         return new BCryptPasswordEncoder();
@@ -49,11 +53,5 @@ public class SecurityConfig {
                 .antMatchers("/api/v1/**").permitAll().anyRequest().authenticated()
                 .and().rememberMe(); // todo: enable csrf protection after testing
         return http.build();
-    }
-
-    @Bean
-    public WebSecurityCustomizer webSecurityCustomizer() {
-        //will ignore without authentication for any pattern url starts with below
-        return (web) -> web.ignoring().antMatchers("/images/**");
     }
 }

@@ -41,11 +41,6 @@
   border-bottom: thick double 
 }
 
-.leaderBoard th:first-child,
-.leaderBoard td:first-child {
-  width: 70%; /* Adjust the width as needed */
-}
-
 .leaderBoard th {
   background-color: #f9f9f9;
 }

@@ -87,6 +87,7 @@ class GameoverBoard extends React.Component<any, any>{
                     <table>
                         <thead>
                             <tr>
+                                <th>Rank</th>
                                 <th>Name</th>
                                 <th>Score</th>
                             </tr>
@@ -94,6 +95,7 @@ class GameoverBoard extends React.Component<any, any>{
                         <tbody>
                             {leaderBoardList.map((item: any, index: number) => (
                                 <tr key={index}>
+                                    <td>{index+1}</td>
                                     <td>{item[0]}</td>
                                     <td>{item[1]}</td>
                                 </tr>

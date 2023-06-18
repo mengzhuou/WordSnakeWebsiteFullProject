@@ -3,6 +3,7 @@ import "./ClassicMode.css";
 import { withFuncProps } from "../withFuncProps";
 import { logout, getLetterFromPreviousWord, getRandomStart, getHintWordAndDef } from '../../helpers/connector';
 import { TextField, FormHelperText } from "@mui/material";
+
 import React from "react";
 import CountdownTimer from "./CountdownTimer";
 import HintPopup from "./HintPopupProps";
@@ -19,10 +20,11 @@ class ClassicMode extends React.Component<any, any>{
             inputValue: '',
             storedInputValue: '', inputValidString: '',
             errMessage: '', 
-            timeLeft: 60, wordList: [], history: []
+            wordList: [], history: []
         };
         this.menuNav = this.menuNav.bind(this);
     }
+
 
     forceup = async (inputValue: string) => {
         try {
@@ -34,7 +36,10 @@ class ClassicMode extends React.Component<any, any>{
                 if (inputValue[0] === lastLetter) {
                     const words = await getLetterFromPreviousWord(inputValue);
                     let wordList = this.state.wordList.concat(inputValue);
-                    this.handleCloseHint();
+
+                    if (this.state.showHints){
+                        this.handleCloseHint();
+                    }
                     
                     this.setState({
                         lastWord: lastWord,
@@ -43,18 +48,19 @@ class ClassicMode extends React.Component<any, any>{
                         ForceUpdateNow: false,
                         wordList: wordList,
                     });
+                    
                     let hisArr = this.state.history.concat(inputValue);
                     const lastWordForHint = hisArr[hisArr.length - 1]
                     const lastLetter = lastWordForHint[lastWordForHint.length - 1]
                     
                     this.setState({history: hisArr, lastLetter: lastLetter})
                 } else {
-                    this.setState({ errMessage: `The word must start with '${lastLetter}'` })
+                    this.setState({ errMessage: `The word must start with '${lastLetter}'`, inputValue: "", storedInputValue: "" })
                 }
             }
         } catch (error) {
             console.error("Error fetching word in the database:", error);
-            this.setState({ errMessage: 'The word does not exist. Please enter a valid word.' });
+            this.setState({ errMessage: 'The word does not exist. Please enter a valid word.', inputValue: "", storedInputValue: "" });
         }
         
     };
@@ -67,12 +73,10 @@ class ClassicMode extends React.Component<any, any>{
         const inputString = event.target.value;
         if (
             inputString.startsWith('-') || 
-            inputString.startsWith('\'') || 
-            inputString.endsWith('-') || 
-            inputString.endsWith('\'')) 
+            inputString.startsWith('\''))
         {
             this.setState({ 
-                errMessage: 'Apostrophes and/or hyphens cannot be used in the beginning or ending of a word. Please type a valid word.' 
+                errMessage: 'Apostrophes and/or hyphens cannot be used in the beginning of a word.' 
             });
         } 
         else if (inputString === "") {
@@ -89,7 +93,7 @@ class ClassicMode extends React.Component<any, any>{
                     errMessage: ""
                 });
             } else {
-                this.setState({ errMessage: 'Special character(s) or number(s) are not accepted (except apostrophes, hyphens). Please type a valid word.' })
+                this.setState({ errMessage: 'Special character(s) or number(s) are not accepted (except apostrophes, hyphens).' })
             }
         }
     }
@@ -99,16 +103,22 @@ class ClassicMode extends React.Component<any, any>{
             this.storeInputValue(this.state.inputValue).then(() => {
                 this.setState({ inputValue: "" });
             });
-
         }
     }
 
     storeInputValue = async (inputValue: string) => {
         try {
             if (inputValue !== this.state.storedInputValue) {
-                const lowerInput = inputValue.toLowerCase();
-                this.setState({ storedInputValue: lowerInput, ForceUpdateNow: true })
-                this.forceup(lowerInput);
+                if (inputValue.endsWith('\'') || inputValue.endsWith('-')){
+                    this.setState({ 
+                        errMessage: 'Apostrophes and/or hyphens cannot be used in the ending of a word.' 
+                    });
+                }
+                else{
+                    const lowerInput = inputValue.toLowerCase();
+                    this.setState({ storedInputValue: lowerInput, ForceUpdateNow: true })
+                    this.forceup(lowerInput);
+                }
             }
         } catch (error) {
             console.error(error)
@@ -173,13 +183,14 @@ class ClassicMode extends React.Component<any, any>{
     handleCloseHint = () => {
         this.setState({ showHints: false, printHints: []})
     }
+
     render() {
         const { firstWord, inputValue, wordList, errMessage, 
-            isGameStarted, showWords, printHints, showHints,
-            timeLeft
+            isGameStarted, showWords, printHints, showHints, 
         } = this.state;
         const wordListWithoutFirst = wordList.slice(1);
         const sortedWords = [...wordListWithoutFirst].sort();
+
         return (
             <div className="App">
                 <div className="topnav">
@@ -187,7 +198,7 @@ class ClassicMode extends React.Component<any, any>{
                     <button className="topnavButton" onClick={this.menuNav}>Menu</button>
                     <button className="topnavButton" onClick={this.pagelogout}>Logout</button>
                 </div>
-                {this.state.isGameStarted ? (
+                {isGameStarted ? (
                     <div className="sidenav">
                     <button className="sidenavButton" onClick={this.handleShowWords}>{showWords ? 'Hide Words' : 'Show Words'}</button>
                     <button className="sidenavButton" onClick={this.handleGiveHints}>Hint</button>

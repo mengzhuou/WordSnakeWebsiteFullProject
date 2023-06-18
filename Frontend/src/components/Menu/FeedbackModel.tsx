@@ -1,5 +1,4 @@
 import React from "react";
-import Draggable from 'react-draggable';
 
 interface FeedbackModelProps {
     message: string,
@@ -17,11 +16,11 @@ const FeedbackModel: React.FC<FeedbackModelProps> = ({ message, rating, onClose,
     };
 
     return (
-        <Draggable>
         <div className="fbpopup">
             <button className="fbClose-btn" onClick={onClose}>
             X
             </button>
+            <h1 className="helpTitle">FEEDBACK</h1>
 
             <form className="fbform" onSubmit={(event) => {event.preventDefault(); onSubmit();}}>
                 <textarea value={message} onChange={onChange}></textarea>
@@ -41,7 +40,6 @@ const FeedbackModel: React.FC<FeedbackModelProps> = ({ message, rating, onClose,
                 <button type="submit" className="fbSubmitButton">Submit</button>
             </form>
         </div>
-        </Draggable>
     );
 };
 

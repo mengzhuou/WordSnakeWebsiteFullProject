@@ -10,13 +10,6 @@ const UnlimitedResultListFunc: React.FC<ResultListProps> = (props) => {
   const { wordList } = location.state;
   return(
     <div>
-                {/* <div>
-                    <ul>
-                        {wordList.map((word: string, index: number) => (
-                            <li key={index}>{word}</li>
-                        ))}
-                    </ul>
-                </div> */}
         <UnlimitedGameoverBoard wordList={wordList}/>
     </div>
   );

@@ -7,17 +7,13 @@ import javax.persistence.*;
 @Component
 @Entity(name = "words")
 public class Word {
-
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-        Integer id;
+    Integer id;
 
     @Column(name = "word")
     String word;
-
-    @Column(name = "wordtype")
-    String wordtype;
 
     @Column(name = "definition")
     String definition;
@@ -38,14 +34,6 @@ public class Word {
         this.word = word;
     }
 
-    public String getWordtype() {
-        return wordtype;
-    }
-
-    public void setWordtype(String wordtype) {
-        this.wordtype = wordtype;
-    }
-
     public String getDefinition() {
         return definition;
     }
@@ -59,7 +47,6 @@ public class Word {
         return "WordModel{" +
                 "id=" + id +
                 ", word='" + word + '\'' +
-                ", wordtype='" + wordtype + '\'' +
                 ", definition='" + definition + '\'' +
                 '}';
     }

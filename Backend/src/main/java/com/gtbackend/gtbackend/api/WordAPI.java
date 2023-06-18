@@ -1,7 +1,9 @@
 package com.gtbackend.gtbackend.api;
 
+import com.gtbackend.gtbackend.dao.WordAdditionRepository;
 import com.gtbackend.gtbackend.dao.WordRepository;
 import com.gtbackend.gtbackend.model.Word;
+import com.gtbackend.gtbackend.service.WordService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.web.bind.annotation.*;
@@ -15,6 +17,14 @@ import java.util.Random;
 public class WordAPI {
     @Autowired
     private WordRepository wordRepository;
+
+    @Autowired
+    private WordAdditionRepository wordAdditionRepository;
+    @Autowired
+    private WordService wordService;
+
+    @Autowired
+    private WordAdditionAPI wordAdditionAPI;
 
     @RequestMapping("/getWords")
     public List<Word> getWords(){
@@ -44,25 +54,9 @@ public class WordAPI {
         }
         throw new IllegalArgumentException("The word does not exist. Please enter a valid word.");
     }
-
-    @RequestMapping("/getWordAndDefTest")
-    public List<String> getWordAndDefTest(){
-        return wordRepository.getWordAndDefTest();
-    }
-
-    @RequestMapping("/getDefTest")
-    public List<String> getDefTest(){
-        return wordRepository.getDefTest();
-    }
-
     @RequestMapping("/isWordExist")
     public boolean isWordExist(@RequestParam String inputWord) throws IllegalArgumentException{
         return wordRepository.isWordExist(inputWord);
-    }
-
-    @RequestMapping("/isWordExistTest")
-    public boolean isWordExistTest(){
-        return wordRepository.isWordExistTest();
     }
 
     @RequestMapping("/getRandomStart")
@@ -77,6 +71,18 @@ public class WordAPI {
             return String.valueOf(inputWord.charAt(inputWord.length() - 1));
         }
         throw new IllegalArgumentException("The word does not exist. Please enter a valid word.");
+    }
+
+    @PostMapping("/storeWordDefinition")
+    @ResponseBody
+    public boolean storeWordDefinition(@RequestParam Integer wordAdditionId) {
+        try {
+            wordService.storeWordDefinition(wordAdditionId);
+            wordAdditionAPI.deleteWordAdditionDefinition(wordAdditionId);
+            return true;
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException("The id for this word request does not exist.");
+        }
     }
 
 }

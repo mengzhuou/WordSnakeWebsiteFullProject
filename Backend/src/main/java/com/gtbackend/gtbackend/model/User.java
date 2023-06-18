@@ -61,6 +61,14 @@ public class User implements UserDetails {
         return role;
     }
 
+    public Integer getSignupRank() {
+        return signupRank;
+    }
+
+    public void setSignupRank(Integer signupRank) {
+        this.signupRank = signupRank;
+    }
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         List<GrantedAuthority> authorities = new ArrayList<GrantedAuthority>();

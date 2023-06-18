@@ -75,7 +75,7 @@ export async function isWordExist(inputWord: string): Promise<boolean>{
         },
         withCredentials: true
     });
-    return content.data.exist;
+    return content.data;
 }
 
 export async function getLetterFromPreviousWord(inputWord: string): Promise<String>{
@@ -208,6 +208,80 @@ export async function updateFeedbackStatus(id: number, status: string){
         params: {
             id: id,
             status: status
+        }
+    });
+    return content.data;
+}
+
+export async function getOnlineDefinition(word: string){
+    let content = await client({
+        method: 'post',
+        url: url+"getOnlineDefinition",
+        params:{
+            word: word
+        }
+    });
+    return content.data;
+}
+
+export async function requestForWordAddition(word: string){
+    let content = await client({
+        method: 'post',
+        url: url+"requestForWordAddition",
+        params:{
+            word: word
+        }
+    });
+    return content.data;
+}
+
+export async function isWordLegitimate(word: string){
+    let content = await client({
+        method: 'get',
+        url: url+"isWordLegitimate",
+        params:{
+            word: word
+        }
+    });
+    return content.data;
+}
+
+export async function isWordForAdditionExist(word: string){
+    let content = await client({
+        method: 'get',
+        url: url+"isWordForAdditionExist",
+        params:{
+            word: word
+        }
+    });
+    return content.data;
+}
+
+export async function getFromWordAddition(){
+    let content = await client({
+        method: 'get',
+        url: url+"getFromWordAddition"
+    });
+    return content.data;
+}
+
+export async function storeWordDefinition(wordAdditionId: number){
+    let content = await client({
+        method: 'post',
+        url: url+"storeWordDefinition",
+        params:{
+            wordAdditionId: wordAdditionId
+        }
+    });
+    return content.data;
+}
+
+export async function deleteWordAdditionDefinition(wordAdditionId: number){
+    let content = await client({
+        method: 'post',
+        url: url+"deleteWordAdditionDefinition",
+        params:{
+            wordAdditionId: wordAdditionId
         }
     });
     return content.data;

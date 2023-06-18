@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "aws-amplify": "^5.2.2",
+    "openai": "^3.2.1"
+  }
+}
