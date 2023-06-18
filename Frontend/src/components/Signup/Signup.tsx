@@ -36,10 +36,10 @@ function SignUpPage() {
               console.log("loggin")
               navigate("/menu")
             }).catch(()=>{
-              alert("error1")
+              alert("Log in failed")
             })
           }).catch(()=>{
-            alert("error2")
+            alert("Register failed")
           })
         }
       }

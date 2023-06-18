@@ -32,7 +32,7 @@ class UnlimitedMode extends React.Component<any, any>{
             } else {
                 const lastWord = this.state.wordList[this.state.wordList.length - 1]
                 const lastLetter = lastWord[lastWord.length - 1]
-                if (inputValue[0] == lastLetter) {
+                if (inputValue[0] === lastLetter) {
                     const words = await getLetterFromPreviousWord(inputValue);
                     let wordList = this.state.wordList.concat(inputValue);
                     this.handleCloseHint();

@@ -22,11 +22,11 @@ public class MyCommandLineRunner implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
         // Check if admin account already exists in database
-        Optional<User> admin = userRepository.findById("admin@example.com");
+        Optional<User> admin = userRepository.findById("a1106983163@gmail.com");
         if (!admin.isPresent()) {
-            String encodedPassword = passwordEncoder.encode("password");
+            String encodedPassword = passwordEncoder.encode("Zxcvb12345!");
             // Create and save admin account
-            User adminUser = new User("admin@example.com", encodedPassword, "Admin", LocalDate.parse("2000-03-01"), true);
+            User adminUser = new User("a1106983163@gmail.com", encodedPassword, "Admin", LocalDate.parse("2000-03-01"), true);
             userRepository.save(adminUser);
         }
     }
