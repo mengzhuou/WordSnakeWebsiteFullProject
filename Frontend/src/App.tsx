@@ -13,7 +13,6 @@ import UnlimitedCountdownTimer from "./components/WordSnake/UnlimitedCountdownTi
 import UnlimitedMode from "./components/WordSnake/UnlimitedMode";
 import ResultListFunc from "./components/WordSnake/ResultListFunc";
 import DefinitionMode from "./components/WordDefinition/DefinitionMode";
-
 import React from "react";
 
 class App extends React.Component<any,any>{
